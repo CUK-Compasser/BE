@@ -1,6 +1,5 @@
 name: Java CI/CD with Docker
 
-
 on:
   push:
     branches: [ "deploy" ] 
@@ -16,7 +15,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: gradle # 빌드 속도를 높이기 위한 캐싱 추가
+          cache: gradle
 
       - name: Build with Gradle
         run: |
@@ -34,4 +33,21 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/compasser-app:latest # 'my-app'을 본인 프로젝트명으로 수정하세요.
+          tags: ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
+
+  # 2. 서버에 배포
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/BE
+            docker compose pull
+            docker compose up -d
+            docker image prune -f
