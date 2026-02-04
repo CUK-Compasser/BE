@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    image: shawn9272/cuk-compasser:latest
+    container_name: cuk-compasser-service
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file: .env
+    depends_on:
+      - mysql-db
+    networks:
+      - cuk-compasser-net
+
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-server
+    restart: always
+    env_file: .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cuk-compasser-net
+
+volumes:
+  mysql_data:
+
+networks:
+  cuk-compasser-net:
+    external: true
