@@ -7,7 +7,18 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    # .env 파일을 읽어오도록 설정합니다.
     env_file: .env
+    environment:
+      # Spring Boot가 .env의 값을 정확히 주입받도록 명시합니다.
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -19,6 +30,12 @@ services:
     container_name: mysql-db
     restart: always
     env_file: .env
+    # MySQL 컨테이너 자체 환경변수 설정
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
@@ -26,7 +43,8 @@ services:
     networks:
       - cuk-compasser-net
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$${DB_USERNAME}", "--password=$${DB_PASSWORD}" ]
+      # 헬스체크 시 변수 오해를 방지하기 위해 .env의 값을 직접 활용하거나 $$를 유지합니다.
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "--password=${MYSQL_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
