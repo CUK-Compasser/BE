@@ -48,7 +48,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           debug: true
           script: |
+            mkdir -p ~/BE
             cd ~/BE
-            docker compose pull
-            docker compose up -d
-            docker image prune -f
+            sudo docker-compose pull
+            sudo docker-compose up -d
+            sudo docker image prune -f
