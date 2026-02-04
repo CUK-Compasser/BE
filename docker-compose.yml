@@ -25,6 +25,12 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - cuk-compasser-net
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$${DB_USERNAME}", "--password=$${DB_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   mysql_data:
