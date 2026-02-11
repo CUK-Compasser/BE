@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status;
 
-import com.example.booklog.global.common.apiPayload.code.BaseSuccessCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseSuccessCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,12 +1,9 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload;
 
-import com.example.booklog.global.auth.exception.AuthErrorCode;
-import com.example.booklog.global.auth.exception.AuthSuccessCode;
-import com.example.booklog.global.common.apiPayload.code.BaseErrorCode;
-import com.example.booklog.global.common.apiPayload.code.BaseSuccessCode;
-import com.example.booklog.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseSuccessCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
@@ -32,16 +29,6 @@ public class ApiResponse<T> {
         this.data = data;
     }
 
-    // 성공 응답 (AuthSuccessCode 사용)
-    public static <T> ApiResponse<T> onSuccess(AuthSuccessCode successCode, T data) {
-        return new ApiResponse<>(true, successCode.getCode(), successCode.getMessage(), data);
-    }
-
-    // 성공 응답 (데이터 없이)
-    public static <T> ApiResponse<T> onSuccess(AuthSuccessCode successCode) {
-        return new ApiResponse<>(true, successCode.getCode(), successCode.getMessage(), null);
-    }
-
     // 성공 응답 (BaseSuccessCode 사용 - SuccessStatus 등)
     public static <T> ApiResponse<T> onSuccess(BaseSuccessCode successCode, T data) {
         return new ApiResponse<>(true, successCode.getCode(), successCode.getMessage(), data);
@@ -53,15 +40,6 @@ public class ApiResponse<T> {
     }
 
 
-    // 실패 응답 (AuthErrorCode 사용)
-    public static <T> ApiResponse<T> onFailure(AuthErrorCode errorCode, T data) {
-        return new ApiResponse<>(false, errorCode.getCode(), errorCode.getMessage(), data);
-    }
-
-    // 실패 응답 (데이터 없이)
-    public static <T> ApiResponse<T> onFailure(AuthErrorCode errorCode) {
-        return new ApiResponse<>(false, errorCode.getCode(), errorCode.getMessage(), null);
-    }
 
     // 실패 응답 (GeneralErrorCode 사용)
     public static <T> ApiResponse<T> onFailure(GeneralErrorCode errorCode, T data) {

@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception;
 
-import com.example.booklog.global.common.apiPayload.code.BaseErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
