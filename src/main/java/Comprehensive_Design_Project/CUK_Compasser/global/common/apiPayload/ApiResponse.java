@@ -4,13 +4,15 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseSuccessCode;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(description = "API 응답")
 public class ApiResponse<T> {
-    @Schema(description = "성공 여부", example = "true")
+
+    @Schema(description = "응답 여부", example = "true")
     private final boolean success;
 
     @Schema(description = "응답 코드", example = "AUTH_2000")
@@ -21,6 +23,7 @@ public class ApiResponse<T> {
 
     @Schema(description = "응답 데이터")
     private final T data;
+
 
     private ApiResponse(boolean success, String code, String message, T data) {
         this.success = success;
