@@ -35,13 +35,27 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
+	implementation 'org.apache.commons:commons-lang3:3.18.0' // springdoc의 의존 라이브러리. 이전 버전 취약성 문제
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.38' // openai 의존성 충돌 해결
+
+
 	compileOnly 'org.projectlombok:lombok'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
 }
 
 tasks.named('test') {
