@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    image: shawn9272/cuk-compasser:latest
+    container_name: cuk-compasser-service
+    restart: always
+    ports:
+      - "8080:8080"
+    env_file: .env
+    environment:
+      - DB_HOST=mysql-db
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - cuk-compasser-net
+
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-db
+    restart: always
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cuk-compasser-net
+    healthcheck:
+      # CMD-SHELL과 $$를 사용하여 환경 변수를 안전하게 전달합니다.
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER -p$$MYSQL_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:
+
+networks:
+  cuk-compasser-net:
+    external: true
