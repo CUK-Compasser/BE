@@ -37,4 +37,14 @@ public class Member {
     @Column(nullable = false)
     private String memberName;
 
+
+    public Member createNormalMember(){
+        return new Member();
+    }
+    public Member createStoreManager(){
+        return new Member();
+    }
+    public void updateMemberName(String memberName){
+        this.memberName = memberName;
+    }
 }
