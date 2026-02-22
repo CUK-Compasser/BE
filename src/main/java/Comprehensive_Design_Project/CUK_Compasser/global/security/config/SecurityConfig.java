@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.Security.config;
+package Comprehensive_Design_Project.CUK_Compasser.global.security.config;
 
 
 import org.springframework.context.annotation.Bean;
