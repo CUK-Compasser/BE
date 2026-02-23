@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.security.jwt;
 
-import Lumo.lumo_backend.global.security.userDetails.CustomUserDetailsService;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;

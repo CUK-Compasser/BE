@@ -1,11 +1,10 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.security.filter;
 
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWT;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWTProvider;
-import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
-import Lumo.lumo_backend.global.exception.GeneralException;
-import Lumo.lumo_backend.global.security.jwt.JWT;
-import Lumo.lumo_backend.global.security.jwt.JWTProvider;
-import Lumo.lumo_backend.global.security.userDetails.CustomUserDetailsService;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -49,7 +48,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 String isBlackListed = (String) redisTemplate.opsForValue().get("blacklist:" + accessToken);
                 if (isBlackListed != null){
                     log.warn("[JWTAuthenticationFilter] - Using BlackListed Token!");
-                    throw new GeneralException(ErrorCode.BLACKLISTED_TOKEN);
+                    throw new GeneralException(GeneralErrorCode.BLACKLIST_TOKEN);
                 }
 
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
@@ -107,7 +106,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (savedRT == null){
             log.warn("[JWTAuthenticationFilter] - savedRT is null!");
-            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
+            throw new GeneralException(GeneralErrorCode.RT_NOT_FOUND);
         }
 
         if (requestRT != null && requestRT.equals(savedRT)){
@@ -134,7 +133,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         else{
             log.warn("[JWTAuthenticationFilter] - requestRT is null! || requestRT is not equal to savedRT!");
-            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
+            throw new GeneralException(GeneralErrorCode.RT_NOT_FOUND);
         }
     }
 }

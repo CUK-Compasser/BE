@@ -1,9 +1,10 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails;
 
-
-import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
-import Lumo.lumo_backend.global.exception.GeneralException;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.BaseErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService { // 상속�
 
         return memberRepository.findByEmail(username)
                 .map(CustomUserDetails::new) // 이후 @AuthenticationPrincipal 사용으로 Controller 계층에서 받도록
-                .orElseThrow(() -> new GeneralException(ErrorCode.AUTH_UNAUTHORIZED)); // 일단 GeneralException으로?
+                .orElseThrow(() -> new GeneralException(GeneralErrorCode.MEMBER_NOT_FOUND) ); // 일단 GeneralException으로?
     }
 }
