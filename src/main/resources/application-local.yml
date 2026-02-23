@@ -1,0 +1,59 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  main:
+    web-application-type: servlet
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/cuk_compasser?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    username: root
+    password: ${MYSQL_ROOT_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # 로컬 개발용
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: true   # 로컬에서는 허용
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  # 🔕 로컬에서는 Redis 완전히 비활성화
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  # ☁️ 로컬에서는 AWS 리소스 자동 구성 안 함
+  cloud:
+    aws:
+      stack:
+        auto: false
+      region:
+        static: ap-northeast-2
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      s3:
+        bucket: ${S3_BUCKET_NAME}
+
+# 🩺 Actuator Redis Health Check 비활성화
+management:
+  health:
+    redis:
+      enabled: false
