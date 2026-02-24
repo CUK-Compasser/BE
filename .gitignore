@@ -117,3 +117,7 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij+all
+
+### Local secrets / machine-specific ###
+gradle.properties
+**/gradle.properties
