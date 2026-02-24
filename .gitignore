@@ -120,3 +120,7 @@ gradle-app.setting
 
 # 환경변수
 .env
+
+### Local secrets / machine-specific ###
+gradle.properties
+**/gradle.properties
