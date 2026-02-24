@@ -118,6 +118,9 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/gradle,intellij+all
 
+# 환경변수
+.env
+
 ### Local secrets / machine-specific ###
 gradle.properties
 **/gradle.properties

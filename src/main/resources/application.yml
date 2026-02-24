@@ -1,6 +1,9 @@
 spring:
   application:
     name: CUK-Compasser
+  config:
+    activate:
+      on-profile: local
 
   security:
     oauth2:
