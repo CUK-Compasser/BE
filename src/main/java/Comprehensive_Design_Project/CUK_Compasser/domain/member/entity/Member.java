@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private AuthProvider provider; // LOCAL, KAKAO
+    private Login provider; // LOCAL, KAKAO
 
     @Column(name = "provider_id", length = 128)
     private String providerId;
