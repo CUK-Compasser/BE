@@ -40,3 +40,32 @@ spring:
       credentials:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Prometheus 수집을 위해 엔드포인트 노출
+        include: prometheus, health, info
+  metrics:
+    tags:
+      # Grafana 대시보드 필터링을 위한 레이블 설정
+      application: compasser-api
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  file:
+    # Docker 컨테이너 내부 경로입니다.
+    # docker-compose에서 이 경로를 호스트의 ./logs와 연결하게 됩니다.
+    name: /var/log/compasser-api.log
+  logback:
+    rollingpolicy:
+      # 운영 환경 로그 관리: 7일간 보관, 파일당 10MB 제한
+      max-history: 7
+      max-file-size: 10MB
+  level:
+    # 운영 환경은 로그 양을 조절하기 위해 보통 INFO 레벨을 사용합니다.
+    root: INFO
+    org.hibernate.SQL: ERROR
