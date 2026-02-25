@@ -57,3 +57,8 @@ management:
   health:
     redis:
       enabled: false
+
+jwt:
+  security:
+    key: ${JWT_SECRET_KEY}
+      

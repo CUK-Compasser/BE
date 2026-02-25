@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.security.oauth2.controller;
+package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
