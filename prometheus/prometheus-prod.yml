@@ -1,0 +1,8 @@
+scrape_configs:
+  - job_name: 'compasser-api-prod'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['cuk-compasser-service:8080']
+        labels:
+          application: 'compasser-api'
+          env: 'prod' # 로컬과 구분위해 prod로 설정

@@ -1,3 +1,5 @@
+
+
 spring:
   config:
     activate:
@@ -77,8 +79,25 @@ management:
   health:
     redis:
       enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
 
+    prometheus:
+      metrics:
+        export:
+          enabled: true
+server:
+  port: 8081
+
+logging:
+  file:
+    name: logs/app.log
+  logback:
+    rollingpolicy:
+      max-history: 7
+      max-file-size: 10MB
 jwt:
   security:
     key: ${JWT_SECRET_KEY}
-      
