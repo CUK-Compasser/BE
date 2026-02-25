@@ -3,6 +3,9 @@ package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.contro
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.dto.KakaoLoginDTO;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.service.OAuth2Service;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
