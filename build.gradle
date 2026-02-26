@@ -42,6 +42,10 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.18.0' // springdoc의 의존 라이브러리. 이전 버전 취약성 문제
 	implementation 'io.swagger.core.v3:swagger-annotations:2.2.38' // openai 의존성 충돌 해결
 
+	// JWT
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
 	compileOnly 'org.projectlombok:lombok'
 
