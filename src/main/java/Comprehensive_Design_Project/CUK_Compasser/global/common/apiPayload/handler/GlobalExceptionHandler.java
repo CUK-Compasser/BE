@@ -88,15 +88,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ApiResponse<?> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
-        // @RequestParam YearMonth month 변환 실패 케이스
-        if ("month".equals(e.getName())) {
-            return ApiResponse.onFailure(ErrorStatus.UNSUPPORTED_CALENDAR_FORMAT);
-        }
-        // 나머지는 프로젝트 정책대로 (원하면 더 세분화 가능)
-        return ApiResponse.onFailure(GeneralErrorCode.BAD_REQUEST);
-    }
 }

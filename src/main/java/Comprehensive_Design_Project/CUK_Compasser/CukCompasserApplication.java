@@ -7,11 +7,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-@SpringBootApplication(exclude = {
-		DataSourceAutoConfiguration.class,
-		DataSourceTransactionManagerAutoConfiguration.class,
-		HibernateJpaAutoConfiguration.class
-})
+@SpringBootApplication
 @EnableJpaAuditing
 public class CukCompasserApplication {
 
