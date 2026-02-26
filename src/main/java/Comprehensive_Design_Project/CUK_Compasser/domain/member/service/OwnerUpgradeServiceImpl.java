@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
 
-    private static final String DEFAULT_STORE_NAME = "미등록 매장";
-    private static final String DEFAULT_BIZ_LICENSE = "UNVERIFIED";
+    private static final String DEFAULT_STORE_NAME = "미등록 매장";   // stores.store_name NOT NULL 대응
+    private static final String DEFAULT_BIZ_LICENSE = "UNVERIFIED";  // store_managers.business_license_number NOT NULL 대응(정책값)
 
     private final MemberRepository memberRepository;
     private final StoreManagerRepository storeManagerRepository;
@@ -30,9 +30,9 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다. memberId=" + memberId));
 
-        // ✅ 이미 점장(멱등)
+        // ✅ 멱등: 이미 STORE_MANAGER면 storeId만 찾아서 반환
         if (member.getRole() == MemberRole.STORE_MANAGER) {
-            Long storeId = storeRepository.findByStoreManager_Id(memberId)
+            Long storeId = storeRepository.findByStoreManagerId(memberId)
                     .map(Store::getId)
                     .orElse(null);
 
@@ -47,30 +47,33 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         // 1) role 변경
         member.setRole(MemberRole.STORE_MANAGER);
 
-        // 2) store_manager 생성(멱등)
-        StoreManager storeManager = storeManagerRepository.findById(memberId)
-                .orElseGet(() -> storeManagerRepository.save(
-                        StoreManager.builder()
-                                .memberId(memberId)
-                                .businessLicenseNumber(DEFAULT_BIZ_LICENSE)
-                                .verifiedAt(null)
-                                .build()
-                ));
+        // 2) store_managers 생성 (PK=FK=memberId)
+        if (!storeManagerRepository.existsById(memberId)) {
+            StoreManager storeManager = StoreManager.builder()
+                    .memberId(memberId)
+                    .businessLicenseNumber(DEFAULT_BIZ_LICENSE)
+                    .verifiedAt(null)
+                    .build();
+            storeManagerRepository.save(storeManager);
+        }
 
-        // 3) store 생성(멱등) - 있으면 그대로, 없으면 생성
-        Store store = storeRepository.findByStoreManager_Id(memberId)
-                .orElseGet(() -> storeRepository.save(
-                        Store.builder()
-                                .storeManager(storeManager)
-                                .storeName(DEFAULT_STORE_NAME)
-                                .storeDetails(null)
-                                .beforePrice(null)
-                                .afterPrice(null)
-                                .latitude(null)
-                                .longitude(null)
-                                .businessHours(null)
-                                .build()
-                ));
+        // 3) stores 생성 (사장 1명당 1개면 UNIQUE(store_manager_id) 권장)
+        StoreManager storeManager = storeManagerRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalStateException("storeManager 생성 후 조회 실패"));
+
+        Store store = Store.builder()
+                .storeManager(storeManager)     // ✅ 연관관계 주입
+                .storeName("미등록 매장")
+                .storeDetails(null)
+                .beforePrice(null)
+                .afterPrice(null)
+                .latitude(null)
+                .longitude(null)
+                .businessHours(null)
+                .build();
+        storeRepository.save(store);
+
+        // 4) store_images는 승격 시점 생성 X (업로드 때 생성)
 
         return OwnerUpgradeRespDTO.builder()
                 .memberId(memberId)

@@ -7,5 +7,9 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
 
-    Optional<Store> findByIdAndStoreManager_Id(Long storeId, Long storeManagerId);
+    Optional<Store> findByIdAndStoreManagerId(Long storeId, Long storeManagerId);
+
+    Optional<Store> findByStoreManagerId(Long storeManagerId);
+
+    boolean existsByStoreManagerId(Long storeManagerId);
 }

@@ -4,7 +4,6 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreResponse
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateRequest;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +16,13 @@ public class StoreController {
     private final StoreService storeService;
 
     /**
-     * 스토어 정보 수정 (점장 전용)
+     * 점장 가게 수정 (운영시간 raw JSON 포함)
      * PATCH /stores/{storeId}
      */
     @PatchMapping("/{storeId}")
     public StoreResponse updateStore(
             @PathVariable Long storeId,
-            @Valid @RequestBody StoreUpdateRequest request,
+            @RequestBody StoreUpdateRequest request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
@@ -31,11 +30,29 @@ public class StoreController {
     }
 
     /**
-     * 스토어 단건 조회 (필요시)
+     * (선택) 내 가게 조회 - 운영시간 확인용
      * GET /stores/{storeId}
+     * {
+     *   "businessHours": {
+     *     "timezone": "Asia/Seoul",
+     *     "weekly": {
+     *       "MON": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
+     *       "TUE": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
+     *       "WED": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
+     *       "THU": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
+     *       "FRI": { "open": "09:00", "close": "22:00", "closed": false, "breaks": [] },
+     *       "SAT": { "open": "10:00", "close": "22:00", "closed": false, "breaks": [] },
+     *       "SUN": { "open": null, "close": null, "closed": true, "breaks": [] }
+     *     }
+     *   }
+     * }
      */
     @GetMapping("/{storeId}")
-    public StoreResponse getStore(@PathVariable Long storeId) {
-        return storeService.getStore(storeId);
+    public StoreResponse getMyStore(
+            @PathVariable Long storeId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long memberId = userDetails.getMember().getId();
+        return storeService.getMyStore(storeId, memberId);
     }
 }

@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum GeneralErrorCode implements BaseErrorCode {
     // 일반 에러 코드
+
+    // Common
+    INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "C000", "서버 오류가 발생했습니다."),
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "G001", "잘못된 요청입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "G002", "인증되지 않은 사용자입니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "G003", "권한이 없습니다."),
