@@ -36,13 +36,13 @@ public class StoreController {
      *   "businessHours": {
      *     "timezone": "Asia/Seoul",
      *     "weekly": {
-     *       "MON": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
-     *       "TUE": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
-     *       "WED": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
-     *       "THU": { "open": "09:00", "close": "21:00", "closed": false, "breaks": [] },
-     *       "FRI": { "open": "09:00", "close": "22:00", "closed": false, "breaks": [] },
-     *       "SAT": { "open": "10:00", "close": "22:00", "closed": false, "breaks": [] },
-     *       "SUN": { "open": null, "close": null, "closed": true, "breaks": [] }
+     *       "MON": { "bussiness-time" : {"open": "20:00", "close": "22:00"}, "break-time": {"start": "20:00", "end": "22:00"}},
+     *       "TUE": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
+     *       "WED": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
+     *       "THU": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
+     *       "FRI": { "open": "09:00", "close": "22:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
+     *       "SAT": { "open": "10:00", "close": "22:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
+     *       "SUN": { "open": null, "close": null, "closed": true, "breaks-start": "null", "breaks-end": "null", "break-time": null }
      *     }
      *   }
      * }

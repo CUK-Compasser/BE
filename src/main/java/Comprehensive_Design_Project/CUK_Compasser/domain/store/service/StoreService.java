@@ -36,8 +36,6 @@ public class StoreService {
 
         if (req.getStoreName() != null) store.setStoreName(req.getStoreName());
         if (req.getStoreDetails() != null) store.setStoreDetails(req.getStoreDetails());
-        if (req.getBeforePrice() != null) store.setBeforePrice(req.getBeforePrice());
-        if (req.getAfterPrice() != null) store.setAfterPrice(req.getAfterPrice());
 
         if (req.getBusinessHours() != null) {
             validateBusinessHours(req.getBusinessHours());
