@@ -36,13 +36,13 @@ public class StoreController {
      *   "businessHours": {
      *     "timezone": "Asia/Seoul",
      *     "weekly": {
-     *       "MON": { "bussiness-time" : {"open": "20:00", "close": "22:00"}, "break-time": {"start": "20:00", "end": "22:00"}},
-     *       "TUE": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
-     *       "WED": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
-     *       "THU": { "open": "09:00", "close": "21:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
-     *       "FRI": { "open": "09:00", "close": "22:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
-     *       "SAT": { "open": "10:00", "close": "22:00", "closed": false, "breaks-start": "19:00", "breaks-end": "21:00", "breaks": true },
-     *       "SUN": { "open": null, "close": null, "closed": true, "breaks-start": "null", "breaks-end": "null", "break-time": null }
+     *       "MON": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false}
+     *       "TUE": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
+     *       "WED": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
+     *       "THU": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
+     *       "FRI": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
+     *       "SAT": { "open": "09:00", "close": "21:00", "break-time": null, "closed": false }, //브레이크 타임 없음
+     *       "SUN": { "open": null, "close": null, "break-time": null, "closed": true }
      *     }
      *   }
      * }
