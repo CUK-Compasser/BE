@@ -61,14 +61,14 @@ public class StoreController {
 
 
     @GetMapping // 로그인 이후 바로 연결되는 메인 페이지, createdAt 기준 페이지네이션 10개
-    @Operation()
+    @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
     public ApiResponse<Object> getStoreList (
             @AuthenticationPrincipal CustomUserDetails userDetails){
         return null;
     }
 
     @GetMapping("/{tag}") // 태그 별 리스트  조회
-    @Operation()
+    @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
     public ApiResponse<Object> getStoreListByTag (
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable String tag
@@ -77,7 +77,7 @@ public class StoreController {
     }
 
     @GetMapping("/university/{university}") // 대학교 반경 기준 가게 조회 API
-    @Operation()
+    @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
     public ApiResponse<Object> getStoreListByUniversity (
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable String university){
@@ -85,7 +85,7 @@ public class StoreController {
     }
 
     @GetMapping("/member") // 지도 클릭 시 사용자 반경 가게 조회 API
-    @Operation()
+    @Operation(summary = "사용자 반경 가게 조회 API", description = "사용자의 위치 기준 반경의 가게의 조회하는  API 입니다.")
     public ApiResponse<Object> getStoreListByMemberRadius (
             @RequestBody MemberReqDTO.MemberCoordinatesDTO coordinates,
             @AuthenticationPrincipal CustomUserDetails userDetails){
