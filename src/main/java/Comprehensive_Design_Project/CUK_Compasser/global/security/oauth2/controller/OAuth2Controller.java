@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.controller;
+package Comprehensive_Design_Project.CUK_Compasser.global.security.oauth2.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(("/api/oauth2"))
+@RequestMapping("/api/oauth2")
 public class OAuth2Controller {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
