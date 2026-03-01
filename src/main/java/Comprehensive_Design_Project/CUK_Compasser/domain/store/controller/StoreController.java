@@ -1,9 +1,12 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreResponse;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateRequest;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,4 +58,39 @@ public class StoreController {
         Long memberId = userDetails.getMember().getId();
         return storeService.getMyStore(storeId, memberId);
     }
+
+
+    @GetMapping // 로그인 이후 바로 연결되는 메인 페이지, createdAt 기준 페이지네이션 10개
+    @Operation()
+    public ApiResponse<Object> getStoreList (
+            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return null;
+    }
+
+    @GetMapping("/{tag}") // 태그 별 리스트  조회
+    @Operation()
+    public ApiResponse<Object> getStoreListByTag (
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String tag
+            ){
+        return null;
+    }
+
+    @GetMapping("/university/{university}") // 대학교 반경 기준 가게 조회 API
+    @Operation()
+    public ApiResponse<Object> getStoreListByUniversity (
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable String university){
+        return null;
+    }
+
+    @GetMapping("/member") // 지도 클릭 시 사용자 반경 가게 조회 API
+    @Operation()
+    public ApiResponse<Object> getStoreListByMemberRadius (
+            @RequestBody MemberReqDTO.MemberCoordinatesDTO coordinates,
+            @AuthenticationPrincipal CustomUserDetails userDetails){
+        return null;
+    }
+
+
 }
