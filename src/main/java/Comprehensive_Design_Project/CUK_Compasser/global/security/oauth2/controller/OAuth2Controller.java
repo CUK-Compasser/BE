@@ -32,11 +32,13 @@ public class OAuth2Controller {
     private final OAuth2Service oAuth2Service;
 
     @PostMapping("/login-kakao")
+    @Operation(summary = "카카오 로그인 URL 획득 API", description = "사용자가 이동할 카카오 로그인 동의 페이지 URL를 획득하는 API 입니다.")
     public ApiResponse<String> loginKakao(){
         return ApiResponse.onSuccess(SuccessStatus.OK, "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" +  client_id + "&redirect_uri=" + redirect_uri);
     }
 
     @GetMapping("/code/kakao") // 카카오 회원가입 or 로그인 서비스 == GET 요청
+    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 딱히 접근할 일이 없어요.")
     public ApiResponse<Object> callback (@RequestParam("code") String code, HttpServletResponse response) {
 
         MemberRespDTO.MemberInfoDTO memberInfo = oAuth2Service.loginWithKakao(code);
