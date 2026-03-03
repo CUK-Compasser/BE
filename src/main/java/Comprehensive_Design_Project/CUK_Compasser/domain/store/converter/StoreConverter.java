@@ -17,7 +17,7 @@ public class StoreConverter {
     public StoreRespDTO toResp(Store store) {
         return new StoreRespDTO(
                 store.getId(),
-                store.getStoreManager().getMemberId(), // ✅ PK=FK
+                store.getStoreManager().getId(), // ✅ PK=FK
                 store.getStoreName(),
                 store.getStoreDetails(),
                 store.getBeforePrice(),

@@ -66,36 +66,30 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         // ✅ (2) role 변경
         member.setRole(MemberRole.STORE_MANAGER);
 
-        // ✅ (3) store_managers 생성(멱등)
-        if (!storeManagerRepository.existsById(memberId)) {
-            StoreManager storeManager = StoreManager.builder()
-                    .memberId(memberId)
-                    .businessLicenseNumber(DEFAULT_BIZ_LICENSE)
-                    .verifiedAt(null)
-                    .build();
-            storeManagerRepository.save(storeManager);
-        }
+// ✅ (3) store_managers 생성(멱등) - MapsId 정석
+        StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
+                .orElseGet(() -> storeManagerRepository.save(
+                        StoreManager.builder()
+                                .member(member)
+                                .businessLicenseNumber(DEFAULT_BIZ_LICENSE)
+                                .verifiedAt(null)
+                                .build()
+                ));
 
         // ✅ (4) stores 생성(멱등)
         Store store = storeRepository.findByStoreManager_MemberId(memberId)
-                .orElseGet(() -> {
-                    StoreManager manager = storeManagerRepository.findById(memberId)
-                            .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND));
-
-                    return storeRepository.save(
-                            Store.builder()
-                                    .storeManager(manager)
-                                    .storeName(DEFAULT_STORE_NAME)
-                                    .storeDetails(null)
-                                    .beforePrice(null)
-                                    .afterPrice(null)
-                                    .latitude(null)
-                                    .longitude(null)
-                                    .businessHours(null)
-                                    .build()
-                    );
-                });
-
+                .orElseGet(() -> storeRepository.save(
+                        Store.builder()
+                                .storeManager(storeManager)
+                                .storeName(DEFAULT_STORE_NAME)
+                                .storeDetails(null)
+                                .beforePrice(null)
+                                .afterPrice(null)
+                                .latitude(null)
+                                .longitude(null)
+                                .businessHours(null)
+                                .build()
+                ));
         // ✅ (5) store_images 기본 1장 생성(멱등)
         if (!storeImageRepository.existsByStore_Id(store.getId())) {
             storeImageRepository.save(StoreImage.builder()

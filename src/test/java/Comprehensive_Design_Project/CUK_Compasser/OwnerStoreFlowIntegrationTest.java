@@ -1,7 +1,9 @@
 package Comprehensive_Design_Project.CUK_Compasser;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Login;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Role;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.SaleStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
@@ -44,9 +46,11 @@ class OwnerStoreFlowIntegrationTest {
         // ✅ 로그인 없이도 테스트 할 수 있도록 "멤버"를 DB에 미리 생성
         Member m = Member.builder()
                 .email("owner@test.com")
-                .password("encoded") // 실제 로그인 안 쓰니까 아무 값
+                .password("encoded")
                 .memberName("점장테스터")
+                .provider(Login.NORMAL)   // ✅ 이거 추가
                 .role(MemberRole.NORMAL)
+                .status(Role.ACTIVE)       // (status도 not null이면 같이)
                 .build();
         memberRepository.save(m);
         memberId = m.getId();
@@ -71,7 +75,7 @@ class OwnerStoreFlowIntegrationTest {
 
         // 1) 점장 승격 (자동 생성)
         String upgradeResp = mockMvc.perform(
-                        post("/owners/upgrade")
+                        patch("/owners/upgrade")
                                 .with(withMemberPrincipal(memberId))
                 )
                 .andExpect(status().isOk())
