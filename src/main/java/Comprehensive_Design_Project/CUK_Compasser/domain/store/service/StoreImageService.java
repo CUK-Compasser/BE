@@ -44,7 +44,7 @@ public class StoreImageService {
         Store store = assertOwner(storeId, memberId);
 
         if (storeImage == null || storeImage.isEmpty()) {
-            throw new GeneralException(ErrorStatus.INVALID_IMAGE);
+            throw new GeneralException(ErrorStatus.STORE_IMAGE_NOT_FOUND);
         }
 
         // ✅ (초기 구현) 실제 S3 업로드 전까지는 파일명을 URL처럼 저장 (TODO: S3 연동)
@@ -66,7 +66,7 @@ public class StoreImageService {
         assertOwner(storeId, memberId);
 
         StoreImage image = storeImageRepository.findByIdAndStore_Id(imageId, storeId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.IMAGE_NOT_FOUND));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_IMAGE_NOT_FOUND));
 
         storeImageRepository.delete(image);
     }
