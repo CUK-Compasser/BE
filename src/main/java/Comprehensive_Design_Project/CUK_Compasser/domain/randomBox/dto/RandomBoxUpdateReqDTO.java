@@ -1,16 +1,17 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.SaleStatus;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RandomBoxUpdateRequest {
+public class RandomBoxUpdateReqDTO {
     private String boxName;
+    private String content;
     private Integer stock;
     private Integer beforePrice;
     private Integer afterPrice;
-    private String content;
-    private String saleStatus;
+    private SaleStatus saleStatus; // ✅ enum
 }

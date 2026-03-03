@@ -1,16 +1,17 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.SaleStatus;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RandomBoxCreateRequest {
-    private String boxName;      // 피그마: 랜덤박스 이름
-    private Integer stock;       // 피그마: 총 수량
+public class RandomBoxCreateReqDTO {
+    private String boxName;
+    private String content;
+    private Integer stock;
     private Integer beforePrice;
     private Integer afterPrice;
-    private String content;      // 피그마: 설명
-    private String saleStatus;   // READY/ON_SALE/SOLD_OUT 등 정책값
+    private SaleStatus saleStatus; // ✅ enum
 }

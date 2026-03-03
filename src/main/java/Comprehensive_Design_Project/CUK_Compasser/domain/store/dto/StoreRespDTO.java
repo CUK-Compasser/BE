@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 @Getter
 @AllArgsConstructor
-public class StoreResponse {
+public class StoreRespDTO {
 
     private Long storeId;
     private Long storeManagerId;
