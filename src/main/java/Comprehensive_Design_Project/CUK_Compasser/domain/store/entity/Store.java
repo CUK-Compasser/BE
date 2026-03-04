@@ -13,6 +13,9 @@ import java.util.List;
 @Entity
 @Table(
         name = "stores",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_stores_store_manager", columnNames = {"store_manager_id"})
+        },
         indexes = {
                 @Index(name = "idx_stores_manager", columnList = "store_manager_id"),
                 @Index(name = "idx_stores_geo", columnList = "latitude,longitude")

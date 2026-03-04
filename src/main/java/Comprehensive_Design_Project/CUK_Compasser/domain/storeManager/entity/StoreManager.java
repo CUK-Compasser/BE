@@ -25,7 +25,7 @@ public class StoreManager extends BaseEntity {
 
     @Id
     @Column(name = "member_id")
-    private Long memberId;
+    private Long id; // ✅ PK만 들고, 직접 세팅하지 않음 (MapsId가 채움)
 
     /** PK=FK 매핑 */
     @MapsId
