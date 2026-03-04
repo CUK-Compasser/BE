@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface StoreManagerRepository extends JpaRepository<StoreManager, Long> {
 
-    // 로그인한 memberId로 점장 정보 조회
-    Optional<StoreManager> findByMemberId(Long memberId);
+    // memberId로 점장 조회 (연관관계 기준)
+    Optional<StoreManager> findByMember_Id(Long memberId);
 
-    // (선택) 점장 여부만 빠르게 체크
+    // 점장 여부 체크
     boolean existsByMember_Id(Long memberId);
 }

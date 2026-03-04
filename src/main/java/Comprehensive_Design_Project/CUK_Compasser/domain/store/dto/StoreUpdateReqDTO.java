@@ -6,14 +6,15 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class StoreUpdateRequest {
-
+public class StoreUpdateReqDTO {
     private String storeName;
     private String storeDetails;
+    private Integer beforePrice;
+    private Integer afterPrice;
 
     /**
-     * raw JSON으로 받는다.
-     * 예: { "timezone":"Asia/Seoul", "weekly": {...} }
+     * raw JSON
+     * { "timezone":"Asia/Seoul", "weekly": {...} }
      */
     private JsonNode businessHours;
 }

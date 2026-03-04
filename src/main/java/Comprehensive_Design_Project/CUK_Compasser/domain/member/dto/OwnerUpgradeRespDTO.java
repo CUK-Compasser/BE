@@ -11,5 +11,5 @@ public class OwnerUpgradeRespDTO {
     private Long memberId;
     private MemberRole role;
     private Long storeId;
-    private Boolean alreadyUpgraded; // 이미 점장이었는지(멱등)
+    private Boolean alreadyUpgraded; // 멱등
 }
