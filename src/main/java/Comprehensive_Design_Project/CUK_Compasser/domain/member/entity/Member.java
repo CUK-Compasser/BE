@@ -5,8 +5,6 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.security.AuthProvider;
-
 @Entity
 @Table(
         name = "members",

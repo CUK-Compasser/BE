@@ -3,6 +3,8 @@ package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.servic
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWT;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWTProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -137,5 +140,20 @@ public class OAuth2Service {
 
         // 여기 추가, 통합
         return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).memberName(memberName).build();
+    }
+
+    public void logout (String accessToken, Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        redisTemplate.delete("refresh:"+member.getEmail());
+
+        Long remainingTime = jwtProvider.getRemainingTime(accessToken); // TTL 용 남은 시간 계산
+
+        if (remainingTime > 0) {
+            String key = "blacklist:" + accessToken;
+            redisTemplate.opsForValue().set(key, "logout", remainingTime, TimeUnit.MILLISECONDS);
+            log.info("[MemberService] - add AccessToken in BlackList! remainingTime: {}ms", remainingTime);
+        }
+
+        log.info("[MemberService - logout] Success to logout -> {}", member.getEmail());
     }
 }

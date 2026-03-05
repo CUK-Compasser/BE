@@ -9,10 +9,10 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+@Configuration
 public class SwaggerConfig {
 
-//    @Bean
+    @Bean
     public OpenAPI swagger() {
         Info info = new Info().title("Compasser API Document").description("Compasser API 문서입니다.").version("0.0.1");
 

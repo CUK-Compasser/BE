@@ -3,8 +3,9 @@ package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.contro
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
-import Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.dto.KakaoLoginDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.service.OAuth2Service;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(("/api/oauth2"))
+@RequestMapping("/oauth2")
 public class OAuth2Controller {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -29,11 +31,13 @@ public class OAuth2Controller {
     private final OAuth2Service oAuth2Service;
 
     @PostMapping("/login-kakao")
+    @Operation(summary = "카카오 로그인 URL 획득 API", description = "사용자가 이동할 카카오 로그인 동의 페이지 URL를 획득하는 API 입니다.")
     public ApiResponse<String> loginKakao(){
         return ApiResponse.onSuccess(SuccessStatus.OK, "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" +  client_id + "&redirect_uri=" + redirect_uri);
     }
 
     @GetMapping("/code/kakao") // 카카오 회원가입 or 로그인 서비스 == GET 요청
+    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 딱히 접근할 일이 없어요.")
     public ApiResponse<Object> callback (@RequestParam("code") String code, HttpServletResponse response) {
 
         MemberRespDTO.MemberInfoDTO memberInfo = oAuth2Service.loginWithKakao(code);
@@ -49,5 +53,16 @@ public class OAuth2Controller {
 
         MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().isSuccess(true).memberName(memberInfo.getMemberName()).accessToken(memberInfo.getJwt().getAccessToken()).build();
         return ApiResponse.onSuccess(SuccessStatus.OK, respDTO);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그인을 한 사용자에 한해, 로그아웃을 진행하는 API 입니다.")
+    public ApiResponse<Object> logout(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            oAuth2Service.logout(bearerToken.substring(7).trim(), userDetails.getMember().getId());
+        }
+        return null; // bool 값 리턴
     }
 }
