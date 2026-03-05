@@ -31,6 +31,14 @@ public enum ErrorStatus implements BaseErrorCode {
     STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "S001", "가게를 찾을 수 없습니다."),
     STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "S002", "가게 수정/조회 권한이 없습니다."),
     INVALID_LOCATION(HttpStatus.BAD_REQUEST, "S003", "위치 정보(위도/경도)가 올바르지 않습니다."),
+    STORE_BUSINESS_HOURS_SERIALIZE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S020", "영업시간 JSON 직렬화에 실패했습니다."),
+    STORE_BUSINESS_HOURS_PARSE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S021", "영업시간 JSON 파싱에 실패했습니다."),
+
+    // =========================
+    // [Store Location]
+    // =========================
+    STORE_ADDRESS_NOT_FOUND(HttpStatus.BAD_REQUEST, "SL001", "유효한 주소를 찾을 수 없습니다."),
+    STORE_LOCATION_CONVERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S003", "주소 좌표 변환에 실패했습니다."),
 
     // =========================
     // [Store Image]

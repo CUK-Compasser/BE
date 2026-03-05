@@ -105,8 +105,6 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                                 .storeManager(storeManager)
                                 .storeName(DEFAULT_STORE_NAME)
                                 .storeDetails(null)
-                                .beforePrice(null)
-                                .afterPrice(null)
                                 .latitude(null)
                                 .longitude(null)
                                 .businessHours(null)

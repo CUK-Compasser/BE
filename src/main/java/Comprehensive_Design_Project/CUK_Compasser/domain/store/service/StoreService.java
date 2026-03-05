@@ -9,10 +9,15 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreR
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
+import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.dto.KakaoAddressSearchRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.service.KakaoLocalService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -21,23 +26,21 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreManagerRepository storeManagerRepository;
     private final StoreConverter storeConverter;
+    private final KakaoLocalService kakaoLocalService;
 
     @Transactional
     public StoreRespDTO updateStore(Long storeId, Long memberId, StoreUpdateReqDTO req) {
 
-        // ✅ 점장인지 확인 (PK=FK)
         if (!storeManagerRepository.existsById(memberId)) {
             throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
         }
 
-        // ✅ 내 가게인지 권한 체크
         Store store = storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
 
         if (req.getStoreName() != null) store.setStoreName(req.getStoreName());
-        if (req.getStoreDetails() != null) store.setStoreDetails(req.getStoreDetails());
-        if (req.getBeforePrice() != null) store.setBeforePrice(req.getBeforePrice());
-        if (req.getAfterPrice() != null) store.setAfterPrice(req.getAfterPrice());
+
+        if (req.getStoreEmail() != null) store.setStoreEmail(req.getStoreEmail());
 
         if (req.getBusinessHours() != null) {
             validateBusinessHours(req.getBusinessHours());
@@ -70,12 +73,18 @@ public class StoreService {
         Store store = storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
 
-        if (req.getLatitude() == null || req.getLongitude() == null) {
-            throw new GeneralException(ErrorStatus.INVALID_LOCATION);
+        if (req == null || !StringUtils.hasText(req.getInputAddress())) {
+            throw new GeneralException(ErrorStatus.STORE_ADDRESS_NOT_FOUND);
         }
 
-        store.setLatitude(req.getLatitude());
-        store.setLongitude(req.getLongitude());
+        KakaoAddressSearchRespDTO.Document document =
+                kakaoLocalService.searchAddress(req.getInputAddress());
+
+        store.setInputAddress(req.getInputAddress());
+        store.setRoadAddress(document.getRoadAddress() != null ? document.getRoadAddress().getAddressName() : null);
+        store.setJibunAddress(document.getAddress() != null ? document.getAddress().getAddressName() : null);
+        store.setLongitude(new BigDecimal(document.getX()));
+        store.setLatitude(new BigDecimal(document.getY()));
 
         return storeConverter.toResp(store);
     }

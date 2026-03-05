@@ -24,6 +24,11 @@ repositories {
 	mavenCentral()
 }
 
+//맥북에서 사용지 그래들 설정
+if (isMac) {
+	runtimeOnly "io.netty:netty-resolver-dns-native-macos:${nettyVersion}:${isAppleSilicon ? 'osx-aarch_64' : 'osx-x86_64'}"
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
@@ -62,6 +67,11 @@ dependencies {
 	// monitoring 설정
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+
+	//가게 위치 설정
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
 
 }
 

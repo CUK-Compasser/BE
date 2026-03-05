@@ -1,30 +1,19 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class StoreRespDTO {
-
+@AllArgsConstructor
+public class StoreLocationRespDTO {
     private Long storeId;
-    private Long storeManagerId;
-    private String storeName;
-    private String storeDetails;
-
     private String inputAddress;
     private String roadAddress;
     private String jibunAddress;
-
     private BigDecimal latitude;
     private BigDecimal longitude;
-
-    private JsonNode businessHours;
 }
