@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
@@ -13,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -85,4 +88,30 @@ public class StoreService {
             throw new GeneralException(ErrorStatus.BUSINESS_HOURS_INVALID);
         }
     }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreList (String email){
+
+        return null;
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreListByTag (String email, String tag){
+
+        return null;
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreListByUniversity (String email, String university){
+
+        return null;
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreListByMemberRadius (String email, MemberReqDTO.MemberCoordinatesDTO coordinates){
+
+        return null;
+    }
+
+
 }
