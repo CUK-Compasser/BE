@@ -4,6 +4,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -12,6 +13,8 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,9 +93,11 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespDTO> getStoreList (String email){
+    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreList(int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
+        return storeConverter.toGetStoreByCreatedDTO(allByOrderByCreatedAtDesc);
 
-        return null;
     }
 
     @Transactional (readOnly = true)

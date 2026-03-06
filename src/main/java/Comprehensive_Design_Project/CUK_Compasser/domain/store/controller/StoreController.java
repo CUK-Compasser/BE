@@ -3,9 +3,11 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -60,9 +62,10 @@ public class StoreController {
 
     @GetMapping // 로그인 이후 바로 연결되는 메인 페이지, createdAt 기준 페이지네이션 10개
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
-    public ApiResponse<List<StoreRespDTO>> getStoreList (
-            @AuthenticationPrincipal CustomUserDetails userDetails){
-        return null;
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO>> getStoreList (
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(defaultValue = "0") Integer page) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(page));
     }
 
     @GetMapping("/{tag}") // 태그 별 리스트  조회
