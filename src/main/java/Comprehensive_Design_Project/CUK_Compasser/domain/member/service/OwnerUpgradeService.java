@@ -4,4 +4,6 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.OwnerUpgrade
 
 public interface OwnerUpgradeService {
     OwnerUpgradeRespDTO upgradeToStoreManager(Long memberId);
+
+    OwnerUpgradeRespDTO verifyBusinessLicenseAndUpgrade(Long memberId, String businessLicenseNumber);
 }
