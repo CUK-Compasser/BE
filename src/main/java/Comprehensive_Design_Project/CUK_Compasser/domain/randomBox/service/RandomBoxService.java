@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto.RandomBox
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto.RandomBoxRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto.RandomBoxUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.SaleStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.repository.RandomBoxRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -38,7 +39,7 @@ public class RandomBoxService {
                 .stock(req.getStock())
                 .price(req.getPrice())
                 .buyLimit(req.getBuyLimit())
-                .saleStatus(req.getSaleStatus())
+                .saleStatus(SaleStatus.READY)
                 .build());
 
         return randomBoxConverter.toResp(box);

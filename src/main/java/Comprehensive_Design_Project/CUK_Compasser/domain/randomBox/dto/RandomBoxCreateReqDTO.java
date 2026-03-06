@@ -13,5 +13,4 @@ public class RandomBoxCreateReqDTO {
     private Integer stock;
     private Integer price;
     private Integer buyLimit;
-    private SaleStatus saleStatus;
 }
