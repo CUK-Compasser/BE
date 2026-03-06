@@ -28,6 +28,7 @@ public class RandomBoxService {
 
     @Transactional
     public RandomBoxRespDTO create(Long storeId, Long memberId, RandomBoxCreateReqDTO req) {
+        validateCreateReq(req);
         Store store = assertOwner(storeId, memberId);
 
         RandomBox box = randomBoxRepository.save(RandomBox.builder()
@@ -35,19 +36,36 @@ public class RandomBoxService {
                 .boxName(req.getBoxName())
                 .content(req.getContent())
                 .stock(req.getStock())
-                .beforePrice(req.getBeforePrice())
-                .afterPrice(req.getAfterPrice())
-                .saleStatus(req.getSaleStatus()) // ✅ enum 그대로
+                .price(req.getPrice())
+                .buyLimit(req.getBuyLimit())
+                .saleStatus(req.getSaleStatus())
                 .build());
 
         return randomBoxConverter.toResp(box);
+    }
+
+    private void validateCreateReq(RandomBoxCreateReqDTO req) {
+        if (req.getBoxName() == null || req.getBoxName().isBlank()) {
+            throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_NAME);
+        }
+        if (req.getStock() == null || req.getStock() < 1) {
+            throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_STOCK);
+        }
+        if (req.getPrice() == null || req.getPrice() < 1) {
+            throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_PRICE);
+        }
+        if (req.getBuyLimit() == null || req.getBuyLimit() < 1) {
+            throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_BUY_LIMIT);
+        }
     }
 
     @Transactional(readOnly = true)
     public List<RandomBoxRespDTO> list(Long storeId, Long memberId) {
         assertOwner(storeId, memberId);
         return randomBoxRepository.findAllByStore_Id(storeId)
-                .stream().map(randomBoxConverter::toResp).toList();
+                .stream()
+                .map(randomBoxConverter::toResp)
+                .toList();
     }
 
     @Transactional
@@ -57,12 +75,41 @@ public class RandomBoxService {
         RandomBox box = randomBoxRepository.findByIdAndStore_Id(boxId, storeId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
 
-        if (req.getBoxName() != null) box.setBoxName(req.getBoxName());
-        if (req.getContent() != null) box.setContent(req.getContent());
-        if (req.getStock() != null) box.setStock(req.getStock());
-        if (req.getBeforePrice() != null) box.setBeforePrice(req.getBeforePrice());
-        if (req.getAfterPrice() != null) box.setAfterPrice(req.getAfterPrice());
-        if (req.getSaleStatus() != null) box.setSaleStatus(req.getSaleStatus()); // ✅ enum
+        if (req.getBoxName() != null) {
+            if (req.getBoxName().isBlank()) {
+                throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_NAME);
+            }
+            box.setBoxName(req.getBoxName());
+        }
+
+        if (req.getContent() != null) {
+            box.setContent(req.getContent());
+        }
+
+        if (req.getStock() != null) {
+            if (req.getStock() < 1) {
+                throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_STOCK);
+            }
+            box.setStock(req.getStock());
+        }
+
+        if (req.getPrice() != null) {
+            if (req.getPrice() < 1) {
+                throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_PRICE);
+            }
+            box.setPrice(req.getPrice());
+        }
+
+        if (req.getBuyLimit() != null) {
+            if (req.getBuyLimit() < 1) {
+                throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_BUY_LIMIT);
+            }
+            box.setBuyLimit(req.getBuyLimit());
+        }
+
+        if (req.getSaleStatus() != null) {
+            box.setSaleStatus(req.getSaleStatus());
+        }
 
         return randomBoxConverter.toResp(box);
     }
@@ -71,6 +118,7 @@ public class RandomBoxService {
         if (!storeManagerRepository.existsById(memberId)) {
             throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
         }
+
         return storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
     }

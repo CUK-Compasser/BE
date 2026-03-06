@@ -24,7 +24,10 @@ repositories {
 	mavenCentral()
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3ae6d94 (랜덤박스 관련 api 수정)
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
