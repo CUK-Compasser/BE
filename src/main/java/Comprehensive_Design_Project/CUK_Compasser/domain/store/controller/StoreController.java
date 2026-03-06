@@ -88,7 +88,7 @@ public class StoreController {
     @GetMapping("/member") // 지도 클릭 시 사용자 반경 가게 조회 API
     @Operation(summary = "사용자 반경 가게 조회 API", description = "사용자의 위치 기준 반경의 가게의 조회하는  API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByMemberRadius (
-            @RequestBody MemberReqDTO.MemberCoordinatesDTO coordinates,
+            @RequestBody MemberReqDTO.MemberCoordinatesDTO coordinates
             /*@AuthenticationPrincipal CustomUserDetails userDetails*/){
         return null;
     }
