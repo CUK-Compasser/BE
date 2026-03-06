@@ -16,14 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
 
     private static final String DEFAULT_STORE_NAME = "미등록 매장";
-    private static final String DEFAULT_BIZ_LICENSE = "UNVERIFIED";
-
-    // ✅ 기본 이미지 URL(정책값) - 나중에 실제 기본 이미지 경로로 교체
     private static final String DEFAULT_STORE_IMAGE_URL = "https://example.com/default-store.png";
 
     private final MemberRepository memberRepository;
@@ -31,6 +30,10 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
     private final StoreRepository storeRepository;
     private final StoreImageRepository storeImageRepository;
 
+    /**
+     * ✅ (옵션) "승격만" 수행하는 기존 API용
+     * - 이제는 사업자 검증이 되어있는지(verifiedAt) 체크하고 승격/생성 처리
+     */
     @Override
     @Transactional
     public OwnerUpgradeRespDTO upgradeToStoreManager(Long memberId) {
@@ -38,59 +41,77 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        // ✅ (1) 이미 점장인 경우(멱등)
-        if (member.getRole() == MemberRole.STORE_MANAGER) {
-            Long storeId = storeRepository.findByStoreManager_MemberId(memberId)
-                    .map(Store::getId)
-                    .orElse(null);
+        StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.BUSINESS_LICENSE_NOT_REGISTERED));
 
-            // (선택) 이미 점장인데 store가 존재하면, 이미지도 없을 때 기본이미지 보정
-            if (storeId != null && !storeImageRepository.existsByStore_Id(storeId)) {
-                Store store = storeRepository.findById(storeId)
-                        .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
-
-                storeImageRepository.save(StoreImage.builder()
-                        .store(store)
-                        .imageUrl(DEFAULT_STORE_IMAGE_URL)
-                        .build());
-            }
-
-            return OwnerUpgradeRespDTO.builder()
-                    .memberId(memberId)
-                    .role(MemberRole.STORE_MANAGER)
-                    .storeId(storeId)
-                    .alreadyUpgraded(true)
-                    .build();
+        if (isBlank(storeManager.getBusinessLicenseNumber()) || storeManager.getVerifiedAt() == null) {
+            throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_NOT_VERIFIED);
         }
 
-        // ✅ (2) role 변경
-        member.setRole(MemberRole.STORE_MANAGER);
+        return upgradeAndProvision(member, storeManager);
+    }
 
-// ✅ (3) store_managers 생성(멱등) - MapsId 정석
+    /**
+     * ✅ 화면용 원스텝: 사업자번호 검증 + 점장승격 + store/storeImage 자동 생성(멱등)
+     */
+    @Override
+    @Transactional
+    public OwnerUpgradeRespDTO verifyBusinessLicenseAndUpgrade(Long memberId, String businessLicenseNumber) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        String bizNo = normalizeBizNo(businessLicenseNumber);
+        validateBizNoFormat(bizNo);
+
+        // (선택) 외부 검증 붙일 자리
+        // boolean valid = externalBizVerifier.verify(bizNo);
+        // if (!valid) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_VERIFY_FAILED);
+
+        // ✅ store_manager upsert (없으면 생성, 있으면 업데이트)
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
                 .orElseGet(() -> storeManagerRepository.save(
                         StoreManager.builder()
                                 .member(member)
-                                .businessLicenseNumber(DEFAULT_BIZ_LICENSE)
-                                .verifiedAt(null)
+                                .businessLicenseNumber(bizNo)
+                                .verifiedAt(LocalDateTime.now())
                                 .build()
                 ));
 
-        // ✅ (4) stores 생성(멱등)
+        // 정책: 이미 존재하면 번호/검증시간 갱신 허용 (원하면 "이미 등록됨"으로 막을 수도 있음)
+        storeManager.setBusinessLicenseNumber(bizNo);
+        storeManager.setVerifiedAt(LocalDateTime.now());
+
+        return upgradeAndProvision(member, storeManager);
+    }
+
+    /**
+     * ✅ 공통: role=STORE_MANAGER 승격 + store/storeImage 멱등 생성
+     * - 이미 STORE_MANAGER면 alreadyUpgraded=true 반환
+     */
+    private OwnerUpgradeRespDTO upgradeAndProvision(Member member, StoreManager storeManager) {
+
+        Long memberId = member.getId();
+
+        boolean alreadyUpgraded = (member.getRole() == MemberRole.STORE_MANAGER);
+
+        // ✅ role 승격(멱등)
+        member.setRole(MemberRole.STORE_MANAGER);
+
+        // ✅ store 멱등 생성
         Store store = storeRepository.findByStoreManager_MemberId(memberId)
                 .orElseGet(() -> storeRepository.save(
                         Store.builder()
                                 .storeManager(storeManager)
                                 .storeName(DEFAULT_STORE_NAME)
                                 .storeDetails(null)
-                                .beforePrice(null)
-                                .afterPrice(null)
                                 .latitude(null)
                                 .longitude(null)
                                 .businessHours(null)
                                 .build()
                 ));
-        // ✅ (5) store_images 기본 1장 생성(멱등)
+
+        // ✅ 기본 이미지 1장 멱등 생성
         if (!storeImageRepository.existsByStore_Id(store.getId())) {
             storeImageRepository.save(StoreImage.builder()
                     .store(store)
@@ -102,7 +123,21 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                 .memberId(memberId)
                 .role(MemberRole.STORE_MANAGER)
                 .storeId(store.getId())
-                .alreadyUpgraded(false)
+                .alreadyUpgraded(alreadyUpgraded)
                 .build();
+    }
+
+    private String normalizeBizNo(String bizNo) {
+        if (bizNo == null) return null;
+        return bizNo.replaceAll("\\D", ""); // 숫자만 남김
+    }
+
+    private void validateBizNoFormat(String bizNo) {
+        if (bizNo == null) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_REQUIRED);
+        if (bizNo.length() != 10) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_INVALID_FORMAT);
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

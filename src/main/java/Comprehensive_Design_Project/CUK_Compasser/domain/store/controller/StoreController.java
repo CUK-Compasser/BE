@@ -95,19 +95,69 @@ public class StoreController {
 }
 /**
  * (선택) 내 가게 조회 - 운영시간 확인용
- * GET /stores/{storeId}
- * {
- *   "businessHours": {
- *     "timezone": "Asia/Seoul",
- *     "weekly": {
- *       "MON": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false}
- *       "TUE": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
- *       "WED": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
- *       "THU": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
- *       "FRI": { "open": "09:00", "close": "21:00", "break-time": {"start": "15:00","end": "16:00"}, "closed": false },
- *       "SAT": { "open": "09:00", "close": "21:00", "break-time": null, "closed": false }, //브레이크 타임 없음
- *       "SUN": { "open": null, "close": null, "break-time": null, "closed": true }
- *     }
- *   }
- * }
+     * GET /stores/{storeId}
+     {
+     "businessHours": {
+     "timezone": "Asia/Seoul",
+     "weekly": {
+     "MON": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": {
+     "start": "15:00",
+     "end": "16:00"
+     },
+     "closed": false
+     },
+     "TUE": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": {
+     "start": "15:00",
+     "end": "16:00"
+     },
+     "closed": false
+     },
+     "WED": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": {
+     "start": "15:00",
+     "end": "16:00"
+     },
+     "closed": false
+     },
+     "THU": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": {
+     "start": "15:00",
+     "end": "16:00"
+     },
+     "closed": false
+     },
+     "FRI": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": {
+     "start": "15:00",
+     "end": "16:00"
+     },
+     "closed": false
+     },
+     "SAT": {
+     "open": "09:00",
+     "close": "21:00",
+     "break-time": null,
+     "closed": false
+     },
+     "SUN": {
+     "open": null,
+     "close": null,
+     "break-time": null,
+     "closed": true
+     }
+     }
+     }
+     }
  */

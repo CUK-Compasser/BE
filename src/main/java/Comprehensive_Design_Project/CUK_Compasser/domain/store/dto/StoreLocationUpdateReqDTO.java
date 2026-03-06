@@ -1,15 +1,10 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
 
-import lombok.*;
-
-import java.math.BigDecimal;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class StoreLocationUpdateReqDTO {
-    private String locationType;      // 예: CURRENT, CUSTOM 등
-    private BigDecimal latitude;
-    private BigDecimal longitude;
+    private String inputAddress;
 }

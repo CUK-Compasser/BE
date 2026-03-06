@@ -21,13 +21,15 @@ import java.util.List;
                 @Index(name = "idx_stores_geo", columnList = "latitude,longitude")
         }
 )
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Store extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -41,17 +43,23 @@ public class Store extends BaseEntity {
     @Column(name = "store_name", nullable = false, length = 100)
     private String storeName;
 
+    @Column(name = "store_email", length = 255)
+    private String storeEmail;
+
     @Enumerated(EnumType.STRING)
     private Tag tag;
 
     @Column(name = "store_details", length = 500)
     private String storeDetails;
 
-    @Column(name = "before_price")
-    private Integer beforePrice;
+    @Column(name = "input_address", length = 255)
+    private String inputAddress;
 
-    @Column(name = "after_price")
-    private Integer afterPrice;
+    @Column(name = "road_address", length = 255)
+    private String roadAddress;
+
+    @Column(name = "jibun_address", length = 255)
+    private String jibunAddress;
 
     @Column(precision = 10, scale = 7)
     private BigDecimal latitude;
@@ -59,7 +67,6 @@ public class Store extends BaseEntity {
     @Column(precision = 10, scale = 7)
     private BigDecimal longitude;
 
-    /** JSON 컬럼 - 우선 String으로 (원하면 JsonNode + Converter로 개선 가능) */
     @Column(name = "business_hours", columnDefinition = "json")
     private String businessHours;
 
