@@ -1,10 +1,13 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -13,11 +16,15 @@ import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao
 import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.service.KakaoLocalService;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -94,4 +101,32 @@ public class StoreService {
             throw new GeneralException(ErrorStatus.BUSINESS_HOURS_INVALID);
         }
     }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreList(int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
+        return storeConverter.toGetStoreByCreatedDTO(allByOrderByCreatedAtDesc);
+
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreListByTag (int page, Tag tag){
+        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreByCreatedDTO(allByTag);
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreListByUniversity (String email, String university){
+
+        return null;
+    }
+
+    @Transactional (readOnly = true)
+    public List<StoreRespDTO> getStoreListByMemberRadius (String email, MemberReqDTO.MemberCoordinatesDTO coordinates){
+
+        return null;
+    }
+
+
 }
