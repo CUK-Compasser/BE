@@ -62,6 +62,7 @@ public class StoreConverter {
                     .storeId(store.getId())
                     .storeManagerId(store.getStoreManager().getId())
                     .storeName(store.getStoreName())
+                    .tag(store.getTag())
                     .storeDetails(store.getStoreDetails())
                     .latitude(store.getLatitude())
                     .longitude(store.getLongitude())

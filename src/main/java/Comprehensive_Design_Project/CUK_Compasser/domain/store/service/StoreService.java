@@ -7,6 +7,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -110,9 +111,9 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespDTO> getStoreListByTag (String email, String tag){
-
-        return null;
+    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreListByTag (int page, Tag tag){
+        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreByCreatedDTO(allByTag);
     }
 
     @Transactional (readOnly = true)

@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocation
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
@@ -72,7 +73,7 @@ public class StoreController {
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable String tag
+            @PathVariable Tag tag
     ){
         return null;
     }

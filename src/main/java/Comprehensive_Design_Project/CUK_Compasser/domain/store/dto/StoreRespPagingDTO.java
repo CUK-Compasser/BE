@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class StoreRespPagingDTO {
         private Long storeId;
         private Long storeManagerId;
         private String storeName;
+        private Tag tag;
         private String storeDetails;
         private BigDecimal latitude;
         private BigDecimal longitude;
