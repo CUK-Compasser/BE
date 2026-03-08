@@ -134,5 +134,9 @@ public class StoreService {
         return null;
     }
 
+    @Transactional (readOnly = true)
+    public StoreRespDTO getStoreInfo (Long storeId){
+        return storeConverter.toResp(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)));
+    }
 
 }
