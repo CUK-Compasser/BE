@@ -97,7 +97,7 @@ public class StoreController {
         return null;
     }
 
-    @GetMapping("/storeId")
+    @GetMapping("/storeId/{storeId}")
     @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
     public ApiResponse<StoreRespDTO> getStoreListByStoreId (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
