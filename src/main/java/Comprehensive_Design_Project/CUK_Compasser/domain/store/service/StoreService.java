@@ -103,17 +103,16 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreList(int page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
-        return storeConverter.toGetStoreByCreatedDTO(allByOrderByCreatedAtDesc);
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(int page) {
+        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(allByOrderByCreatedAtDesc);
 
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreListByTag (int page, Tag tag){
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (int page, Tag tag){
         List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
-        return storeConverter.toGetStoreByCreatedDTO(allByTag);
+        return storeConverter.toGetStoreDTOList(allByTag);
     }
 
     @Transactional (readOnly = true)

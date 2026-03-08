@@ -63,7 +63,7 @@ public class StoreController {
 
     @GetMapping // 로그인 이후 바로 연결되는 메인 페이지, createdAt 기준 페이지네이션 10개
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
-    public ApiResponse<List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO>> getStoreList (
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreList (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
             @RequestParam(defaultValue = "0") Integer page) {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(page));
@@ -71,11 +71,10 @@ public class StoreController {
 
     @GetMapping("/{tag}") // 태그 별 리스트  조회
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
-    public ApiResponse<List<StoreRespDTO>> getStoreListByTag (
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable Tag tag
-    ){
-        return null;
+            @PathVariable Tag tag, @RequestParam(defaultValue = "0") Integer page) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(page,tag));
     }
 
     @GetMapping("/university/{university}") // 대학교 반경 기준 가게 조회 API

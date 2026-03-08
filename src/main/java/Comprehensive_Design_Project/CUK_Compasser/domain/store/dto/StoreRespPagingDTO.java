@@ -12,7 +12,7 @@ public class StoreRespPagingDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class GetStoreOrderByCreatedDTO {
+    public static class GetStoreReqDTO {
         private Long storeId;
         private Long storeManagerId;
         private String storeName;
