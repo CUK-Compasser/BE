@@ -80,11 +80,12 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(page, dto));
     }
 
-    @GetMapping("/university/{university}") // 대학교 반경 기준 가게 조회 API
+    @GetMapping("/university") // 대학교 반경 기준 가게 조회 API
     @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByUniversity (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable String university){
+            @RequestBody StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto,
+            @RequestParam(defaultValue = "0") Integer page){
         return null;
     }
 

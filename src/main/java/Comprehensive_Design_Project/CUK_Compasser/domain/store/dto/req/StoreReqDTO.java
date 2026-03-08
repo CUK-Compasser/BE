@@ -28,4 +28,14 @@ public class StoreReqDTO {
         private BigDecimal longitude;
         private Tag tag;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class StoreReqWithCoordinateAndUniversityDTO {
+        private BigDecimal latitude;
+        private BigDecimal longitude;
+        private String university;
+    }
 }
