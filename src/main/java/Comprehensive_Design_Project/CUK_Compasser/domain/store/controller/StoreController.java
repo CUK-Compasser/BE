@@ -103,6 +103,16 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
     }
 
+    @GetMapping("/{keyword}")
+    @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+    public ApiResponse<StoreRespDTO> getStoreListByKeyword (
+            @PathVariable String keyword
+    ){
+        // ElasticSearch 를 활용한 검색이 필요?
+        return null;
+
+    }
+
 }
 /**
  * (선택) 내 가게 조회 - 운영시간 확인용

@@ -139,4 +139,9 @@ public class StoreService {
         return storeConverter.toResp(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)));
     }
 
+    @Transactional (readOnly = true)
+    public void getStoreListByKeyword (){
+
+    }
+
 }
