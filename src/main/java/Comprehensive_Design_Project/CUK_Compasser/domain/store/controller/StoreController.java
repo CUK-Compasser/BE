@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocation
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -65,8 +66,9 @@ public class StoreController {
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreList (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
+            @RequestBody StoreReqDTO.StoreReqWithCoordinateDTO dto,
             @RequestParam(defaultValue = "0") Integer page) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(page));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(dto, page));
     }
 
     @GetMapping("/{tag}") // 태그 별 리스트  조회

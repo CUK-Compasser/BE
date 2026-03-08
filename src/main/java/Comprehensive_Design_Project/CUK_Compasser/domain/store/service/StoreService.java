@@ -6,6 +6,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocation
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -103,9 +104,10 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(int page) {
-        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
-        return storeConverter.toGetStoreDTOList(allByOrderByCreatedAtDesc);
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(StoreReqDTO.StoreReqWithCoordinateDTO dto, int page) {
+        List<Store> storeList = storeRepository.findStoresWithinRadius(dto.getLatitude(), dto.getLongitude(), 3, PageRequest.of(page, 10)).getContent();
+//        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(storeList);
 
     }
 
