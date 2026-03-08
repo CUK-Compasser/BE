@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +28,6 @@ public class StoreRespDTO {
     private BigDecimal longitude;
 
     private JsonNode businessHours;
+
+    private Tag tag;
 }

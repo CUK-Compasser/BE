@@ -32,6 +32,7 @@ public class StoreConverter {
                 .latitude(store.getLatitude())
                 .longitude(store.getLongitude())
                 .businessHours(toJsonNode(store.getBusinessHours()))
+                .tag(store.getTag())
                 .build();
     }
     public String toRawJson(JsonNode node) {
