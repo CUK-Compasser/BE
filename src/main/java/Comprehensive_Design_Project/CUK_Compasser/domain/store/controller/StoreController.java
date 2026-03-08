@@ -71,12 +71,13 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(dto, page));
     }
 
-    @GetMapping("/{tag}") // 태그 별 리스트  조회
+    @GetMapping("/tag") // 태그 별 리스트  조회
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable Tag tag, @RequestParam(defaultValue = "0") Integer page) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(page,tag));
+            @RequestBody StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto,
+            @RequestParam(defaultValue = "0") Integer page) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(page, dto));
     }
 
     @GetMapping("/university/{university}") // 대학교 반경 기준 가게 조회 API

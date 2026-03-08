@@ -108,13 +108,18 @@ public class StoreService {
         List<Store> storeList = storeRepository.findStoresWithinRadius(dto.getLatitude(), dto.getLongitude(), 3, PageRequest.of(page, 10)).getContent();
 //        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(storeList);
-
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (int page, Tag tag){
-        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
-        return storeConverter.toGetStoreDTOList(allByTag);
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (int page, StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto){
+//        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
+        List<Store> storeList = storeRepository.findStoresByTagWithinRadius(
+                dto.getLatitude(),
+                dto.getLongitude(),
+                3,
+                dto.getTag().toString(),
+                PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(storeList);
     }
 
     @Transactional (readOnly = true)
