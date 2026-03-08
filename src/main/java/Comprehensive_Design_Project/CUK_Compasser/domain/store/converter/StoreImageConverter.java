@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.converter;
 
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreImageRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreImageRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.StoreImage;
 import org.springframework.stereotype.Component;
 

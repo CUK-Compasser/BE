@@ -1,12 +1,11 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreLocationUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;

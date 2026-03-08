@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreImageListRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreImageListRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreImageService;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;

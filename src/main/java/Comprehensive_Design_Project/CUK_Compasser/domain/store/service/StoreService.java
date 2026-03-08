@@ -2,13 +2,12 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreLocationUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -18,7 +17,6 @@ import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;

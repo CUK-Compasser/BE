@@ -1,7 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.converter;
 
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;

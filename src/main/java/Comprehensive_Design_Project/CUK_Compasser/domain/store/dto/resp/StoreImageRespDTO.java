@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp;
 
 import lombok.*;
 
