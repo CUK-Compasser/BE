@@ -56,10 +56,13 @@ jobs:
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@master
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: IMAGE_TAG
           debug: true
           script: |
             mkdir -p ~/BE
@@ -89,8 +92,8 @@ jobs:
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_LOGIN_REDIRECT_URI=${{ secrets.KAKAO_LOGIN_REDIRECT_URI }}" >> .env
             
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:$IMAGE_TAG
             
-            sudo docker-compose -f docker-compose-prod.yml up -d --force-recreate
+            sudo IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose-prod.yml up -d --force-recreate
             
             sudo docker image prune -f

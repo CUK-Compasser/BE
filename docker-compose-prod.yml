@@ -1,6 +1,6 @@
 services:
   app:
-    image: shawn9272/cuk-compasser:latest
+    image: shawn9272/cuk-compasser:${IMAGE_TAG}
     container_name: cuk-compasser-service
     restart: always
     ports:
