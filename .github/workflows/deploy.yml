@@ -33,7 +33,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
+            ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:${{ github.sha }}
 
   # 2. 서버에 배포
   deploy:
@@ -87,8 +89,7 @@ jobs:
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_LOGIN_REDIRECT_URI=${{ secrets.KAKAO_LOGIN_REDIRECT_URI }}" >> .env
             
-          
-            sudo docker-compose -f docker-compose-prod.yml pull
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
             
             sudo docker-compose -f docker-compose-prod.yml up -d --force-recreate
             
