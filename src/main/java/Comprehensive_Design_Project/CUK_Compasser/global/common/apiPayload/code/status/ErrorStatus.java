@@ -85,7 +85,19 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_LICENSE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "O002", "사업자등록번호 형식이 올바르지 않습니다."),
     BUSINESS_LICENSE_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "O003", "사업자등록번호가 등록되지 않았습니다."),
     BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 검증이 완료되지 않았습니다."),
-    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다.");
+    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다."),
+
+    // =========================
+    // [Reservation]
+    // =========================
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "예약을 찾을 수 없습니다."),
+    RESERVATION_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "R002", "이미 처리된 예약입니다."),
+    INVALID_APPROVED_QUANTITY(HttpStatus.BAD_REQUEST, "R003", "승인 수량이 올바르지 않습니다."),
+    APPROVED_QUANTITY_EXCEEDS_REQUESTED(HttpStatus.BAD_REQUEST, "R004", "승인 수량이 요청 수량을 초과할 수 없습니다."),
+    REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R005", "거절 사유는 필수입니다."),
+    STORE_FORBIDDEN(HttpStatus.FORBIDDEN, "S003", "해당 가게에 대한 권한이 없습니다."),
+    STORE_MANAGER_NOT_FOUND(HttpStatus.NOT_FOUND, "SM001", "점장 정보를 찾을 수 없습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

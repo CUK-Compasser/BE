@@ -15,13 +15,15 @@ import lombok.*;
                 @Index(name = "idx_resv_store_status", columnList = "store_id,status")
         }
 )
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class Reservation extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -32,9 +34,10 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "store_id", nullable = false, foreignKey = @ForeignKey(name = "fk_resv_store"))
     private Store store;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private ReservationStatus status;
+    private ReservationStatus status = ReservationStatus.REQUESTED;
 
     @Column(name = "requested_quantity", nullable = false)
     private Integer requestedQuantity;
@@ -47,4 +50,11 @@ public class Reservation extends BaseEntity {
 
     @Column(name = "reject_reason", length = 500)
     private String rejectReason;
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.status == null) {
+            this.status = ReservationStatus.REQUESTED;
+        }
+    }
 }
