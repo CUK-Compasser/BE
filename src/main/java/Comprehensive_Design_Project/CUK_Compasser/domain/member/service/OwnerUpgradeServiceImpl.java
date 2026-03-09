@@ -111,14 +111,6 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                                 .build()
                 ));
 
-        // ✅ 기본 이미지 1장 멱등 생성
-        if (!storeImageRepository.existsByStore_Id(store.getId())) {
-            storeImageRepository.save(StoreImage.builder()
-                    .store(store)
-                    .imageUrl(DEFAULT_STORE_IMAGE_URL)
-                    .build());
-        }
-
         return OwnerUpgradeRespDTO.builder()
                 .memberId(memberId)
                 .role(MemberRole.STORE_MANAGER)

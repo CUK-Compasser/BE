@@ -5,11 +5,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class StoreImageRespDTO {
     private Long imageId;
+    private Long storeId;
     private String imageUrl;
     private LocalDateTime createdAt;
+    private boolean isDefault;
 }

@@ -58,7 +58,12 @@ public enum ErrorStatus implements BaseErrorCode {
     // =========================
     // [RandomBox]
     // =========================
-    RANDOM_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "RB001", "랜덤박스를 찾을 수 없습니다."),
+    INVALID_RANDOM_BOX_NAME(HttpStatus.BAD_REQUEST, "RB001", "랜덤박스 이름이 올바르지 않습니다."),
+    INVALID_RANDOM_BOX_STOCK(HttpStatus.BAD_REQUEST, "RB002", "랜덤박스 수량이 올바르지 않습니다."),
+    INVALID_RANDOM_BOX_PRICE(HttpStatus.BAD_REQUEST, "RB003", "랜덤박스 가격이 올바르지 않습니다."),
+    INVALID_RANDOM_BOX_BUY_LIMIT(HttpStatus.BAD_REQUEST, "RB004", "구매 제한 개수가 올바르지 않습니다."),
+    INVALID_RANDOM_BOX_SALE_STATUS(HttpStatus.BAD_REQUEST, "RB005", "랜덤박스 판매 상태가 올바르지 않습니다."),
+    RANDOM_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "RB006", "랜덤박스를 찾을 수 없습니다."),
 
     // =========================
     // [QRCode]

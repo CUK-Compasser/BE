@@ -35,18 +35,16 @@ public class StoreService {
     private final KakaoLocalService kakaoLocalService;
 
     @Transactional
-    public StoreRespDTO updateStore(Long storeId, Long memberId, StoreUpdateReqDTO req) {
+    public StoreRespDTO updateStore(Long memberId, StoreUpdateReqDTO req) {
+        Store store = getMyStoreEntity(memberId);
 
-        if (!storeManagerRepository.existsById(memberId)) {
-            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
+        if (req.getStoreName() != null) {
+            store.setStoreName(req.getStoreName());
         }
 
-        Store store = storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
-
-        if (req.getStoreName() != null) store.setStoreName(req.getStoreName());
-
-        if (req.getStoreEmail() != null) store.setStoreEmail(req.getStoreEmail());
+        if (req.getStoreEmail() != null) {
+            store.setStoreEmail(req.getStoreEmail());
+        }
 
         if (req.getBusinessHours() != null) {
             validateBusinessHours(req.getBusinessHours());
@@ -57,27 +55,14 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public StoreRespDTO getMyStore(Long storeId, Long memberId) {
-
-        if (!storeManagerRepository.existsById(memberId)) {
-            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
-        }
-
-        Store store = storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
-
+    public StoreRespDTO getMyStore(Long memberId) {
+        Store store = getMyStoreEntity(memberId);
         return storeConverter.toResp(store);
     }
 
     @Transactional
-    public StoreRespDTO updateLocation(Long storeId, Long memberId, StoreLocationUpdateReqDTO req) {
-
-        if (!storeManagerRepository.existsById(memberId)) {
-            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
-        }
-
-        Store store = storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
+    public StoreRespDTO updateLocation(Long memberId, StoreLocationUpdateReqDTO req) {
+        Store store = getMyStoreEntity(memberId);
 
         if (req == null || !StringUtils.hasText(req.getInputAddress())) {
             throw new GeneralException(ErrorStatus.STORE_ADDRESS_NOT_FOUND);
@@ -95,8 +80,17 @@ public class StoreService {
         return storeConverter.toResp(store);
     }
 
+    private Store getMyStoreEntity(Long memberId) {
+        if (!storeManagerRepository.existsById(memberId)) {
+            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
+        }
+
+        return storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+    }
+
     private void validateBusinessHours(JsonNode node) {
-        if (node.get("weekly") == null) {
+        if (node == null || node.get("weekly") == null) {
             throw new GeneralException(ErrorStatus.BUSINESS_HOURS_INVALID);
         }
     }

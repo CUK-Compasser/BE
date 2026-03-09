@@ -32,10 +32,11 @@ public class Store extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "store_manager_id",
             nullable = false,
+            unique = true,
             foreignKey = @ForeignKey(name = "fk_stores_manager")
     )
     private StoreManager storeManager;
