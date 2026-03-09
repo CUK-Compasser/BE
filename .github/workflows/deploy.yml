@@ -96,6 +96,6 @@ jobs:
             
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:$IMAGE_TAG
             
-            sudo IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose-prod.yml up -d --force-recreate
+            sudo IMAGE_TAG=$IMAGE_TAG docker-compose -f docker-compose-prod.yml up -d --force-recreate
             
             sudo docker image prune -f
