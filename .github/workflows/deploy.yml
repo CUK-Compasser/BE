@@ -92,6 +92,8 @@ jobs:
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_LOGIN_REDIRECT_URI=${{ secrets.KAKAO_LOGIN_REDIRECT_URI }}" >> .env
             
+            sudo docker-compose -f docker-compose-prod.yml down --remove-orphans
+            
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:$IMAGE_TAG
             
             sudo IMAGE_TAG=$IMAGE_TAG docker compose -f docker-compose-prod.yml up -d --force-recreate
