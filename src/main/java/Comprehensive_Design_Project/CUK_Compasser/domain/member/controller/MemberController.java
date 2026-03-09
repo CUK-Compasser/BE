@@ -45,7 +45,7 @@ public class MemberController {
     }
 
     @GetMapping("/reward")
-    @Operation(summary = "QR 코드 이미지 직접 확인용 (테스트용)", description = "브라우저에서 바로 이미지를 볼 수 있도록 하는 테스트용 API")
+    @Operation(summary = "적립 현황 확인 API", description = "사용자가 여러 가게에서 적립한 현황을 확인하는 API 입니다.")
     public ApiResponse<Object> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
         return null;
     }

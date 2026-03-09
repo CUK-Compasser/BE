@@ -1,5 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import com.google.zxing.BarcodeFormat;
@@ -18,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
+
+    private final MemberRepository memberRepository;
 
     @Value("aws.host")
     private String AWS_HOST;
@@ -45,5 +49,13 @@ public class MemberService {
             log.error("Unexpected QR Generation Error: {}", e.getMessage());
             throw new GeneralException(ErrorStatus.QR_GENERATE_FAILED);
         }
+    }
+
+    public void getRewardList (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        // rewardRepository -> 각 필드와 store_id 갖고 오기 -> store_id를 통한 store 이름 조회 필요
+
+        // DTO 변환, return
     }
 }
