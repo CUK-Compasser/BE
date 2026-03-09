@@ -10,37 +10,34 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stores")
+@RequestMapping("/owners/me/store/images")
 public class StoreImageController {
 
     private final StoreImageService storeImageService;
 
-    @GetMapping("/{storeId}/images")
+    @GetMapping
     public StoreImageListRespDTO list(
-            @PathVariable Long storeId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeImageService.getImages(storeId, memberId);
+        return storeImageService.getImages(memberId);
     }
 
-    @PatchMapping("/{storeId}/images")
+    @PatchMapping
     public StoreImageListRespDTO upload(
-            @PathVariable Long storeId,
             @RequestPart("storeImage") MultipartFile storeImage,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeImageService.uploadRepresentativeImage(storeId, memberId, storeImage);
+        return storeImageService.uploadRepresentativeImage(memberId, storeImage);
     }
 
-    @DeleteMapping("/{storeId}/images/{imageId}")
+    @DeleteMapping("/{imageId}")
     public void delete(
-            @PathVariable Long storeId,
             @PathVariable Long imageId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        storeImageService.deleteImage(storeId, imageId, memberId);
+        storeImageService.deleteImage(imageId, memberId);
     }
 }

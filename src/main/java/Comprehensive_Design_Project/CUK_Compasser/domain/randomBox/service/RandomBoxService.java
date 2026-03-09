@@ -28,9 +28,9 @@ public class RandomBoxService {
     private final RandomBoxConverter randomBoxConverter;
 
     @Transactional
-    public RandomBoxRespDTO create(Long storeId, Long memberId, RandomBoxCreateReqDTO req) {
+    public RandomBoxRespDTO create(Long memberId, RandomBoxCreateReqDTO req) {
         validateCreateReq(req);
-        Store store = assertOwner(storeId, memberId);
+        Store store = getMyStoreEntity(memberId);
 
         RandomBox box = randomBoxRepository.save(RandomBox.builder()
                 .store(store)
@@ -43,6 +43,47 @@ public class RandomBoxService {
                 .build());
 
         return randomBoxConverter.toResp(box);
+    }
+
+    @Transactional
+    public RandomBoxRespDTO update(Long boxId, Long memberId, RandomBoxUpdateReqDTO req) {
+        Store store = getMyStoreEntity(memberId);
+
+        RandomBox box = randomBoxRepository.findByIdAndStore_Id(boxId, store.getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
+
+        validateUpdateReq(req, box);
+
+        return randomBoxConverter.toResp(box);
+    }
+
+    @Transactional
+    public void delete(Long boxId, Long memberId) {
+        Store store = getMyStoreEntity(memberId);
+
+        RandomBox box = randomBoxRepository.findByIdAndStore_Id(boxId, store.getId())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
+
+        randomBoxRepository.delete(box);
+    }
+
+    @Transactional(readOnly = true)
+    public List<RandomBoxRespDTO> list(Long memberId) {
+        Store store = getMyStoreEntity(memberId);
+
+        return randomBoxRepository.findAllByStore_Id(store.getId())
+                .stream()
+                .map(randomBoxConverter::toResp)
+                .toList();
+    }
+
+    private Store getMyStoreEntity(Long memberId) {
+        if (!storeManagerRepository.existsById(memberId)) {
+            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
+        }
+
+        return storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
     }
 
     private void validateCreateReq(RandomBoxCreateReqDTO req) {
@@ -60,22 +101,7 @@ public class RandomBoxService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<RandomBoxRespDTO> list(Long storeId, Long memberId) {
-        assertOwner(storeId, memberId);
-        return randomBoxRepository.findAllByStore_Id(storeId)
-                .stream()
-                .map(randomBoxConverter::toResp)
-                .toList();
-    }
-
-    @Transactional
-    public RandomBoxRespDTO update(Long storeId, Long boxId, Long memberId, RandomBoxUpdateReqDTO req) {
-        assertOwner(storeId, memberId);
-
-        RandomBox box = randomBoxRepository.findByIdAndStore_Id(boxId, storeId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
-
+    private void validateUpdateReq(RandomBoxUpdateReqDTO req, RandomBox box) {
         if (req.getBoxName() != null) {
             if (req.getBoxName().isBlank()) {
                 throw new GeneralException(ErrorStatus.INVALID_RANDOM_BOX_NAME);
@@ -111,16 +137,5 @@ public class RandomBoxService {
         if (req.getSaleStatus() != null) {
             box.setSaleStatus(req.getSaleStatus());
         }
-
-        return randomBoxConverter.toResp(box);
-    }
-
-    private Store assertOwner(Long storeId, Long memberId) {
-        if (!storeManagerRepository.existsById(memberId)) {
-            throw new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND);
-        }
-
-        return storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
     }
 }
