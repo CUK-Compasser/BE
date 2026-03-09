@@ -11,8 +11,8 @@ public class RandomBoxRespDTO {
     private Long storeId;
     private String boxName;
     private Integer stock;
-    private Integer beforePrice;
-    private Integer afterPrice;
+    private Integer price;
+    private Integer buyLimit;
     private String content;
     private String saleStatus;
 }

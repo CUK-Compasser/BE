@@ -14,9 +14,9 @@ public class RandomBoxConverter {
                 .boxName(box.getBoxName())
                 .content(box.getContent())
                 .stock(box.getStock())
-                .beforePrice(box.getBeforePrice())
-                .afterPrice(box.getAfterPrice())
-                .saleStatus(box.getSaleStatus().name()) // ✅ enum -> String
+                .price(box.getPrice())
+                .buyLimit(box.getBuyLimit())
+                .saleStatus(box.getSaleStatus().name())
                 .build();
     }
 }

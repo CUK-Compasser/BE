@@ -11,7 +11,6 @@ public class RandomBoxCreateReqDTO {
     private String boxName;
     private String content;
     private Integer stock;
-    private Integer beforePrice;
-    private Integer afterPrice;
-    private SaleStatus saleStatus; // ✅ enum
+    private Integer price;
+    private Integer buyLimit;
 }
