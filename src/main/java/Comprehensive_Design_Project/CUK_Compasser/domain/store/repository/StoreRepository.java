@@ -18,6 +18,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     Optional<Store> findByStoreManager_MemberId(Long memberId);
 
+    Optional<Store> findByStoreManager_Id(Long storeManagerId);
+
     /*
     * 반경 함수 기준 MySQL = ST_Distance_Sphere = 특정 DB 종속 함수라 NativeSQL이 필요
     */

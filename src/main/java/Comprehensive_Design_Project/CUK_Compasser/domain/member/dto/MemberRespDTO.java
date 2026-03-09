@@ -26,5 +26,14 @@ public class MemberRespDTO {
         private String accessToken;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class QRDTO {
+        private Long memberId;
+        private String token; // redis 인증용 토큰
+    }
+
 
 }
