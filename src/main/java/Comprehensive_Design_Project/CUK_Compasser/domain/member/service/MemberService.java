@@ -22,12 +22,13 @@ public class MemberService {
     @Value("aws.host")
     private String AWS_HOST;
 
-    public byte[] generateQRCode (Long  memberId) {
+    public byte[] generateQRCode (Long memberId) {
         int width = 200, height = 200;
 
         BitMatrix encode = null;
+        String memberIdJson = "{memberId : "+memberId.toString()+"}";
         try {
-            encode = new MultiFormatWriter().encode(AWS_HOST, BarcodeFormat.QR_CODE, width, height);
+            encode = new MultiFormatWriter().encode(memberIdJson, BarcodeFormat.QR_CODE, width, height);
         } catch (WriterException e) {
             throw new GeneralException(ErrorStatus.QR_IMAGE_WRITE_FAILED); // 새로 에러 코드 만들기
         }
@@ -35,7 +36,7 @@ public class MemberService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             MatrixToImageWriter.writeToStream(encode, "PNG", outputStream);
-            return outputStream.toByteArray();
+            return outputStream.toByteArray(); // qr 코드는 일회용, 발급만, 필요에 따라 저장
         } catch (IllegalArgumentException e) {
             // 가로/세로가 0 이하일 때 등
             throw new GeneralException(ErrorStatus.QR_INVALID_SIZE);
