@@ -43,4 +43,11 @@ public class MemberController {
                 .contentType(MediaType.IMAGE_PNG) // 브라우저에게 이미지임을 알림
                 .body(resource);
     }
+
+    @GetMapping("/reward")
+    @Operation(summary = "QR 코드 이미지 직접 확인용 (테스트용)", description = "브라우저에서 바로 이미지를 볼 수 있도록 하는 테스트용 API")
+    public ApiResponse<Object> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return null;
+    }
+
 }
