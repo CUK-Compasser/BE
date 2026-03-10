@@ -11,7 +11,7 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
 
     Optional<Reward> findByMember_IdAndStore_Id(Long memberId, Long storeId);
 
-    @Query("select r from Reward r join fetch Store s on r.store where r.member.id = :memberId")
+    @Query("select r from Reward r join fetch Store s where r.member.id = :memberId")
     List<Reward> findAllByMember_Id(Long memberId);
 
 }
