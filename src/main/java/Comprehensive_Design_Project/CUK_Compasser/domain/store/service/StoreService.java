@@ -125,7 +125,13 @@ public class StoreService {
 
     @Transactional (readOnly = true)
     public SimpleStoreInfoDTO getSimpleStoreInfo (Long storeId){
-        return SimpleStoreInfoDTO.builder().storeId(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getId()).tag(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getTag()).storeName(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getStoreName()).roadAddress(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getRoadAddress()).businessHours(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getBusinessHours()).build();;
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+        return SimpleStoreInfoDTO.builder()
+                .storeId(store.getId())
+                .tag(store.getTag())
+                .storeName(store.getStoreName())
+                .roadAddress(store.getRoadAddress())
+                .businessHours(store.getBusinessHours()).build();
     }
 
     @Transactional (readOnly = true)
