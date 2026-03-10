@@ -6,6 +6,8 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.entity.RewardHistory;
+import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repository.RewardHistoryRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
@@ -24,6 +26,7 @@ public class StoreManagerService {
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final RewardRepository rewardRepository;
+    private final RewardHistoryRepository  rewardHistoryRepository;
     private final RedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
@@ -66,15 +69,17 @@ public class StoreManagerService {
     public void writingReward(StoreManagerReqDTO.WritingRewardDTO dto) {
         Reward reward = rewardRepository.findById(dto.getRewardId()).orElseThrow(() -> new GeneralException(ErrorStatus.REWARD_NOT_FOUND));
 
+        Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
         // 있으면 Increase
         if (reward != null) {
             reward.increasePoint();
-            return;
+
+        }
+        else{
+            rewardRepository.save(Reward.createNewReward(member, store));
         }
 
-        // 없으면 new & save
-        Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
-        rewardRepository.save(Reward.createNewReward(member, store));
+        rewardHistoryRepository.save(RewardHistory.earnReward(member, store));
     }
 }
