@@ -2,6 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Reward {
+public class Reward extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,9 +39,6 @@ public class Reward {
     @Column(length = 100)
     private String reason;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
     @PrePersist
     void prePersist() {
         this.createdAt = LocalDateTime.now();
@@ -52,7 +50,6 @@ public class Reward {
                 .store(store)
                 .points(0)
                 .reason("")
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 
