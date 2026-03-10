@@ -45,10 +45,22 @@ public class StoreManagerService {
 
         // null 인 경우 첫 적립 DTO 반환
         if (reward == null) {
-            return StoreManagerRespDTO.GetMemberRewardDTO.builder().storeId(store.getId()).memberId(qrDTO.getMemberId()).points(null).createdAt(null).build();
+            return StoreManagerRespDTO.GetMemberRewardDTO.builder()
+                    .rewardId(null)
+                    .storeId(store.getId())
+                    .memberId(qrDTO.getMemberId())
+                    .points(null)
+                    .createdAt(null)
+                    .build();
         }
         // null이 아닌 경우 해당 DTO 반환
-        return StoreManagerRespDTO.GetMemberRewardDTO.builder().storeId(store.getId()).memberId(qrDTO.getMemberId()).points(reward.getPoints()).createdAt(reward.getCreatedAt()).build();
+        return StoreManagerRespDTO.GetMemberRewardDTO.builder()
+                .rewardId(reward.getId())
+                .storeId(store.getId())
+                .memberId(qrDTO.getMemberId())
+                .points(reward.getPoints())
+                .createdAt(reward.getCreatedAt())
+                .build();
     }
 
     @Transactional

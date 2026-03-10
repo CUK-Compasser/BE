@@ -14,6 +14,7 @@ public class StoreManagerRespDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetMemberRewardDTO {
+        private Long rewardId;
         private Long storeId;
         private Long memberId;
         private Integer points;
