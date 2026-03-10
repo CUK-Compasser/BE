@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

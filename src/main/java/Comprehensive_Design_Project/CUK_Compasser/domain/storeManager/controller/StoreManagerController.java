@@ -1,7 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.StoreManagerRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.service.StoreManagerService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
