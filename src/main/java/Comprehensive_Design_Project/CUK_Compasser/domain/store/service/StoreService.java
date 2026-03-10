@@ -2,10 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -124,6 +121,11 @@ public class StoreService {
     public List<StoreRespDTO> getStoreListByMemberRadius (String email, MemberReqDTO.MemberCoordinatesDTO coordinates){
 
         return null;
+    }
+
+    @Transactional (readOnly = true)
+    public SimpleStoreInfoDTO getSimpleStoreInfo (Long storeId){
+        return SimpleStoreInfoDTO.builder().storeId(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getId()).tag(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getTag()).storeName(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getStoreName()).roadAddress(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getRoadAddress()).businessHours(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)).getBusinessHours()).build();;
     }
 
     @Transactional (readOnly = true)

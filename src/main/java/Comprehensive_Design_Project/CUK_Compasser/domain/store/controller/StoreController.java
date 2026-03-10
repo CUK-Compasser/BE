@@ -1,10 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -100,9 +97,15 @@ public class StoreController {
         return null;
     }
 
+    @GetMapping("/storeId/{storeId}/simple")
+    @Operation(summary = "가게 단순 조회 API", description = "사용자 원하는 가게 대한 단순 정보를 요청/반환하는 API 입니다.")
+    public ApiResponse<SimpleStoreInfoDTO> getStoreSimple (@PathVariable Long storeId){
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getSimpleStoreInfo(storeId));
+    }
+
     @GetMapping("/storeId/{storeId}")
     @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
-    public ApiResponse<StoreRespDTO> getStoreListByStoreId (@PathVariable Long storeId){
+    public ApiResponse<StoreRespDTO> getStore (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
     }
 
