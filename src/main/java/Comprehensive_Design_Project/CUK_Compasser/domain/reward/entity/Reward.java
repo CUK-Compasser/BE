@@ -45,4 +45,19 @@ public class Reward {
     void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public static Reward createNewReward (Member member, Store store){
+        return Reward.builder()
+                .member(member)
+                .store(store)
+                .points(0)
+                .reason("")
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    public void increasePoint (){
+        this.points++;
+    }
+
 }

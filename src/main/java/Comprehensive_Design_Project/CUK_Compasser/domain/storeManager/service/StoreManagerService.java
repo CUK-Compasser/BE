@@ -2,11 +2,13 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.service;
 
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -61,15 +63,18 @@ public class StoreManagerService {
     }
 
     @Transactional
-    public void writingReward (Long storeManagerId){
-
-        // findByStoreManagerID + Eager Fetch "Store" -> get store_id
-
-        // rewardRepository 조회
+    public void writingReward(StoreManagerReqDTO.WritingRewardDTO dto) {
+        Reward reward = rewardRepository.findById(dto.getRewardId()).orElseThrow(() -> new GeneralException(ErrorStatus.REWARD_NOT_FOUND));
 
         // 있으면 Increase
+        if (reward != null) {
+            reward.increasePoint();
+            return;
+        }
 
         // 없으면 new & save
-
+        Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+        rewardRepository.save(Reward.createNewReward(member, store));
     }
 }

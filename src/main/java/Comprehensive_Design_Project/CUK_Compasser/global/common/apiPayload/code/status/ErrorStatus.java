@@ -74,6 +74,11 @@ public enum ErrorStatus implements BaseErrorCode {
     QR_EXPIRED(HttpStatus.BAD_REQUEST,"RW005","만료된 QR 코드 입니다."),
 
     // =========================
+    // [Reward]
+    // =========================
+    REWARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"RW001","적립을 찾을 수 없습니다"),
+
+    // =========================
     // [BusinessNum]
     // =========================
     BUSINESS_LICENSE_REQUIRED(HttpStatus.BAD_REQUEST, "O001", "사업자등록번호를 입력해주세요."),

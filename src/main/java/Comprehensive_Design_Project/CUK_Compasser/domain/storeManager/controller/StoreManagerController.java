@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.service.StoreManagerService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -29,8 +30,11 @@ public class StoreManagerController {
     }
 
     @PostMapping("/reward")
-    public ApiResponse<Object> writingReward(@AuthenticationPrincipal CustomUserDetails userDetails){
+    public ApiResponse<Object> writingReward(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody StoreManagerReqDTO.WritingRewardDTO dto){
         // 사장님의 적립 확인 버튼에 의한 실질적인 적립 로직
-        return null;
+        storeManagerService.writingReward(dto);
+        return ApiResponse.onSuccess(SuccessStatus.OK);
     }
 }
