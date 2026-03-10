@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.controller;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
@@ -15,6 +16,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -46,8 +49,8 @@ public class MemberController {
 
     @GetMapping("/reward")
     @Operation(summary = "적립 현황 확인 API", description = "사용자가 여러 가게에서 적립한 현황을 확인하는 API 입니다.")
-    public ApiResponse<Object> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return null;
+    public ApiResponse<List<MemberRespDTO.RewardListDTO>> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getRewardList(userDetails.getMember().getId()));
     }
 
 }

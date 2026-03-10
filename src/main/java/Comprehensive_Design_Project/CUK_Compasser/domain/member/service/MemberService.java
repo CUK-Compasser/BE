@@ -1,7 +1,11 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import com.google.zxing.BarcodeFormat;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RewardRepository rewardRepository;
 
     @Value("aws.host")
     private String AWS_HOST;
@@ -51,11 +57,11 @@ public class MemberService {
         }
     }
 
-    public void getRewardList (Long memberId){
+    public List<MemberRespDTO.RewardListDTO> getRewardList (Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // rewardRepository -> 각 필드와 store_id 갖고 오기 -> store_id를 통한 store 이름 조회 필요
-
         // DTO 변환, return
+        return RewardConverter.toRewardListDTO(rewardRepository.findAllByMember_Id(memberId));
     }
 }
