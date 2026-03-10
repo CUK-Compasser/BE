@@ -13,7 +13,7 @@ public class RewardConverter {
                 .map(reward ->
                         MemberRespDTO.RewardListDTO.builder()
                                 .rewardId(reward.getId())
-                                .points(reward.getPoints())
+                                .points(reward.getStamp())
                                 .storename(reward.getStore().getStoreName())
                                 .build()
                 )

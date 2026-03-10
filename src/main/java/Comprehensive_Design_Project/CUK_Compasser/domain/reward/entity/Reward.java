@@ -6,8 +6,6 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(
         name = "rewards",
@@ -34,27 +32,34 @@ public class Reward extends BaseEntity {
     private Store store;
 
     @Column(nullable = false)
-    private Integer points;
+    private Integer stamp; // 적립 도장
+
+    @Column(nullable = false)
+    private Integer coupon; // 적립 쿠폰
+
+    @Column(nullable = false)
+    private Integer useCouponCnt; // 쿠폰 사용 횟수
 
     @Column(length = 100)
     private String reason;
 
-    @PrePersist
+    /*@PrePersist
     void prePersist() {
         this.createdAt = LocalDateTime.now();
-    }
+    }*/
 
     public static Reward createNewReward (Member member, Store store){
         return Reward.builder()
                 .member(member)
                 .store(store)
-                .points(0)
+                .stamp(0)
+                .coupon(0)
                 .reason("")
                 .build();
     }
 
     public void increasePoint (){
-        this.points++;
+        this.stamp++;
     }
 
 }

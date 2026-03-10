@@ -60,7 +60,7 @@ public class StoreManagerService {
                 .rewardId(reward.getId())
                 .storeId(store.getId())
                 .memberId(qrDTO.getMemberId())
-                .points(reward.getPoints())
+                .points(reward.getStamp())
                 .createdAt(reward.getCreatedAt())
                 .build();
     }
