@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.service;
+package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
