@@ -25,45 +25,44 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot Starters
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux' //가게 위치 설정
-	implementation 'org.springframework.boot:spring-boot-starter-actuator' // monitoring 설정
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	// swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
-	implementation 'org.apache.commons:commons-lang3:3.18.0' // springdoc의 의존 라이브러리. 이전 버전 취약성 문제
-	implementation 'io.swagger.core.v3:swagger-annotations:2.2.38' // openai 의존성 충돌 해결
+	// Cloud & Database
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.0'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
-	// prometheus
+	// Swagger (버전 통합 및 의존성 충돌 해결)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
+	implementation 'io.swagger.core.v3:swagger-annotations:2.2.38'
+
+	// Monitoring
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
-	// JWT
+	// JWT (최신 jjwt 0.12.x 버전)
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
 
+	// Lombok (중요: 테스트 환경에서도 @Builder 등을 인식하도록 설정)
 	compileOnly 'org.projectlombok:lombok'
-
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-
 	annotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
+	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 }
 
 tasks.named('test') {
