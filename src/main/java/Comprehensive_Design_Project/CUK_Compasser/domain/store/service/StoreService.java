@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreCo
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -93,20 +94,20 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(StoreReqDTO.StoreReqWithCoordinateDTO dto, int page) {
-        List<Store> storeList = storeRepository.findStoresWithinRadius(dto.getLatitude(), dto.getLongitude(), 3, PageRequest.of(page, 10)).getContent();
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(BigDecimal userLat, BigDecimal userLon, int page) {
+        List<Store> storeList = storeRepository.findStoresWithinRadius(userLat, userLon, 3, PageRequest.of(page, 10)).getContent();
 //        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(storeList);
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (int page, StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto){
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (BigDecimal userLat, BigDecimal userLon, Tag tag, int page){
 //        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
         List<Store> storeList = storeRepository.findStoresByTagWithinRadius(
-                dto.getLatitude(),
-                dto.getLongitude(),
+                userLat,
+                userLon,
                 3,
-                dto.getTag().toString(),
+                tag.toString(),
                 PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(storeList);
     }

@@ -3,6 +3,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -66,18 +68,21 @@ public class StoreController {
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreList (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @RequestBody StoreReqDTO.StoreReqWithCoordinateDTO dto,
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
             @RequestParam(defaultValue = "0") Integer page) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(dto, page));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(userLat, userLon, page));
     }
 
     @GetMapping("/stores/tag/{tag}")
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @RequestBody StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto,
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
+            @RequestParam Tag tag,
             @RequestParam(defaultValue = "0") Integer page) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(page, dto));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(userLat, userLon, tag, page));
     }
 
     @GetMapping("/stores/university/{university}")
