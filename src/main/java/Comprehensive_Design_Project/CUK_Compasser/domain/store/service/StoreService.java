@@ -12,7 +12,9 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.dto.KakaoAddressSearchRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.service.KakaoLocalService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class StoreService {
     private final StoreManagerRepository storeManagerRepository;
     private final StoreConverter storeConverter;
     private final KakaoLocalService kakaoLocalService;
+
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public StoreRespDTO updateStore(Long memberId, StoreUpdateReqDTO req) {
@@ -127,12 +131,20 @@ public class StoreService {
     @Transactional (readOnly = true)
     public SimpleStoreInfoDTO getSimpleStoreInfo (Long storeId){
         Store store = storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
-        return SimpleStoreInfoDTO.builder()
-                .storeId(store.getId())
-                .tag(store.getTag())
-                .storeName(store.getStoreName())
-                .roadAddress(store.getRoadAddress())
-                .businessHours(store.getBusinessHours()).build();
+
+        if (store.getBusinessHours() == null || store.getBusinessHours().isBlank()) {
+            throw new GeneralException(ErrorStatus.BUSINESS_HOURS_INVALID);
+        }
+        try {
+            return SimpleStoreInfoDTO.builder()
+                    .storeId(store.getId())
+                    .tag(store.getTag())
+                    .storeName(store.getStoreName())
+                    .roadAddress(store.getRoadAddress())
+                    .businessHours(objectMapper.readTree(store.getBusinessHours())).build();
+        } catch (JsonProcessingException e) {
+            throw new GeneralException(ErrorStatus.STORE_BUSINESS_HOURS_PARSE_FAILED);
+        }
     }
 
     @Transactional (readOnly = true)

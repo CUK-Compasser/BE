@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +16,5 @@ public class SimpleStoreInfoDTO {
     private Tag tag;
     private String storeName;
     private String roadAddress;
-    private String businessHours;
+    private JsonNode businessHours;
 }
