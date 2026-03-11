@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -47,6 +48,7 @@ public class OAuth2Service {
     private final RedisTemplate redisTemplate;
 
     // JWT
+    @Transactional
     public MemberRespDTO.MemberInfoDTO loginWithKakao(String code){
         log.info("[OAuth2Service] - Received code: {}", code);
 
