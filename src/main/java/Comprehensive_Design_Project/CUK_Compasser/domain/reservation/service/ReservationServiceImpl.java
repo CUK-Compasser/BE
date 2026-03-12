@@ -6,6 +6,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.Reserva
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -28,24 +29,50 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationConverter reservationConverter;
 
     @Override
-    public ReservationRespDTO.ReservationListDTO getReservations(Long storeId, Long memberId, ReservationStatus status) {
+    public ReservationRespDTO.ReservationListDTO getPendingReservations(Long memberId) {
         validateStoreManager(memberId);
-        validateStoreOwner(storeId, memberId);
+        Store store = getOwnerStore(memberId);
 
-        List<Reservation> reservations = (status == null)
-                ? reservationRepository.findAllByStore_IdOrderByCreatedAtDesc(storeId)
-                : reservationRepository.findAllByStore_IdAndStatusOrderByCreatedAtDesc(storeId, status);
+        List<Reservation> reservations =
+                reservationRepository.findAllByStore_IdAndStatusOrderByCreatedAtDesc(
+                        store.getId(), ReservationStatus.REQUESTED
+                );
 
         return reservationConverter.toReservationListDTO(reservations);
     }
 
     @Override
-    public ReservationRespDTO.ReservationDTO getReservationDetail(Long storeId, Long reservationId, Long memberId) {
+    public ReservationRespDTO.ReservationListDTO getProcessedReservations(Long memberId) {
         validateStoreManager(memberId);
-        validateStoreOwner(storeId, memberId);
+        Store store = getOwnerStore(memberId);
 
-        Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, storeId)
+        List<ReservationStatus> processedStatuses = List.of(
+                ReservationStatus.APPROVED,
+                ReservationStatus.REJECTED,
+                ReservationStatus.CANCELED
+        );
+
+        List<Reservation> reservations =
+                reservationRepository.findAllByStore_IdAndStatusInOrderByCreatedAtDesc(
+                        store.getId(), processedStatuses
+                );
+
+        return reservationConverter.toReservationListDTO(reservations);
+    }
+
+    @Override
+    @Transactional
+    public ReservationRespDTO.ReservationDTO approveReservation(Long reservationId, Long memberId) {
+        validateStoreManager(memberId);
+        Store store = getOwnerStore(memberId);
+
+        Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        validateRequestableReservation(reservation);
+
+        reservation.setStatus(ReservationStatus.APPROVED);
+        reservation.setRejectReason(null);
 
         return reservationConverter.toReservationDTO(reservation);
     }
@@ -55,17 +82,14 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationRespDTO.ReservationDTO rejectReservation(Long reservationId, Long memberId,
                                                                ReservationReqDTO.RejectDTO request) {
         validateStoreManager(memberId);
+        Store store = getOwnerStore(memberId);
 
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
 
-        validateStoreOwner(reservation.getStore().getId(), memberId);
+        validateRequestableReservation(reservation);
 
-        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
-            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PROCESSED);
-        }
-
-        if (!StringUtils.hasText(request.getRejectReason())) {
+        if (request == null || !StringUtils.hasText(request.getRejectReason())) {
             throw new GeneralException(ErrorStatus.REJECT_REASON_REQUIRED);
         }
 
@@ -81,8 +105,14 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
-    private void validateStoreOwner(Long storeId, Long memberId) {
-        storeRepository.findByIdAndStoreManager_MemberId(storeId, memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_FORBIDDEN));
+    private Store getOwnerStore(Long memberId) {
+        return storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+    }
+
+    private void validateRequestableReservation(Reservation reservation) {
+        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
+            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PROCESSED);
+        }
     }
 }

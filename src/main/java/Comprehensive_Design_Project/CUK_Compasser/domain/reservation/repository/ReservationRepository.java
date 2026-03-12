@@ -17,6 +17,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findAllByStore_IdAndStatusOrderByCreatedAtDesc(Long storeId, ReservationStatus status);
 
     @EntityGraph(attributePaths = {"member", "store"})
+    List<Reservation> findAllByStore_IdAndStatusInOrderByCreatedAtDesc(
+            Long storeId,
+            List<ReservationStatus> statuses
+    );
+
+    @EntityGraph(attributePaths = {"member", "store"})
     Optional<Reservation> findByIdAndStore_Id(Long reservationId, Long storeId);
 
     @EntityGraph(attributePaths = {"member", "store"})
