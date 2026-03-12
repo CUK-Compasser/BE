@@ -7,13 +7,6 @@ public class ReservationReqDTO {
 
     @Getter
     @NoArgsConstructor
-    public static class ApproveDTO {
-        private Integer approvedQuantity;
-        private String memo;
-    }
-
-    @Getter
-    @NoArgsConstructor
     public static class RejectDTO {
         private String rejectReason;
     }

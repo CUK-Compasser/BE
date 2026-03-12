@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.Reserva
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.service.ReservationService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,40 +24,32 @@ public class ReservationController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ApiResponse.onSuccess(
-                reservationService.getReservations(storeId, userDetails.getMemberId(), status)
+                SuccessStatus.OK,
+                reservationService.getReservations(storeId, userDetails.getMember().getId(), status)
         );
     }
 
     @GetMapping("/stores/{storeId}/reservations/{reservationId}")
-    public ApiResponse<ReservationRespDTO.ReservationDetailDTO> getReservationDetail(
+    public ApiResponse<ReservationRespDTO.ReservationDTO> getReservationDetail(
             @PathVariable Long storeId,
             @PathVariable Long reservationId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ApiResponse.onSuccess(
-                reservationService.getReservationDetail(storeId, reservationId, userDetails.getMemberId())
-        );
-    }
-
-    @PatchMapping("/reservations/{reservationId}/approve")
-    public ApiResponse<ReservationRespDTO.ReservationDetailDTO> approveReservation(
-            @PathVariable Long reservationId,
-            @RequestBody ReservationReqDTO.ApproveDTO request,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        return ApiResponse.onSuccess(
-                reservationService.approveReservation(reservationId, userDetails.getMemberId(), request)
+                SuccessStatus.OK,
+                reservationService.getReservationDetail(storeId, reservationId, userDetails.getMember().getId())
         );
     }
 
     @DeleteMapping("/reservations/{reservationId}/reject")
-    public ApiResponse<ReservationRespDTO.ReservationDetailDTO> rejectReservation(
+    public ApiResponse<ReservationRespDTO.ReservationDTO> rejectReservation(
             @PathVariable Long reservationId,
             @RequestBody ReservationReqDTO.RejectDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ApiResponse.onSuccess(
-                reservationService.rejectReservation(reservationId, userDetails.getMemberId(), request)
+                SuccessStatus.OK,
+                reservationService.rejectReservation(reservationId, userDetails.getMember().getId(), request)
         );
     }
 }

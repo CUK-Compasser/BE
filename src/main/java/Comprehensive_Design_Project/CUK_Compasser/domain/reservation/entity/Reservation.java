@@ -42,12 +42,6 @@ public class Reservation extends BaseEntity {
     @Column(name = "requested_quantity", nullable = false)
     private Integer requestedQuantity;
 
-    @Column(name = "approved_quantity")
-    private Integer approvedQuantity;
-
-    @Column(length = 500)
-    private String memo;
-
     @Column(name = "reject_reason", length = 500)
     private String rejectReason;
 

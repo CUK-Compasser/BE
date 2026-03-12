@@ -8,11 +8,8 @@ public interface ReservationService {
 
     ReservationRespDTO.ReservationListDTO getReservations(Long storeId, Long memberId, ReservationStatus status);
 
-    ReservationRespDTO.ReservationDetailDTO getReservationDetail(Long storeId, Long reservationId, Long memberId);
+    ReservationRespDTO.ReservationDTO getReservationDetail(Long storeId, Long reservationId, Long memberId);
 
-    ReservationRespDTO.ReservationDetailDTO approveReservation(Long reservationId, Long memberId,
-                                                               ReservationReqDTO.ApproveDTO request);
-
-    ReservationRespDTO.ReservationDetailDTO rejectReservation(Long reservationId, Long memberId,
-                                                              ReservationReqDTO.RejectDTO request);
+    ReservationRespDTO.ReservationDTO rejectReservation(Long reservationId, Long memberId,
+                                                        ReservationReqDTO.RejectDTO request);
 }

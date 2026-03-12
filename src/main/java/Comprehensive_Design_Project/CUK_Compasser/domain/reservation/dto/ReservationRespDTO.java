@@ -12,7 +12,7 @@ public class ReservationRespDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ReservationSummaryDTO {
+    public static class ReservationDTO {
         private Long reservationId;
         private Long memberId;
         private String memberName;
@@ -20,27 +20,6 @@ public class ReservationRespDTO {
         private String storeName;
         private ReservationStatus status;
         private Integer requestedQuantity;
-        private Integer approvedQuantity;
-        private String memo;
-        private String rejectReason;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ReservationDetailDTO {
-        private Long reservationId;
-        private Long memberId;
-        private String memberName;
-        private Long storeId;
-        private String storeName;
-        private ReservationStatus status;
-        private Integer requestedQuantity;
-        private Integer approvedQuantity;
-        private String memo;
         private String rejectReason;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -51,7 +30,7 @@ public class ReservationRespDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReservationListDTO {
-        private List<ReservationSummaryDTO> reservations;
+        private List<ReservationDTO> reservations;
         private Integer count;
     }
 }
