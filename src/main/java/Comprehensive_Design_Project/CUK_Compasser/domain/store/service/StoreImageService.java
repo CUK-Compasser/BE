@@ -1,7 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreImageConverter;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreImageRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreImageRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.StoreImage;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreImageRepository;

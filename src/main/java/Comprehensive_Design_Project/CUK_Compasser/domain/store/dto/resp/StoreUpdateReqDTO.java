@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;

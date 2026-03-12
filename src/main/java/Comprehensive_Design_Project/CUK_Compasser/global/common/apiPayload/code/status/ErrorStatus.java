@@ -66,6 +66,19 @@ public enum ErrorStatus implements BaseErrorCode {
     RANDOM_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "RB006", "랜덤박스를 찾을 수 없습니다."),
 
     // =========================
+    // [QRCode]
+    // =========================
+    QR_IMAGE_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW001","이미지 파일로 변환하는 중 오류가 발생했습니다."),
+    QR_INVALID_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "RW003","QR 코드의 크기(가로/세로) 설정이 잘못되었습니다."),
+    QR_GENERATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW004","QR 코드 생성 중 알 수 없는 오류가 발생했습니다."),
+    QR_EXPIRED(HttpStatus.BAD_REQUEST,"RW005","만료된 QR 코드 입니다."),
+
+    // =========================
+    // [Reward]
+    // =========================
+    REWARD_NOT_FOUND(HttpStatus.BAD_REQUEST,"RW001","적립을 찾을 수 없습니다"),
+
+    // =========================
     // [BusinessNum]
     // =========================
     BUSINESS_LICENSE_REQUIRED(HttpStatus.BAD_REQUEST, "O001", "사업자등록번호를 입력해주세요."),

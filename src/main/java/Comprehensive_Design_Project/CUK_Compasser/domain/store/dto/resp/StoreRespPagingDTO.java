@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +12,7 @@ public class StoreRespPagingDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class GetStoreOrderByCreatedDTO {
+    public static class GetStoreReqDTO {
         private Long storeId;
         private Long storeManagerId;
         private String storeName;

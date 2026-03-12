@@ -1,7 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.converter;
 
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -32,6 +32,7 @@ public class StoreConverter {
                 .latitude(store.getLatitude())
                 .longitude(store.getLongitude())
                 .businessHours(toJsonNode(store.getBusinessHours()))
+                .tag(store.getTag())
                 .build();
     }
     public String toRawJson(JsonNode node) {
@@ -54,11 +55,11 @@ public class StoreConverter {
     }
 
     // 일단 기본 조회 기준으로 converter를 만들긴 했는데, 재사용 가능하게 수정 예정
-    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> toGetStoreByCreatedDTO(List<Store> storeList) {
-        List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> dtoList = new ArrayList<>();
+    public List<StoreRespPagingDTO.GetStoreReqDTO> toGetStoreDTOList(List<Store> storeList) {
+        List<StoreRespPagingDTO.GetStoreReqDTO> dtoList = new ArrayList<>();
 
         for (Store store : storeList) {
-            dtoList.add(StoreRespPagingDTO.GetStoreOrderByCreatedDTO.builder()
+            dtoList.add(StoreRespPagingDTO.GetStoreReqDTO.builder()
                     .storeId(store.getId())
                     .storeManagerId(store.getStoreManager().getId())
                     .storeName(store.getStoreName())

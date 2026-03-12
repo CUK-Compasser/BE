@@ -103,3 +103,7 @@ kakao:
   local:
     base-url: https://dapi.kakao.com
     rest-api-key: ${KAKAO_REST_API_KEY}
+
+
+springdoc:
+  packages-to-scan: Comprehensive_Design_Project.CUK_Compasser

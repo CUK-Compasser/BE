@@ -26,5 +26,23 @@ public class MemberRespDTO {
         private String accessToken;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class QRDTO {
+        private Long memberId;
+        private String token; // redis 인증용 토큰
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RewardListDTO {
+        private Long rewardId;
+        private Integer points;
+        private String storename;
+    }
 
 }

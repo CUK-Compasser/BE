@@ -1,6 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreImageRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreImageRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreImageService;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
