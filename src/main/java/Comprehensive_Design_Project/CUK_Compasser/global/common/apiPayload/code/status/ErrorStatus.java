@@ -92,9 +92,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // =========================
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "예약을 찾을 수 없습니다."),
     RESERVATION_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "R002", "이미 처리된 예약입니다."),
-    INVALID_APPROVED_QUANTITY(HttpStatus.BAD_REQUEST, "R003", "승인 수량이 올바르지 않습니다."),
-    APPROVED_QUANTITY_EXCEEDS_REQUESTED(HttpStatus.BAD_REQUEST, "R004", "승인 수량이 요청 수량을 초과할 수 없습니다."),
-    REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R005", "거절 사유는 필수입니다.");
+    REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R003", "거절 사유는 필수입니다."),
+    RESERVATION_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "R004", "예약 상태값은 필수입니다."),
+    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다.");
 
 
     private final HttpStatus httpStatus;

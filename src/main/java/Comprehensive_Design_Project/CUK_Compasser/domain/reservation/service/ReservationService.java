@@ -12,5 +12,5 @@ public interface ReservationService {
     ReservationRespDTO.ReservationDTO approveReservation(Long reservationId, Long memberId);
 
     ReservationRespDTO.ReservationDTO rejectReservation(Long reservationId, Long memberId,
-                                                        ReservationReqDTO.RejectDTO request);
+                                                        ReservationReqDTO request);
 }

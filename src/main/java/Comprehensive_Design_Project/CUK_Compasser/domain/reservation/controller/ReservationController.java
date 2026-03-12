@@ -70,7 +70,7 @@ public class ReservationController {
     @DeleteMapping("/reservations/{reservationId}/reject")
     public ApiResponse<ReservationRespDTO.ReservationDTO> rejectReservation(
             @PathVariable Long reservationId,
-            @RequestBody ReservationReqDTO.RejectDTO request,
+            @RequestBody ReservationReqDTO request,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ApiResponse.onSuccess(
