@@ -17,7 +17,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @GetMapping("/stores/{storeId}/reservations")
+    @GetMapping("/owner/stores/{storeId}/reservations")
     public ApiResponse<ReservationRespDTO.ReservationListDTO> getReservations(
             @PathVariable Long storeId,
             @RequestParam(required = false) ReservationStatus status,
@@ -29,7 +29,7 @@ public class ReservationController {
         );
     }
 
-    @GetMapping("/stores/{storeId}/reservations/{reservationId}")
+    @GetMapping("/owner/stores/{storeId}/reservations/{reservationId}")
     public ApiResponse<ReservationRespDTO.ReservationDTO> getReservationDetail(
             @PathVariable Long storeId,
             @PathVariable Long reservationId,
@@ -41,7 +41,7 @@ public class ReservationController {
         );
     }
 
-    @DeleteMapping("/reservations/{reservationId}/reject")
+    @DeleteMapping("owner/stores/{storeId}/reservations/{reservationId}/reject")
     public ApiResponse<ReservationRespDTO.ReservationDTO> rejectReservation(
             @PathVariable Long reservationId,
             @RequestBody ReservationReqDTO.RejectDTO request,
