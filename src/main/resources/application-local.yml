@@ -98,8 +98,9 @@ logging:
   level:
     com.zaxxer.hikari: DEBUG
 jwt:
-  security:
+  secret:
     key: ${JWT_SECRET_KEY}
+
 kakao:
   local:
     base-url: https://dapi.kakao.com
