@@ -2,10 +2,8 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -14,10 +12,11 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.dto.KakaoAddressSearchRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.integration.kakao.kakao.service.KakaoLocalService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -34,6 +33,8 @@ public class StoreService {
     private final StoreManagerRepository storeManagerRepository;
     private final StoreConverter storeConverter;
     private final KakaoLocalService kakaoLocalService;
+
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public StoreRespDTO updateStore(Long memberId, StoreUpdateReqDTO req) {
@@ -97,17 +98,22 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreList(int page) {
-        Pageable pageable = PageRequest.of(page, 10);
-        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
-        return storeConverter.toGetStoreByCreatedDTO(allByOrderByCreatedAtDesc);
-
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(BigDecimal userLat, BigDecimal userLon, int page) {
+        List<Store> storeList = storeRepository.findStoresWithinRadius(userLat, userLon, 3000, PageRequest.of(page, 10)).getContent();
+//        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(storeList);
     }
 
     @Transactional (readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO> getStoreListByTag (int page, Tag tag){
-        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
-        return storeConverter.toGetStoreByCreatedDTO(allByTag);
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (BigDecimal userLat, BigDecimal userLon, Tag tag, int page){
+//        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
+        List<Store> storeList = storeRepository.findStoresByTagWithinRadius(
+                userLat,
+                userLon,
+                3000,
+                tag.toString(),
+                PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(storeList);
     }
 
     @Transactional (readOnly = true)
@@ -122,5 +128,33 @@ public class StoreService {
         return null;
     }
 
+    @Transactional (readOnly = true)
+    public SimpleStoreInfoDTO getSimpleStoreInfo (Long storeId){
+        Store store = storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
+        if (store.getBusinessHours() == null || store.getBusinessHours().isBlank()) {
+            throw new GeneralException(ErrorStatus.BUSINESS_HOURS_INVALID);
+        }
+        try {
+            return SimpleStoreInfoDTO.builder()
+                    .storeId(store.getId())
+                    .tag(store.getTag())
+                    .storeName(store.getStoreName())
+                    .roadAddress(store.getRoadAddress())
+                    .businessHours(objectMapper.readTree(store.getBusinessHours())).build();
+        } catch (JsonProcessingException e) {
+            throw new GeneralException(ErrorStatus.STORE_BUSINESS_HOURS_PARSE_FAILED);
+        }
+    }
+
+    @Transactional (readOnly = true)
+    public StoreRespDTO getStoreInfo (Long storeId){
+        return storeConverter.toResp(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)));
+    }
+
+    @Transactional (readOnly = true)
+    public void getStoreListByKeyword (){
+
+    }
 
 }

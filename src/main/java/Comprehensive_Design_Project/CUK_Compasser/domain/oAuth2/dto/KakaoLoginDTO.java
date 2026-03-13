@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

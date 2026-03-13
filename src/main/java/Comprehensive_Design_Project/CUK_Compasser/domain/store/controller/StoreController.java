@@ -1,10 +1,8 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreLocationUpdateReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreRespPagingDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.StoreUpdateReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -15,10 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/stores")
 public class StoreController {
 
     private final StoreService storeService;
@@ -66,36 +66,64 @@ public class StoreController {
 
     @GetMapping("/stores")
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
-    public ApiResponse<List<StoreRespPagingDTO.GetStoreOrderByCreatedDTO>> getStoreList (
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreList (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
             @RequestParam(defaultValue = "0") Integer page) {
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(page));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(userLat, userLon, page));
     }
 
     @GetMapping("/stores/tag/{tag}")
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
-    public ApiResponse<List<StoreRespDTO>> getStoreListByTag (
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable Tag tag
-    ){
-        return null;
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
+            @RequestParam Tag tag,
+            @RequestParam(defaultValue = "0") Integer page) {
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(userLat, userLon, tag, page));
     }
 
     @GetMapping("/stores/university/{university}")
     @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByUniversity (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @PathVariable String university){
+            @RequestBody StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto,
+            @RequestParam(defaultValue = "0") Integer page){
         return null;
     }
 
-    @GetMapping("/member") // 지도 클릭 시 사용자 반경 가게 조회 API
-    @Operation(summary = "사용자 반경 가게 조회 API", description = "사용자의 위치 기준 반경의 가게의 조회하는  API 입니다.")
+//    @GetMapping("/member") // 지도 클릭 시 사용자 반경 가게 조회 API
+//    @Operation(summary = "사용자 반경 가게 조회 API", description = "사용자의 위치 기준 반경의 가게의 조회하는  API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByMemberRadius (
             @RequestBody MemberReqDTO.MemberCoordinatesDTO coordinates
             /*@AuthenticationPrincipal CustomUserDetails userDetails*/){
         return null;
     }
+
+    @GetMapping("/storeId/{storeId}/simple")
+    @Operation(summary = "가게 단순 조회 API", description = "사용자 원하는 가게 대한 단순 정보를 요청/반환하는 API 입니다.")
+    public ApiResponse<SimpleStoreInfoDTO> getStoreSimple (@PathVariable Long storeId){
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getSimpleStoreInfo(storeId));
+    }
+
+    @GetMapping("/storeId/{storeId}")
+    @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+    public ApiResponse<StoreRespDTO> getStore (@PathVariable Long storeId){
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
+    }
+
+    @GetMapping("/{keyword}")
+    @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+    public ApiResponse<StoreRespDTO> getStoreListByKeyword (
+            @PathVariable String keyword
+    ){
+        // ElasticSearch 를 활용한 검색이 필요?
+        return null;
+
+    }
+
 }
 /**
  * (선택) 내 가게 조회 - 운영시간 확인용

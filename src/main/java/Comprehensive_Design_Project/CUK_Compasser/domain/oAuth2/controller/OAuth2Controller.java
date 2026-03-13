@@ -1,9 +1,9 @@
-package Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.controller;
+package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
-import Comprehensive_Design_Project.CUK_Compasser.global.security.oAuth2.service.OAuth2Service;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service.OAuth2Service;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,10 +2,9 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Reward {
+public class Reward extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,16 +32,34 @@ public class Reward {
     private Store store;
 
     @Column(nullable = false)
-    private Integer points;
+    private Integer stamp; // 적립 도장
+
+    @Column(nullable = false)
+    private Integer coupon; // 적립 쿠폰
+
+    @Column(nullable = false)
+    private Integer useCouponCnt; // 쿠폰 사용 횟수
 
     @Column(length = 100)
     private String reason;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
+    /*@PrePersist
     void prePersist() {
         this.createdAt = LocalDateTime.now();
+    }*/
+
+    public static Reward createNewReward (Member member, Store store){
+        return Reward.builder()
+                .member(member)
+                .store(store)
+                .stamp(0)
+                .coupon(0)
+                .reason("")
+                .build();
     }
+
+    public void increasePoint (){
+        this.stamp++;
+    }
+
 }
