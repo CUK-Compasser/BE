@@ -44,3 +44,6 @@ gradle.properties
 # 애플리케이션 및 시스템 로그 파일 제외
 *.log
 /logs/
+
+# 테스트 설정 파일 제외
+src/test/resources/application-test.yml
