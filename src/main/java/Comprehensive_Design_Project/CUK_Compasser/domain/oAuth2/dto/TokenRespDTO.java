@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.auth.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto;
 
 import lombok.Builder;
 
@@ -6,4 +6,4 @@ import lombok.Builder;
 public record TokenRespDTO (
         String accessToken,
         String refreshToken
-) {}
+) { }

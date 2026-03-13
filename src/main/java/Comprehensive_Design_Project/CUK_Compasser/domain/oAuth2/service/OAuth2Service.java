@@ -3,6 +3,8 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.LoginReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.TokenRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWT;
@@ -18,6 +20,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -45,7 +48,33 @@ public class OAuth2Service {
     private String redirect_uri;
 
     private final JWTProvider jwtProvider;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    // 일반 로그인을 위한 AuthenticationManager 추가
+    private final AuthenticationManager authenticationManager;
+
+    // 일반 로그인 서비스
+    @Transactional
+    public TokenRespDTO login(LoginReqDTO request) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(request.email(), request.password());
+
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+
+        JWT jwt = jwtProvider.generateToken(authentication);
+
+        redisTemplate.opsForValue().set(
+                "refresh:" + authentication.getName(),
+                jwt.getRefreshToken(),
+                7,
+                TimeUnit.DAYS
+        );
+
+        return TokenRespDTO.builder()
+                .accessToken(jwt.getAccessToken())
+                .refreshToken(jwt.getRefreshToken())
+                .build();
+    }
 
     // JWT
     @Transactional

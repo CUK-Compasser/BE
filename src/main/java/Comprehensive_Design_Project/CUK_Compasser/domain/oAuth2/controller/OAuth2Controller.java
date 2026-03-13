@@ -1,6 +1,8 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.LoginReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.TokenRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service.OAuth2Service;
@@ -8,6 +10,7 @@ import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.Cu
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +32,29 @@ public class OAuth2Controller {
     private String redirect_uri;
 
     private final OAuth2Service oAuth2Service;
+
+    public record AccessTokenDTO(String accessToken) {}
+
+    @PostMapping("/login")
+    @Operation(summary = "일반 로그인 API", description = "이메일과 비밀번호를 사용하여 로그인을 진행합니다.")
+    public ApiResponse<AccessTokenDTO> login(
+            @Valid @RequestBody LoginReqDTO request,
+            HttpServletResponse response
+    ) {
+        TokenRespDTO tokenResponse = oAuth2Service.login(request);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenResponse.refreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, new AccessTokenDTO(tokenResponse.accessToken()));
+    }
 
     @PostMapping("/login-kakao")
     @Operation(summary = "카카오 로그인 URL 획득 API", description = "사용자가 이동할 카카오 로그인 동의 페이지 URL를 획득하는 API 입니다.")

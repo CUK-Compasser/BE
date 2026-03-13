@@ -1,4 +1,4 @@
-package Comprehensive_Design_Project.CUK_Compasser.domain.auth.dto;
+package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
