@@ -16,5 +16,6 @@ public class SimpleStoreInfoDTO {
     private Tag tag;
     private String storeName;
     private String roadAddress;
+    private String jibunAddress;
     private JsonNode businessHours;
 }

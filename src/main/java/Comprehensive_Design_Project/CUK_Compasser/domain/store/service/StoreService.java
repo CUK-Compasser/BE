@@ -141,6 +141,7 @@ public class StoreService {
                     .tag(store.getTag())
                     .storeName(store.getStoreName())
                     .roadAddress(store.getRoadAddress())
+                    .jibunAddress(store.getJibunAddress())
                     .businessHours(objectMapper.readTree(store.getBusinessHours())).build();
         } catch (JsonProcessingException e) {
             throw new GeneralException(ErrorStatus.STORE_BUSINESS_HOURS_PARSE_FAILED);
