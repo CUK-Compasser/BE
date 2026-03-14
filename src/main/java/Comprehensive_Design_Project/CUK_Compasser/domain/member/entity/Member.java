@@ -48,7 +48,10 @@ public class Member extends BaseEntity {
     private Role status; // ACTIVE, BLOCKED, DELETED
 
     @Column(name = "member_name", length = 50)
-    private String memberName;
+    private String memberName; // 실명
+
+    @Column(name = "nickname", length = 50)
+    private String nickname; // 닉네임
 
     @Column(length = 20)
     private String phone;
