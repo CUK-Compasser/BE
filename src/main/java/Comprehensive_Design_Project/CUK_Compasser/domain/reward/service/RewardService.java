@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.entity.Re
 import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repository.RewardHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class RewardService {
     /*
     * 사장님 홈 페이지에서 사용할 DTO!
     * */
+    @Transactional(readOnly = true)
     public RewardSummary getStoreRewardInToday (Long storeId){
 
         LocalDateTime start = LocalDate.now().atStartOfDay();
