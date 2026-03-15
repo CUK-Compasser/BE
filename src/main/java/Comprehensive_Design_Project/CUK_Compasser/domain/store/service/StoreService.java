@@ -3,7 +3,6 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -153,8 +152,9 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public void getStoreListByKeyword (){
-
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByKeyword (BigDecimal userLat, BigDecimal userLon, String keyword, int page){
+        List<Store> content = storeRepository.findStoresByKeywordWithinRadius( userLon, userLat, 3000, "%" + keyword + "%", PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(content);
     }
 
 }

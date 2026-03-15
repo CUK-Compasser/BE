@@ -114,14 +114,16 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
     }
 
-    @GetMapping("/{keyword}")
+    @GetMapping("/keyword")
     @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
-    public ApiResponse<StoreRespDTO> getStoreListByKeyword (
-            @PathVariable String keyword
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByKeyword (
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") Integer page
     ){
         // ElasticSearch 를 활용한 검색이 필요?
-        return null;
-
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByKeyword(userLat, userLon, keyword, page));
     }
 
 }

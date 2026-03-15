@@ -60,4 +60,19 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
             @Param("tag") String tag,
             Pageable pageable); // 태그 별 조회 + 반경 + 페이징
 
+    @Query(value = "Select * From stores s " +
+            "Where ST_Distance_Sphere(Point(:userLon, :userLat), Point(s.longitude, s.latitude)) <= :distance " +
+            "And s.store_name like :keyword " +
+            "Order By s.created_at DESC",
+            countQuery = "Select count(*) From stores s " +
+                    "Where ST_Distance_Sphere(Point(:userLon, :userLat), Point(s.longitude, s.latitude)) <= :distance " +
+                    "And s.store_name like :keyword",
+            nativeQuery = true)
+    Page<Store> findStoresByKeywordWithinRadius(
+            @Param("userLon") BigDecimal userLon,
+            @Param("userLat") BigDecimal userLat,
+            @Param("distance") double distanceInMeters,
+            @Param("keyword") String keyword,
+            Pageable pageable); // 가게 이름 조회 + 반경 + 페이징
+
 }
