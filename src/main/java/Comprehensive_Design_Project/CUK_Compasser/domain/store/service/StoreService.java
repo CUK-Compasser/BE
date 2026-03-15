@@ -98,7 +98,7 @@ public class StoreService {
 
     @Transactional (readOnly = true)
     public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(BigDecimal userLat, BigDecimal userLon, int page) {
-        List<Store> storeList = storeRepository.findStoresWithinRadius(userLat, userLon, 3000, PageRequest.of(page, 10)).getContent();
+        List<Store> storeList = storeRepository.findStoresWithinRadius( userLon, userLat, 3000, PageRequest.of(page, 10)).getContent();
 //        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(storeList);
     }
@@ -107,8 +107,8 @@ public class StoreService {
     public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (BigDecimal userLat, BigDecimal userLon, Tag tag, int page){
 //        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
         List<Store> storeList = storeRepository.findStoresByTagWithinRadius(
-                userLat,
                 userLon,
+                userLat,
                 3000,
                 tag.toString(),
                 PageRequest.of(page, 10)).getContent();
