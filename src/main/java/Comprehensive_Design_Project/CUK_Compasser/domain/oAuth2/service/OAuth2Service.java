@@ -1,9 +1,14 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Login;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Role;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.LoginReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.TokenRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -24,6 +29,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class OAuth2Service {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String client_id;
 
@@ -49,9 +56,42 @@ public class OAuth2Service {
 
     private final JWTProvider jwtProvider;
     private final RedisTemplate<String, String> redisTemplate;
-
-    // 일반 로그인을 위한 AuthenticationManager 추가
     private final AuthenticationManager authenticationManager;
+
+    @Transactional
+    public SignUpRespDTO.JoinRespDTO joinMember(SignUpReqDTO.JoinReqDTO joinRequestDTO) {
+
+        // 이메일 중복 확인
+        if (memberRepository.findByEmail(joinRequestDTO.getEmail()).isPresent()) {
+            throw new RuntimeException("이미 존재하는 이메일입니다.");
+        }
+
+        // 비밀번호 일치 확인
+        if(!joinRequestDTO.getPassword().equals(joinRequestDTO.getPasswordConfirm())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        String encodedPassword = passwordEncoder.encode(joinRequestDTO.getPassword());
+
+        Member newMember = Member.builder()
+                .email(joinRequestDTO.getEmail())
+                .password(encodedPassword)
+                .memberName(joinRequestDTO.getMemberName())
+                .nickname(joinRequestDTO.getNickname())
+                // 2. provider를 LOCAL로 수정 (엔티티 정의와 일치)
+                .provider(Login.NORMAL)
+                .role(MemberRole.NORMAL)
+                .status(Role.ACTIVE)
+                .build();
+
+        Member savedMember = memberRepository.save(newMember);
+
+        // 3. 빌더를 통해 생성된 객체 반환
+        return SignUpRespDTO.JoinRespDTO.builder()
+                .memberName(savedMember.getMemberName())
+                .email(savedMember.getEmail())
+                .build();
+    }
 
     // 일반 로그인 서비스
     @Transactional

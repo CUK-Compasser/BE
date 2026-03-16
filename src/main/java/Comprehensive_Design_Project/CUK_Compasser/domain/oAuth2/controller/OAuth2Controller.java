@@ -1,7 +1,10 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.LoginReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.TokenRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/oauth2")
 public class OAuth2Controller {
 
+    private final MemberService memberService;
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String client_id;
 
@@ -34,6 +38,13 @@ public class OAuth2Controller {
     private final OAuth2Service oAuth2Service;
 
     public record AccessTokenDTO(String accessToken) {}
+
+    @PostMapping("/sign-up")
+    @Operation(summary = "일반 회원가입 API", description = "이름, 닉네임, 이메일 등을 입력받아 회원가입을 진행합니다.")
+    public ApiResponse<SignUpRespDTO.JoinRespDTO> signUp(@RequestBody @Valid SignUpReqDTO.JoinReqDTO signUpReqDTO) {
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, oAuth2Service.joinMember(signUpReqDTO));
+    }
+
 
     @PostMapping("/login")
     @Operation(summary = "일반 로그인 API", description = "이메일과 비밀번호를 사용하여 로그인을 진행합니다.")
