@@ -1,12 +1,12 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.AddressDTOs;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.repository.OrderRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -18,10 +18,13 @@ import com.google.zxing.common.BitMatrix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -32,6 +35,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RewardRepository rewardRepository;
     private final OrderRepository orderRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+
+    private static final String ADDRESS_KEY_PREFIX = "address:member";
 
     @Value("aws.host")
     private String AWS_HOST;
@@ -74,15 +80,11 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다."));
 
-        // 2. 적립 현황 통계 합산 (RewardRepository 활용)
-        // 데이터가 아예 없는 신규 유저라도 COALESCE 덕분에 0으로 안전하게 반환됩니다.
         Integer totalStamp = rewardRepository.sumTotalStampsByMemberId(memberId);
         Integer totalUsedCoupon = rewardRepository.sumTotalUsedCouponsByMemberId(memberId);
 
-        // 3. 랜덤박스 언박싱 횟수 (이건 Order 테이블에서 가져온다고 가정)
         Long totalUnboxing = orderRepository.countByMember_IdAndStatus(memberId, OrderStatus.PICKED_UP);
 
-        // 4. DTO 조립
         return MemberRespDTO.MyPageRespDTO.builder()
                 .memberName(member.getMemberName())
                 .nickname(member.getNickname())
@@ -91,6 +93,42 @@ public class MemberService {
                 .totalStampCount(totalStamp != null ? totalStamp : 0)
                 .totalUnboxingCount(totalUnboxing != null ? totalUnboxing.intValue(): 0)
                 .totalCouponCount(totalUsedCoupon != null ? totalUsedCoupon : 0)
+                .build();
+    }
+
+    // 주소 설정 (PATCH)
+    public void updateMemberAddress(Long memberId, AddressDTOs.AddressReqDTO request) {
+        String key = ADDRESS_KEY_PREFIX + memberId;
+
+        // 데이터 포맷: "위도|경도|주소명" 형태로 직렬화하여 저장
+        String value = request.getLatitude() + "|" +
+                request.getLongitude() + "|" +
+                request.getAddressName();
+
+        // 사용자가 앱을 켜두는 동안 유지되도록 7일(TTL) 보관
+        redisTemplate.opsForValue().set(key, value, Duration.ofDays(7));
+    }
+
+    // 주소 조회 (GET)
+    public AddressDTOs.AddressRespDTO getMemberAddress(Long memberId) {
+        String key = ADDRESS_KEY_PREFIX + memberId;
+        String value = redisTemplate.opsForValue().get(key);
+
+        // 설정한 주소가 없는 경우 (최초 접속 시)
+        if (value == null) {
+            return AddressDTOs.AddressRespDTO.builder()
+                    .latitude(null)
+                    .longitude(null)
+                    .addressName("내 주소를 설정해주세요")
+                    .build();
+        }
+
+        // 2. 설정한 주소가 있는 경우 역직렬화하여 반환
+        String[] parts = value.split("\\|");
+        return AddressDTOs.AddressRespDTO.builder()
+                .latitude(new BigDecimal(parts[0]))
+                .longitude(new BigDecimal(parts[1]))
+                .addressName(parts[2]) // 예: "별동네 베이커리카페 별내본점"
                 .build();
     }
 }

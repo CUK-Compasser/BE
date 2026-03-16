@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.controller;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.AddressDTOs;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -13,9 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,5 +57,23 @@ public class MemberController {
     public ApiResponse<MemberRespDTO.MyPageRespDTO> getMyPage (@AuthenticationPrincipal CustomUserDetails userDetails) {
 
         return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getMyPageInfo(userDetails.getMember().getId()));
+    }
+
+    @PatchMapping("address")
+    @Operation(summary = "주소 선택 (설정) API", description = "모달창에서 선택한 주소(위경도 및 텍스트)를 저장합니다.")
+    public ApiResponse<String> updateAddress(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody AddressDTOs.AddressReqDTO request) {
+
+        memberService.updateMemberAddress(userDetails.getMember().getId(), request);
+        return ApiResponse.onSuccess(SuccessStatus.OK, "주소가 성공적으로 설정되었습니다.");
+    }
+
+    @GetMapping("/address")
+    @Operation(summary = "현재 설정 주소 조회 API", description = "메인 화면 좌측 상단에 표시할 현재 주소를 조회합니다.")
+    public ApiResponse<AddressDTOs.AddressRespDTO> getAddress(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getMemberAddress(userDetails.getMember().getId()));
     }
 }
