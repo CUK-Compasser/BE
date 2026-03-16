@@ -53,4 +53,10 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getRewardList(userDetails.getMember().getId()));
     }
 
+    @GetMapping("/my-page")
+    @Operation(summary = "마이페이지 조회 API", description = "로그인한 사용자의 프로필 및 적립 통계를 조회합니다.")
+    public ApiResponse<MemberRespDTO.MyPageRespDTO> getMyPage (@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getMyPageInfo(userDetails.getMember().getId()));
+    }
 }

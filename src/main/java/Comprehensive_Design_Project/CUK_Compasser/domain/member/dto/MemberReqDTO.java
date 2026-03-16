@@ -1,9 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -16,5 +13,14 @@ public class MemberReqDTO {
     public static class MemberCoordinatesDTO {
         private BigDecimal latitude;
         private BigDecimal longitude;
+    }
+
+    // erd 보고 수정
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class UpdateProfileDTO {
+        private String memberName;
+        private String profileImageUrl;
     }
 }

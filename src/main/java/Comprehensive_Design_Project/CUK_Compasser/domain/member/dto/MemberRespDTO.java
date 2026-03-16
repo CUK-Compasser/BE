@@ -45,4 +45,19 @@ public class MemberRespDTO {
         private String storename;
     }
 
+    // erd 보고 수정
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPageRespDTO {
+        private String memberName;
+        private String nickname;
+        private String email;
+        private String profileImageUrl;
+
+        private Integer totalStampCount; // 적립 횟수
+        private Integer totalUnboxingCount; // 랜덤박스 언박싱 횟수
+        private Integer totalCouponCount; // 쿠폰 사용 횟수
+    }
 }

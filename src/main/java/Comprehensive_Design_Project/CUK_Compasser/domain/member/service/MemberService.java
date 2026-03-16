@@ -3,6 +3,8 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
+import Comprehensive_Design_Project.CUK_Compasser.domain.order.repository.OrderRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
@@ -17,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -28,6 +31,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RewardRepository rewardRepository;
+    private final OrderRepository orderRepository;
 
     @Value("aws.host")
     private String AWS_HOST;
@@ -63,5 +67,30 @@ public class MemberService {
         // rewardRepository -> 각 필드와 store_id 갖고 오기 -> store_id를 통한 store 이름 조회 필요
         // DTO 변환, return
         return RewardConverter.toRewardListDTO(rewardRepository.findAllByMember_Id(memberId));
+    }
+
+    @Transactional(readOnly = true)
+    public MemberRespDTO.MyPageRespDTO getMyPageInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다."));
+
+        // 2. 적립 현황 통계 합산 (RewardRepository 활용)
+        // 데이터가 아예 없는 신규 유저라도 COALESCE 덕분에 0으로 안전하게 반환됩니다.
+        Integer totalStamp = rewardRepository.sumTotalStampsByMemberId(memberId);
+        Integer totalUsedCoupon = rewardRepository.sumTotalUsedCouponsByMemberId(memberId);
+
+        // 3. 랜덤박스 언박싱 횟수 (이건 Order 테이블에서 가져온다고 가정)
+        Long totalUnboxing = orderRepository.countByMember_IdAndStatus(memberId, OrderStatus.PICKED_UP);
+
+        // 4. DTO 조립
+        return MemberRespDTO.MyPageRespDTO.builder()
+                .memberName(member.getMemberName())
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .profileImageUrl(null) // 현재 엔티티에 프로필 이미지 필드가 없으므로 null
+                .totalStampCount(totalStamp != null ? totalStamp : 0)
+                .totalUnboxingCount(totalUnboxing != null ? totalUnboxing.intValue(): 0)
+                .totalCouponCount(totalUsedCoupon != null ? totalUsedCoupon : 0)
+                .build();
     }
 }
