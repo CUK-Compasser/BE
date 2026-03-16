@@ -44,5 +44,4 @@ public class MemberRespDTO {
         private Integer points;
         private String storename;
     }
-
 }
