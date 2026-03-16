@@ -16,7 +16,7 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
     @Query("select r from Reward r join fetch Store s where r.member.id = :memberId")
     List<Reward> findAllByMember_Id(Long memberId);
 
-    @Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord(" +
+    /*@Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord(" +
             "m.id, m.nickname, s.id, r.id, r.stamp, r.coupon, r.createdAt) " +
             "FROM Member m " +
             "CROSS JOIN Store s " + // 명시
@@ -25,5 +25,5 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
     Optional<RewardRespRecord> findRewardRecord(
             @Param("memberId") Long memberId,
             @Param("storeManagerId") Long storeManagerId
-    );
+    );*/
 }
