@@ -18,7 +18,8 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
 
     @Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord(" +
             "m.id, m.nickname, s.id, r.id, r.stamp, r.coupon, r.createdAt) " +
-            "FROM Member m, Store s " +
+            "FROM Member m " +
+            "CROSS JOIN Store s " + // 명시
             "LEFT JOIN Reward r ON r.member = m AND r.store = s " +
             "WHERE m.id = :memberId AND s.storeManager.id = :storeManagerId")
     Optional<RewardRespRecord> findRewardRecord(
