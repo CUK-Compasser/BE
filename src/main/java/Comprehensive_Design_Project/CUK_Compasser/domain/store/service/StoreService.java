@@ -3,7 +3,6 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
@@ -99,7 +98,7 @@ public class StoreService {
 
     @Transactional (readOnly = true)
     public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreList(BigDecimal userLat, BigDecimal userLon, int page) {
-        List<Store> storeList = storeRepository.findStoresWithinRadius(userLat, userLon, 3000, PageRequest.of(page, 10)).getContent();
+        List<Store> storeList = storeRepository.findStoresWithinRadius( userLon, userLat, 3000, PageRequest.of(page, 10)).getContent();
 //        List<Store> allByOrderByCreatedAtDesc = storeRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(storeList);
     }
@@ -108,8 +107,8 @@ public class StoreService {
     public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByTag (BigDecimal userLat, BigDecimal userLon, Tag tag, int page){
 //        List<Store> allByTag = storeRepository.findAllByTagOrderByCreatedAtDesc(tag, PageRequest.of(page, 10)).getContent();
         List<Store> storeList = storeRepository.findStoresByTagWithinRadius(
-                userLat,
                 userLon,
+                userLat,
                 3000,
                 tag.toString(),
                 PageRequest.of(page, 10)).getContent();
@@ -141,6 +140,7 @@ public class StoreService {
                     .tag(store.getTag())
                     .storeName(store.getStoreName())
                     .roadAddress(store.getRoadAddress())
+                    .jibunAddress(store.getJibunAddress())
                     .businessHours(objectMapper.readTree(store.getBusinessHours())).build();
         } catch (JsonProcessingException e) {
             throw new GeneralException(ErrorStatus.STORE_BUSINESS_HOURS_PARSE_FAILED);
@@ -153,8 +153,9 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public void getStoreListByKeyword (){
-
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByKeyword (BigDecimal userLat, BigDecimal userLon, String keyword, int page){
+        List<Store> content = storeRepository.findStoresByKeywordWithinRadius( userLon, userLat, 3000, "%" + keyword + "%", PageRequest.of(page, 10)).getContent();
+        return storeConverter.toGetStoreDTOList(content);
     }
 
 }
