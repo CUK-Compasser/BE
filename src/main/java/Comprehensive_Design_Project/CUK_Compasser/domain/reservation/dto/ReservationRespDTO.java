@@ -14,13 +14,21 @@ public class ReservationRespDTO {
     @AllArgsConstructor
     public static class ReservationDTO {
         private Long reservationId;
+
         private Long memberId;
-        private String memberName;
+        private String nickName;
+
         private Long storeId;
         private String storeName;
+
+        private Long randomBoxId;
+        private String randomBoxName;
+        private Integer price;
+
         private ReservationStatus status;
         private Integer requestedQuantity;
         private String rejectReason;
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
     }

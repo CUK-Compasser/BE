@@ -6,6 +6,8 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.Reserva
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final StoreRepository storeRepository;
     private final ReservationConverter reservationConverter;
 
     /**
@@ -34,10 +37,15 @@ public class ReservationServiceImpl implements ReservationService {
      * - memberId를 직접 사용하지 않는 구조라면, 로그인단/상위 계층에서 이미 필터링된 상태여야 한다.
      */
     @Override
+    @Transactional(readOnly = true)
     public ReservationRespDTO.ReservationListDTO getPendingReservations(Long memberId) {
+
+        Store store = storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
         List<Reservation> reservations =
                 reservationRepository.findAllByStore_IdAndStatusOrderByCreatedAtDesc(
-                        memberId, ReservationStatus.REQUESTED
+                        store.getId(), ReservationStatus.REQUESTED
                 );
 
         return reservationConverter.toReservationListDTO(reservations);
@@ -54,7 +62,11 @@ public class ReservationServiceImpl implements ReservationService {
      * - 이 메서드를 그대로 쓰려면 상위에서 실제 storeId를 넘겨주도록 다시 정리하는 것이 가장 안전하다.
      */
     @Override
+    @Transactional(readOnly = true)
     public ReservationRespDTO.ReservationListDTO getProcessedReservations(Long memberId) {
+        Store store = storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
         List<ReservationStatus> processedStatuses = List.of(
                 ReservationStatus.APPROVED,
                 ReservationStatus.REJECTED,
@@ -63,7 +75,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<Reservation> reservations =
                 reservationRepository.findAllByStore_IdAndStatusInOrderByCreatedAtDesc(
-                        memberId, processedStatuses
+                        store.getId(), processedStatuses
                 );
 
         return reservationConverter.toReservationListDTO(reservations);
@@ -78,11 +90,14 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public ReservationRespDTO.ReservationDTO approveReservation(Long reservationId, Long memberId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Store store = storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
+        Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
 
-        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
-            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PROCESSED);
+        if (reservation.getStatus() == ReservationStatus.CANCELED) {
+            throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
         }
 
         reservation.setStatus(ReservationStatus.APPROVED);
@@ -90,7 +105,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservationConverter.toReservationDTO(reservation);
     }
-
     /**
      * 예약 거절
      *
@@ -104,31 +118,22 @@ public class ReservationServiceImpl implements ReservationService {
     @Transactional
     public ReservationRespDTO.ReservationDTO rejectReservation(Long reservationId, Long memberId,
                                                                ReservationReqDTO request) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+        Store store = storeRepository.findByStoreManager_MemberId(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
+        Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
 
-        if (request.getStatus() == null) {
-            throw new GeneralException(ErrorStatus.RESERVATION_STATUS_REQUIRED);
-        }
-
-        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
-            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PROCESSED);
-        }
-
-        if (request.getStatus() == ReservationStatus.APPROVED) {
-            reservation.setStatus(ReservationStatus.APPROVED);
-            reservation.setRejectReason(null);
-
-        } else if (request.getStatus() == ReservationStatus.REJECTED) {
-            if (!StringUtils.hasText(request.getRejectReason())) {
-                throw new GeneralException(ErrorStatus.REJECT_REASON_REQUIRED);
-            }
-            reservation.setStatus(ReservationStatus.REJECTED);
-            reservation.setRejectReason(request.getRejectReason().trim());
-
-        } else {
+        if (reservation.getStatus() == ReservationStatus.CANCELED) {
             throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
         }
+
+        if (!StringUtils.hasText(request.getRejectReason())) {
+            throw new GeneralException(ErrorStatus.REJECT_REASON_REQUIRED);
+        }
+
+        reservation.setStatus(ReservationStatus.REJECTED);
+        reservation.setRejectReason(request.getRejectReason().trim());
 
         return reservationConverter.toReservationDTO(reservation);
     }

@@ -67,7 +67,7 @@ public class ReservationController {
             summary = "예약 거절",
             description = "로그인한 점장의 가게 기준으로 확인 대기중 예약을 거절합니다."
     )
-    @DeleteMapping("/reservations/{reservationId}/reject")
+    @PatchMapping("/reservations/{reservationId}/reject")
     public ApiResponse<ReservationRespDTO.ReservationDTO> rejectReservation(
             @PathVariable Long reservationId,
             @RequestBody ReservationReqDTO request,
