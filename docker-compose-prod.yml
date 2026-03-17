@@ -29,6 +29,7 @@ services:
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=spring-boot"
+
         mode: non-blocking
         max-buffer-size: 4m
     networks:
@@ -119,7 +120,6 @@ services:
     networks:
       - cuk-compasser-net
 
-# AWS 서버 디스크에 생성될 실제 저장 공간 정의
 volumes:
   mysql_data:
   prometheus_data:
