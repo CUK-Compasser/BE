@@ -22,11 +22,15 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+      loki:
+        condition: service_started
     logging:
       driver: loki
       options:
         loki-url: "http://loki:3100/loki/api/v1/push"
         loki-external-labels: "job=spring-boot"
+        mode: non-blocking
+        max-buffer-size: 4m
     networks:
       - cuk-compasser-net
 
