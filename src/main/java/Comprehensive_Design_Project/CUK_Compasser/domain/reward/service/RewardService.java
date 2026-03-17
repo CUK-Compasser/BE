@@ -1,6 +1,8 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reward.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.entity.RewardType;
 import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repository.RewardHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 public class RewardService {
 
     private final RewardHistoryRepository rewardHistoryRepository;
+    private final RewardRepository rewardRepository;
 
 
     /*
@@ -31,5 +34,17 @@ public class RewardService {
 
         return new RewardSummary(earnCount, couponCount);
     }
+
+    @Transactional(readOnly = true)
+    public SummaryMemberReward summaryMemberReward(Long memberId) {
+        // reward -> select sum (r.stamp), sum (r.useCouponCnt) from Reward r where r.member.id = :memberId
+        SummaryMemberReward rewardSummaryByMemberId = rewardRepository.findTotalRewardSummaryByMemberId(memberId);
+
+        // memberId -> select count(o) from Order o where o.member.id = :memberId And o.orderStatus = 'PICKED_UP'
+        Long unboxingCnt = 1L;
+
+        return rewardSummaryByMemberId.withUnboxedCount(unboxingCnt);
+    }
+
 }
 

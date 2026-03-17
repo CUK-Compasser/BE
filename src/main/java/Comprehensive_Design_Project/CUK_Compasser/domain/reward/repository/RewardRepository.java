@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,12 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
             @Param("memberId") Long memberId,
             @Param("storeManagerId") Long storeManagerId
     );*/
+
+    @Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward(" +
+            "COALESCE(SUM(r.stamp), 0), " +
+            "COALESCE(SUM(r.useCouponCnt), 0)) " +
+            "FROM Reward r " +
+            "WHERE r.member.id = :memberId")
+    SummaryMemberReward findTotalRewardSummaryByMemberId(@Param("memberId") Long memberId);
+
 }
