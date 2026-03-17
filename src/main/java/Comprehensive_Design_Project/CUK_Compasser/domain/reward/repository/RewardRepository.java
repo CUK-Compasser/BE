@@ -15,7 +15,6 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
     @Query("select r from Reward r join fetch r.store s where r.member.id = :memberId")
     List<Reward> findAllByMember_Id(@Param("memberId") Long memberId);
 
-
     @Query("SELECT COALESCE(SUM(r.stamp), 0) FROM Reward r WHERE r.member.id = :memberId")
     Integer sumTotalStampsByMemberId(@Param("memberId") Long memberId);
 
