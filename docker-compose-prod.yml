@@ -15,23 +15,24 @@ services:
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
       - SPRING_PROFILES_ACTIVE=prod
+      # application.yml의 변수명(${SPRING_DATA_REDIS_HOST})과 일치시킴
       - SPRING_DATA_REDIS_HOST=redis
       - SPRING_DATA_REDIS_PORT=6379
+      # JWT 및 카카오 설정 (환경변수로 주입)
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_LOGIN_REDIRECT_URI=${KAKAO_LOGIN_REDIRECT_URI}
     depends_on:
       mysql-db:
         condition: service_healthy
       redis:
         condition: service_started
-      loki:
-        condition: service_started
-    logging:
-      driver: loki
-      options:
-        loki-url: "http://loki:3100/loki/api/v1/push"
-        loki-external-labels: "job=spring-boot"
 
-        mode: non-blocking
-        max-buffer-size: 4m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - cuk-compasser-net
 
@@ -115,6 +116,7 @@ services:
     restart: always
     volumes:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/log:/var/log
     command: -config.file=/etc/promtail/config.yml
     networks:
