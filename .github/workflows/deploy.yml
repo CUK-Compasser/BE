@@ -2,7 +2,7 @@ name: Java CI/CD with Docker
 
 on:
   push:
-    branches: [ "deploy" ] 
+    branches: [ "deploy" ]
 
 jobs:
   build-and-push:
@@ -37,7 +37,6 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:latest
             ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:${{ github.sha }}
 
-  # 2. 서버에 배포
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -45,16 +44,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose-prod.yml to EC2
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "docker-compose-prod.yml" # 로컬 파일
-          target: "~/BE"               # 서버 목적지
-
-      - name: Deploy to EC2
+      - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@master
         env:
           IMAGE_TAG: ${{ github.sha }}
@@ -63,16 +53,15 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: IMAGE_TAG
-          debug: true
           script: |
-            mkdir -p ~/BE
             cd ~/BE
 
-            # 네트워크 생성 (네트워크가 존재하지 않을 시)
-            sudo docker network inspect cuk-compasser-net >/dev/null 2>&1 || \
-            sudo docker network create cuk-compasser-net
-            
-            # .env 파일 생성
+            # 1. [핵심] 깃허브의 모든 최신 파일(promtail-config 등) 강제 동기화
+            git fetch --all
+            git reset --hard origin/deploy
+
+            # 2. .env 파일 생성 (보안상 필요한 변수들만 주입)
+            # 기존에 작성하신 echo 방식을 유지하되, 덮어쓰기(>)와 추가(>>)를 구분합니다.
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
@@ -82,21 +71,21 @@ jobs:
             echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "SPRING_PROFILES_ACTIVE=${{ secrets.SPRING_PROFILES_ACTIVE }}" >> .env
-
             echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
             echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
             echo "S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> .env
             echo "GF_SECURITY_ADMIN_PASSWORD=${{secrets.GF_SECURITY_ADMIN_PASSWORD}}" >> .env
-            
             echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> .env
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_LOGIN_REDIRECT_URI=${{ secrets.KAKAO_LOGIN_REDIRECT_URI }}" >> .env
             echo "KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }}" >> .env
             
-            sudo docker-compose -f docker-compose-prod.yml down --remove-orphans
+            # 3. 네트워크 생성 확인
+            sudo docker network inspect cuk-compasser-net >/dev/null 2>&1 || sudo docker network create cuk-compasser-net
             
+            # 4. 이미지 풀 및 서비스 재시작
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/cuk-compasser:$IMAGE_TAG
-            
             sudo IMAGE_TAG=$IMAGE_TAG docker-compose -f docker-compose-prod.yml up -d --force-recreate
             
+            # 5. 미사용 이미지 정리
             sudo docker image prune -f
