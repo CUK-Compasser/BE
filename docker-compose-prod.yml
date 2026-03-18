@@ -22,6 +22,8 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
       - KAKAO_LOGIN_REDIRECT_URI=${KAKAO_LOGIN_REDIRECT_URI}
+      - KAKAO_LOCAL_BASE_URL=https://dapi.kakao.com
+      - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
     depends_on:
       mysql-db:
         condition: service_healthy

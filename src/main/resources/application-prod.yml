@@ -69,6 +69,11 @@ jwt:
   secret:
     key: ${JWT_SECRET_KEY}
 
+kakao:
+  local:
+    base-url: https://dapi.kakao.com
+    rest-api-key: ${KAKAO_REST_API_KEY}
+
 management:
   endpoints:
     web:
