@@ -85,7 +85,17 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_LICENSE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "O002", "사업자등록번호 형식이 올바르지 않습니다."),
     BUSINESS_LICENSE_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "O003", "사업자등록번호가 등록되지 않았습니다."),
     BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 검증이 완료되지 않았습니다."),
-    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다.");
+    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다."),
+
+    // =========================
+    // [Reservation]
+    // =========================
+    RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "R001", "예약을 찾을 수 없습니다."),
+    RESERVATION_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "R002", "이미 처리된 예약입니다."),
+    REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R003", "거절 사유는 필수입니다."),
+    RESERVATION_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "R004", "예약 상태값은 필수입니다."),
+    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
