@@ -9,19 +9,7 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  - job_name: system
-    static_configs:server:
-  http_listen_port: 9080
-  grpc_listen_port: 0
-
-positions:
-  filename: /tmp/positions.yaml
-
-clients:
-  - url: http://loki:3100/loki/api/v1/push
-
-scrape_configs:
-  # 1. 기존 시스템 로그 설정 (유지)
+  # 1. 기존 시스템 로그 (EC2 자체 로그)
   - job_name: system
     static_configs:
       - targets:
@@ -31,24 +19,19 @@ scrape_configs:
           application: compasser-api
           __path__: /var/log/*.log
 
-  # 2. 추가: 도커 컨테이너 로그 설정 (신규)
+  # 2. 도커 컨테이너 로그 (스프링 부트 로그 포함)
   - job_name: docker_logs
     docker_sd_configs:
-      - host: unix:///var/run/docker.sock # 도커 소켓을 통해 컨테이너 정보를 읽음
+      - host: unix:///var/run/docker.sock
         refresh_interval: 5s
     relabel_configs:
-      # 컨테이너 이름을 container_name 라벨로 추출
+      - source_labels: [__meta_docker_container_id]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/$1/*-json.log
       - source_labels: ['__meta_docker_container_name']
         regex: '/(.*)'
         target_label: 'container_name'
-      # cuk-compasser-service 컨테이너의 로그에만 'spring-boot'라는 job 라벨을 부여
       - source_labels: ['__meta_docker_container_name']
         regex: '/cuk-compasser-service'
         target_label: 'job'
         replacement: 'spring-boot'
-      - targets:
-          - localhost
-        labels:
-          job: varlogs
-          application: compasser-api
-          __path__: /var/log/*.log
