@@ -28,7 +28,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cuk_compasser
+    url: jdbc:mysql://localhost:3306/${MYSQL_DB_NAME}
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
 

@@ -11,6 +11,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repositor
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -37,32 +38,21 @@ public class StoreManagerService {
             throw new GeneralException(ErrorStatus.QR_EXPIRED);
         }
 
-        // storeManagerId -> storeRepository 확인
-        Store store = storeRepository.findByStoreManager_Id(storeManagerId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+        return null;
 
-        // Member member = memberRepository.findById(qrDTO.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+/*        RewardRespRecord summary = rewardRepository.findRewardRecord(qrDTO.getMemberId(), storeManagerId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)); // 매장이나 유저가 없을 때
 
-        // 특정 가게에 특정 사용자에 대한 정보 조회 -> rewardRepository 조회 필요
-        Reward reward = rewardRepository.findByMember_IdAndStore_Id(qrDTO.getMemberId(), store.getId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-
-        // null 인 경우 첫 적립 DTO 반환
-        if (reward == null) {
-            return StoreManagerRespDTO.GetMemberRewardDTO.builder()
-                    .rewardId(null)
-                    .storeId(store.getId())
-                    .memberId(qrDTO.getMemberId())
-                    .points(null)
-                    .createdAt(null)
-                    .build();
-        }
-        // null이 아닌 경우 해당 DTO 반환
         return StoreManagerRespDTO.GetMemberRewardDTO.builder()
-                .rewardId(reward.getId())
-                .storeId(store.getId())
-                .memberId(qrDTO.getMemberId())
-                .points(reward.getStamp())
-                .createdAt(reward.getCreatedAt())
-                .build();
+                .rewardId(summary.rewardId()) // 첫 적립이면 null
+                .storeId(summary.storeId())
+                .memberId(summary.memberId())
+                .nickname(summary.nickname())
+                .stamp(summary.rewardId() == null ? 0 : summary.stamp())
+                .coupon(summary.rewardId() == null ? 0 : summary.coupon())
+                .createdAt(summary.createdAt())
+                .build();*/
+
     }
 
     @Transactional

@@ -17,7 +17,9 @@ public class StoreManagerRespDTO {
         private Long rewardId;
         private Long storeId;
         private Long memberId;
-        private Integer points;
+        private String nickname;
+        private Integer stamp;
+        private Integer coupon;
         private LocalDateTime createdAt;
 
     }
