@@ -64,7 +64,7 @@ public class StoreController {
         return storeService.updateLocation(memberId, req);
     }
 
-    @GetMapping("/stores")
+    @GetMapping
     @Operation(summary = "가게 조회 메인 페이지 조회 API", description = "사용자가 로그인 이후 연결되는 메인 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreList (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
@@ -74,7 +74,7 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(userLat, userLon, page));
     }
 
-    @GetMapping("/stores/tag/{tag}")
+    @GetMapping("/tag/{tag}")
     @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
@@ -85,7 +85,7 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(userLat, userLon, tag, page));
     }
 
-    @GetMapping("/stores/university/{university}")
+    @GetMapping("/university/{university}")
     @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByUniversity (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
@@ -102,26 +102,28 @@ public class StoreController {
         return null;
     }
 
-    @GetMapping("/storeId/{storeId}/simple")
+    @GetMapping("/{storeId}/simple")
     @Operation(summary = "가게 단순 조회 API", description = "사용자 원하는 가게 대한 단순 정보를 요청/반환하는 API 입니다.")
     public ApiResponse<SimpleStoreInfoDTO> getStoreSimple (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getSimpleStoreInfo(storeId));
     }
 
-    @GetMapping("/storeId/{storeId}")
+    @GetMapping("/{storeId}")
     @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
     public ApiResponse<StoreRespDTO> getStore (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
     }
 
-    @GetMapping("/{keyword}")
+    @GetMapping("/keyword")
     @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
-    public ApiResponse<StoreRespDTO> getStoreListByKeyword (
-            @PathVariable String keyword
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByKeyword (
+            @RequestParam BigDecimal userLat,
+            @RequestParam BigDecimal userLon,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") Integer page
     ){
         // ElasticSearch 를 활용한 검색이 필요?
-        return null;
-
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByKeyword(userLat, userLon, keyword, page));
     }
 
 }
