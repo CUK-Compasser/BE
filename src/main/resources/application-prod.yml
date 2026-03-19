@@ -34,6 +34,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+      pool-name: HikariPool-1
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
