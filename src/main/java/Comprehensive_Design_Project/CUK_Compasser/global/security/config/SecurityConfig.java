@@ -1,6 +1,8 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.security.config;
 
 import Comprehensive_Design_Project.CUK_Compasser.global.security.filter.JWTAuthenticationFilter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,15 +65,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // prometheus 모니터링 경로는 검사에서 제외
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring()
-                .requestMatchers(
-                        "/actuator/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/favicon.ico"
-                );
-    }
 }

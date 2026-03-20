@@ -136,4 +136,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             throw new GeneralException(GeneralErrorCode.RT_NOT_FOUND);
         }
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        // 이 경로들은 필터 로직을 아예 실행하지 않음
+        return path.startsWith("/actuator")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/favicon.ico");
+    }
 }
