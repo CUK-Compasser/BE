@@ -9,6 +9,7 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
+  # 1. 기존 시스템 로그 (EC2 자체 로그)
   - job_name: system
     static_configs:
       - targets:
@@ -17,3 +18,20 @@ scrape_configs:
           job: varlogs
           application: compasser-api
           __path__: /var/log/*.log
+
+  # 2. 도커 컨테이너 로그 (스프링 부트 로그 포함)
+  - job_name: docker_logs
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+    relabel_configs:
+      - source_labels: [__meta_docker_container_id]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/$1/*-json.log
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container_name'
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/cuk-compasser-service'
+        target_label: 'job'
+        replacement: 'spring-boot'

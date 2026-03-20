@@ -34,6 +34,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+      pool-name: HikariPool-1
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
@@ -68,6 +69,11 @@ spring:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+
+kakao:
+  local:
+    base-url: https://dapi.kakao.com
+    rest-api-key: ${KAKAO_REST_API_KEY}
 
 management:
   endpoints:
