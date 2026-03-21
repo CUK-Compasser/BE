@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
             throw new GeneralException(ErrorStatus.INVALID_ORDER_QUANTITY);
         }
 
-        if (randomBox.getSaleStatus() != SaleStatus.READY) {
+        if (randomBox.getSaleStatus() != SaleStatus.READY) {// 해당 부분 확인 요망
             throw new GeneralException(ErrorStatus.RANDOM_BOX_NOT_ON_SALE);
         }
 
