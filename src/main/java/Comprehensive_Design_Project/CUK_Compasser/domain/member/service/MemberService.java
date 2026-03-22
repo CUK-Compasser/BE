@@ -37,9 +37,6 @@ public class MemberService {
 
     private static final String ADDRESS_KEY_PREFIX = "address:member:";
 
-    @Value("${aws.host}") // 환경변수 주입 형식 수정 (${} 추가)
-    private String AWS_HOST;
-
     public byte[] generateQRCode (Long memberId) {
         int width = 200, height = 200;
         BitMatrix encode = null;
