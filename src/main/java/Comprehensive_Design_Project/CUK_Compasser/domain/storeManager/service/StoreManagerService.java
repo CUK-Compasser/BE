@@ -11,7 +11,6 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repositor
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.RewardRespRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -39,6 +38,8 @@ public class StoreManagerService {
         }
 
         return null;
+
+        ///  TODO 수정 필요
 
 /*        RewardRespRecord summary = rewardRepository.findRewardRecord(qrDTO.getMemberId(), storeManagerId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)); // 매장이나 유저가 없을 때
