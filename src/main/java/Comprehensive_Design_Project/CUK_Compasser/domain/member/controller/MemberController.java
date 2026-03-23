@@ -13,9 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,4 +51,10 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getRewardList(userDetails.getMember().getId()));
     }
 
+    @GetMapping("/my-page")
+    @Operation(summary = "마이페이지 조회 API", description = "로그인한 사용자의 프로필 및 적립 통계를 조회합니다.")
+    public ApiResponse<MemberRespDTO.MyPageRespDTO> getMyPage (@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getMyPageInfo(userDetails.getMember().getId()));
+    }
 }
