@@ -1,9 +1,12 @@
 package Comprehensive_Design_Project.CUK_Compasser.global.security.config;
 
 import Comprehensive_Design_Project.CUK_Compasser.global.security.filter.JWTAuthenticationFilter;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWTProvider;
+import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -19,10 +22,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    @Bean
+    public JWTAuthenticationFilter jwtAuthenticationFilter(JWTProvider jwtProvider, RedisTemplate<String, Object> redisTemplate, CustomUserDetailsService customUserDetailsService) {
+        return new JWTAuthenticationFilter(jwtProvider, redisTemplate, customUserDetailsService);
+    }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JWTAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -51,6 +58,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
