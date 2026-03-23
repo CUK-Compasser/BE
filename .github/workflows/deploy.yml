@@ -55,13 +55,12 @@ jobs:
           envs: IMAGE_TAG
           script: |
             cd ~/BE
-
-            # 1. [핵심] 깃허브의 모든 최신 파일(promtail-config 등) 강제 동기화
+            
+            # 1. 깃허브 최신 파일 동기화
             git fetch --all
             git reset --hard origin/deploy
 
-            # 2. .env 파일 생성 (보안상 필요한 변수들만 주입)
-            # 기존에 작성하신 echo 방식을 유지하되, 덮어쓰기(>)와 추가(>>)를 구분합니다.
+            # 2. .env 파일 생성
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > .env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
@@ -88,32 +87,31 @@ jobs:
             sudo IMAGE_TAG=$IMAGE_TAG docker-compose -f docker-compose-prod.yml up -d --force-recreate
             
             # 5. 미사용 이미지 정리
-            sudo docker image prune -f    
-            
-            # 6. 디스코드 알림 (성공 시)
-            - name: Discord Notification - Success
-              if: success()
-              uses: sarisia/actions-status-discord@v1
-              with:
-                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                status: success
-                title: "🚀 배포 완료 (cuk-compasser)"
-                description: |
-                  **브랜치:** `${{ github.ref_name }}`
-                  **커밋 메시지:** ${{ github.event.head_commit.message }}
-                  **태그:** `${{ github.sha }}`
-                  성공적으로 EC2에 배포되었습니다!
-                color: 0x00ff00
+            sudo docker image prune -f
 
-            # 7. 디스코드 알림 (실패 시)
-            - name: Discord Notification - Failure
-              if: failure()
-              uses: sarisia/actions-status-discord@v1
-              with:
-                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-                status: failure
-                title: "❌ 배포 실패 (cuk-compasser)"
-                description: |
-                  **브랜치:** `${{ github.ref_name }}`
-                  배포 중 에러가 발생했습니다. Actions 탭에서 로그를 확인해주세요.
-                color: 0xff0000
+      # 6. 디스코드 알림 (성공 시) - SSH 액션 밖으로 분리
+      - name: Discord Notification - Success
+        if: success()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: success
+          title: "🚀 배포 완료 (cuk-compasser)"
+          description: |
+            **브랜치:** `${{ github.ref_name }}`
+            **커밋 메시지:** ${{ github.event.head_commit.message }}
+            성공적으로 EC2에 배포되었습니다!
+          color: 0x00ff00
+
+      # 7. 디스코드 알림 (실패 시) - SSH 액션 밖으로 분리
+      - name: Discord Notification - Failure
+        if: failure()
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          status: failure
+          title: "❌ 배포 실패 (cuk-compasser)"
+          description: |
+            **브랜치:** `${{ github.ref_name }}`
+            배포 중 에러가 발생했습니다. Actions 탭에서 로그를 확인해주세요.
+          color: 0xff0000
