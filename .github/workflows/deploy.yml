@@ -88,4 +88,32 @@ jobs:
             sudo IMAGE_TAG=$IMAGE_TAG docker-compose -f docker-compose-prod.yml up -d --force-recreate
             
             # 5. 미사용 이미지 정리
-            sudo docker image prune -f
+            sudo docker image prune -f    
+            
+            # 6. 디스코드 알림 (성공 시)
+            - name: Discord Notification - Success
+              if: success()
+              uses: sarisia/actions-status-discord@v1
+              with:
+                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                status: success
+                title: "🚀 배포 완료 (cuk-compasser)"
+                description: |
+                  **브랜치:** `${{ github.ref_name }}`
+                  **커밋 메시지:** ${{ github.event.head_commit.message }}
+                  **태그:** `${{ github.sha }}`
+                  성공적으로 EC2에 배포되었습니다!
+                color: 0x00ff00
+
+            # 7. 디스코드 알림 (실패 시)
+            - name: Discord Notification - Failure
+              if: failure()
+              uses: sarisia/actions-status-discord@v1
+              with:
+                webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                status: failure
+                title: "❌ 배포 실패 (cuk-compasser)"
+                description: |
+                  **브랜치:** `${{ github.ref_name }}`
+                  배포 중 에러가 발생했습니다. Actions 탭에서 로그를 확인해주세요.
+                color: 0xff0000

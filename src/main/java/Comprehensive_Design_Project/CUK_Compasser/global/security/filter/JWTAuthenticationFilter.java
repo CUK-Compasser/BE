@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
-//@Component -> prometheus 접근을 허용하기 위해 제거
+@Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTProvider jwtProvider;
