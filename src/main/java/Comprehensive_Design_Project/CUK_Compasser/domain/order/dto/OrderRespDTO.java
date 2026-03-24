@@ -26,10 +26,7 @@ public class OrderRespDTO {
         private Integer unitPrice;
         private Integer totalPrice;
 
-        // 사용자 대표 상태
         private String orderStatus;
-
-        // 원본 상태
         private String reservationStatus;
         private String paymentStatus;
         private String pickupStatus;
@@ -50,16 +47,23 @@ public class OrderRespDTO {
     @AllArgsConstructor
     public static class CompleteOrderResultDTO {
         private Long reservationId;
-        private BankType memberBankType;
-
-        // 사용자 대표 상태
         private String orderStatus;
-
-        // 원본 상태
         private String reservationStatus;
         private String paymentStatus;
         private String pickupStatus;
+        private String message;
+    }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CancelOrderResultDTO {
+        private Long reservationId;
+        private String orderStatus;
+        private String reservationStatus;
+        private String paymentStatus;
+        private String pickupStatus;
         private String message;
     }
 
@@ -78,10 +82,7 @@ public class OrderRespDTO {
         private Integer quantity;
         private Integer totalPrice;
 
-        // 사용자에게 보여줄 주문의 대표 상태
         private String orderStatus;
-
-        // DB에 저장될 상태
         private String reservationStatus;
         private String paymentStatus;
         private String pickupStatus;

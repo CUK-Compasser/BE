@@ -16,7 +16,8 @@ public enum SuccessStatus implements BaseSuccessCode {
     // =========================
     ORDER_CREATED(HttpStatus.CREATED, "O2001", "주문 생성에 성공했습니다."),
     ORDER_COMPLETED(HttpStatus.OK, "O2002", "결제 진행 정보 저장에 성공했습니다."),
-    ORDER_STATUS_FOUND(HttpStatus.OK, "O2003", "주문 상태 조회에 성공했습니다.");
+    ORDER_STATUS_FOUND(HttpStatus.OK, "O2003", "주문 상태 조회에 성공했습니다."),
+    ORDER_CANCELED(HttpStatus.OK, "ORDER2004", "주문 취소에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
