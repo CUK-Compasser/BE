@@ -38,13 +38,13 @@ public class OrderController {
         return ApiResponse.onSuccess(SuccessStatus.ORDER_COMPLETED, response);
     }
 
-    @GetMapping("/{orderId}/status")
+    @GetMapping("/{reservationId}/status")
     public ApiResponse<OrderRespDTO.OrderStatusDTO> getOrderStatus(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long orderId
+            @PathVariable Long reservationId
     ) {
         OrderRespDTO.OrderStatusDTO response =
-                orderService.getOrderStatus(userDetails.getMember().getId(), orderId);
+                orderService.getOrderStatus(userDetails.getMember().getId(), reservationId);
         return ApiResponse.onSuccess(SuccessStatus.ORDER_STATUS_FOUND, response);
     }
 }
