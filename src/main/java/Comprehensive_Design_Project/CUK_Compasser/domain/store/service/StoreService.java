@@ -115,7 +115,21 @@ public class StoreService {
         return storeConverter.toGetStoreDTOList(storeList);
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByAddress (Long memberId, String address, Integer page) {
+
+        KakaoAddressSearchRespDTO.Document document = kakaoLocalService.searchAddress(address);
+
+        List<Store> storeList = storeRepository.findStoresWithinRadius(BigDecimal.valueOf(
+                        Double.parseDouble(document.getX())),
+                BigDecimal.valueOf(Double.parseDouble(document.getY())),
+                3000,
+                PageRequest.of(page, 10)).getContent();
+
+        return storeConverter.toGetStoreDTOList(storeList);
+    }
+
+    @Transactional (readOnly = true) // -> 대학교도 '특정 주소'이므로 굳이?
     public List<StoreRespDTO> getStoreListByUniversity (String email, String university){
 
         return null;
