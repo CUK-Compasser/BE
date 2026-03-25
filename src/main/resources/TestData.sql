@@ -60,7 +60,8 @@ VALUES (NOW(), 1, NOW(), NOW(), '111-81-12345'),
 
 -- ---------------------------------------------------------
 -- 3. stores 데이터 삽입 (store_manager_id와 1:1 매칭)
--- userLat: 37.5445, userLon: 127.0560로 !
+-- userLat: 37.5445,
+-- userLon: 127.0560 !
 -- ---------------------------------------------------------
 INSERT INTO stores (latitude, longitude, created_at, updated_at,
     store_manager_id, store_name, store_details,
