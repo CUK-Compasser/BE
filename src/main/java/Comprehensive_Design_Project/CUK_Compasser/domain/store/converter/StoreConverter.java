@@ -63,6 +63,7 @@ public class StoreConverter {
                     .storeId(store.getId()) // 맵 화면에서 사용할 id -> 심플 조회 (바텀시트바) API 에 활용
                     .storeManagerId(store.getStoreManager().getId())
                     .storeName(store.getStoreName())
+                    .storeImage(store.getImages().getFirst().getImageUrl())
                     .tag(store.getTag())
                     .storeDetails(store.getStoreDetails())
                     .latitude(store.getLatitude())  // 맵 화면에서 사용할 위도 -> 심플 조회 (바텀시트바) API 에 활용
