@@ -89,7 +89,7 @@ management:
 
 logging:
   file:
-    name: /var/log/compasser-api.log
+    name: /app/log/compasser-api.log
   logback:
     rollingpolicy:
       max-history: 7

@@ -35,6 +35,10 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+    volumes:
+      - ./logs:/app/logs
+
     networks:
       - cuk-compasser-net
 
@@ -118,9 +122,9 @@ services:
     restart: always
     volumes:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+      - ./logs:/var/log/spring-app:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/config.yml
     networks:
       - cuk-compasser-net

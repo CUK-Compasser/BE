@@ -9,29 +9,32 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  # 1. 기존 시스템 로그 (EC2 자체 로그)
-  - job_name: system
-    static_configs:
-      - targets:
-          - localhost
-        labels:
-          job: varlogs
-          application: compasser-api
-          __path__: /var/log/*.log
-
-  # 2. 도커 컨테이너 로그 (스프링 부트 로그 포함)
-  - job_name: docker_logs
+  # 1. 도커 컨테이너 로그 직접 수집 (강력 추천 방식)
+  - job_name: docker_containers
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 5s
     relabel_configs:
-      - source_labels: [__meta_docker_container_id]
-        target_label: __path__
-        replacement: /var/lib/docker/containers/$1/*-json.log
+      # 컨테이너 이름을 추출해서 'container_name' 라벨로 저장
       - source_labels: ['__meta_docker_container_name']
         regex: '/(.*)'
         target_label: 'container_name'
-      - source_labels: ['__meta_docker_container_name']
-        regex: '/cuk-compasser-service'
+      # 로그 파일 경로 설정
+      - source_labels: [__meta_docker_container_id]
+        target_label: __path__
+        replacement: /var/lib/docker/containers/$1/*-json.log
+      # 특정 컨테이너(cuk-compasser-service)를 'spring-boot' job으로 식별
+      - source_labels: ['container_name']
+        regex: 'cuk-compasser-service'
         target_label: 'job'
         replacement: 'spring-boot'
+
+  # 2. 백업: 파일 직접 수집 (컨테이너 내부 logs 폴더)
+  - job_name: spring-boot-file
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: spring-boot
+          container_name: cuk-compasser-service
+          __path__: /var/log/spring-app/*.log
