@@ -116,7 +116,7 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByAddress (Long memberId, String address, Integer page) {
+    public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByAddress (String address, Integer page) {
 
         KakaoAddressSearchRespDTO.Document document = kakaoLocalService.searchAddress(address);
 

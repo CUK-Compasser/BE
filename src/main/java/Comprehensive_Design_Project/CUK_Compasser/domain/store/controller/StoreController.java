@@ -80,8 +80,7 @@ public class StoreController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String address,
             @RequestParam(defaultValue = "0") Integer page){
-
-
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByAddress( address, page));
     }
 
     @GetMapping("/tag/{tag}")
