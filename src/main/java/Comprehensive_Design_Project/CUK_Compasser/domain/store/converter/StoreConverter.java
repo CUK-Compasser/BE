@@ -60,13 +60,13 @@ public class StoreConverter {
 
         for (Store store : storeList) {
             dtoList.add(StoreRespPagingDTO.GetStoreReqDTO.builder()
-                    .storeId(store.getId())
+                    .storeId(store.getId()) // 맵 화면에서 사용할 id -> 심플 조회 (바텀시트바) API 에 활용
                     .storeManagerId(store.getStoreManager().getId())
                     .storeName(store.getStoreName())
                     .tag(store.getTag())
                     .storeDetails(store.getStoreDetails())
-                    .latitude(store.getLatitude())
-                    .longitude(store.getLongitude())
+                    .latitude(store.getLatitude())  // 맵 화면에서 사용할 위도 -> 심플 조회 (바텀시트바) API 에 활용
+                    .longitude(store.getLongitude())  // 맵 화면에서 사용할 경도 -> 심플 조회 (바텀시트바) API 에 활용
                     .businessHours(toJsonNode(store.getBusinessHours()))
                     .build());
         }
