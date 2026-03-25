@@ -115,7 +115,7 @@ public class StoreController {
     }
 
     @GetMapping("/keyword")
-    @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+    @Operation(summary = "가게 검색 API", description = "사용자가 입력한 키워드를 사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByKeyword (
             @RequestParam BigDecimal userLat,
             @RequestParam BigDecimal userLon,
