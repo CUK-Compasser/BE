@@ -74,7 +74,7 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/code/kakao") // 카카오 회원가입 or 로그인 서비스 == GET 요청
-    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 딱히 접근할 일이 없어요.")
+    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 카카오 서버에서 바로 BE 서버로 리다이렉트 해줘서 딱히 접근할 일이 없어요.")
     public ApiResponse<Object> callback (@RequestParam("code") String code, HttpServletResponse response) {
 
         MemberRespDTO.MemberInfoDTO memberInfo = oAuth2Service.loginWithKakao(code);
@@ -100,6 +100,6 @@ public class OAuth2Controller {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             oAuth2Service.logout(bearerToken.substring(7).trim(), userDetails.getMember().getId());
         }
-        return null; // bool 값 리턴
+        return ApiResponse.onSuccess(SuccessStatus.OK); // bool 값 리턴
     }
 }
