@@ -40,6 +40,13 @@ public class StoreManagerService {
         return null;
 
         ///  TODO 수정 필요
+        /*
+        * 필요 정보
+        * member: nickname, email, stamp, coupon
+        * order: randombox (totalPrice, name)
+        *
+        * 해당 가게에, 해당 member에 대한 마지막 랜덤박스 구매 조회 (createAt, PICKED_UP)
+        * */
 
 /*        RewardRespRecord summary = rewardRepository.findRewardRecord(qrDTO.getMemberId(), storeManagerId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)); // 매장이나 유저가 없을 때
