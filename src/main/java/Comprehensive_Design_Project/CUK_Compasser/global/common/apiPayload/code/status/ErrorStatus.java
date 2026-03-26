@@ -98,6 +98,8 @@ public enum ErrorStatus implements BaseErrorCode {
     REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R003", "거절 사유는 필수입니다."),
     RESERVATION_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "R004", "예약 상태값은 필수입니다."),
     INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다."),
+    RESERVATION_ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "R006", "이미 승인된 예약입니다."),
+    RESERVATION_ALREADY_REJECTED(HttpStatus.BAD_REQUEST, "R007", "이미 거절된 예약입니다."),
 
 
     // =========================

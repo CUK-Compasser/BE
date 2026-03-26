@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.repository.Ra
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.converter.ReservationConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.ReservationReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.ReservationRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PickupStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
@@ -106,31 +107,47 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     @Transactional
     public ReservationRespDTO.ReservationDTO approveReservation(Long reservationId, Long memberId) {
+        // 현재 로그인한 점주의 가게 조회
         Store store = storeRepository.findByStoreManager_MemberId(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
 
+        // 해당 가게의 예약인지 확인하면서 예약 조회
         Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
 
-        // 이미 처리된 예약은 다시 승인할 수 없다.
-        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
+        ReservationStatus currentStatus = reservation.getStatus();
+
+        // 이미 픽업이 끝난 예약은 상태 변경 불가
+        if (reservation.getPickupStatus() == PickupStatus.PICKED_UP) {
+            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PICKED_UP);
+        }
+
+        // 사용자가 취소한 예약은 점주가 다시 처리할 수 없음
+        if (currentStatus == ReservationStatus.CANCELED) {
             throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
         }
 
-        // 승인 시점에 실제 재고를 차감해야 하므로
-        // 동시성 문제를 막기 위해 RandomBox를 락으로 다시 조회한다.
+        // 이미 승인된 예약은 다시 승인하지 않음
+        if (currentStatus == ReservationStatus.APPROVED) {
+            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_APPROVED);
+        }
+
+        // 승인 시점에만 실제 재고를 차감해야 하므로 락을 걸고 랜덤박스 재조회
         RandomBox lockedRandomBox = randomBoxRepository.findWithLockById(reservation.getRandomBox().getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
 
-        // 요청 수량만큼 재고 차감
+        // 재고 차감
+        // 차감 후 0개가 되면 RandomBox 내부에서 자동으로 SOLD_OUT 처리
         lockedRandomBox.decreaseStock(reservation.getRequestedQuantity());
 
         // 예약 승인 처리
         reservation.approve();
 
+        // 승인 후 상품 준비중 상태로 변경
+        reservation.markPreparing();
+
         return reservationConverter.toReservationDTO(reservation);
     }
-
     /**
      * 예약 거절
      *
@@ -155,17 +172,39 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation reservation = reservationRepository.findByIdAndStore_Id(reservationId, store.getId())
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
 
-        // 이미 처리된 예약은 다시 거절할 수 없다.
-        if (reservation.getStatus() != ReservationStatus.REQUESTED) {
-            throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
-        }
+        ReservationStatus currentStatus = reservation.getStatus();
 
-        // 거절 사유는 필수 입력값이다.
-        if (!StringUtils.hasText(request.getRejectReason())) {
+        // 거절 사유 필수
+        if (request.getRejectReason() == null || request.getRejectReason().trim().isEmpty()) {
             throw new GeneralException(ErrorStatus.REJECT_REASON_REQUIRED);
         }
 
-        reservation.reject(request.getRejectReason().trim());
+        // 이미 픽업 완료된 예약은 변경 불가
+        if (reservation.getPickupStatus() == PickupStatus.PICKED_UP) {
+            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PICKED_UP);
+        }
+
+        // 사용자가 이미 취소한 예약은 점주가 건드리지 못하게 막음
+        if (currentStatus == ReservationStatus.CANCELED) {
+            throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
+        }
+
+        // 이미 거절 상태면 중복 거절 방지
+        if (currentStatus == ReservationStatus.REJECTED) {
+            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_REJECTED);
+        }
+
+        // APPROVED -> REJECTED
+        // 승인하면서 차감했던 재고를 복구해야 함
+        if (currentStatus == ReservationStatus.APPROVED) {
+            RandomBox lockedRandomBox = randomBoxRepository.findWithLockById(reservation.getRandomBox().getId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
+
+            lockedRandomBox.increaseStock(reservation.getRequestedQuantity());
+        }
+
+        // REQUESTED -> REJECTED 는 재고 변화 없음
+        reservation.reject(request.getRejectReason());
 
         return reservationConverter.toReservationDTO(reservation);
     }

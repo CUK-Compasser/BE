@@ -109,11 +109,13 @@ public class Reservation extends BaseEntity {
 
     public void approve() {
         this.status = ReservationStatus.APPROVED;
+        this.rejectReason = null;
     }
 
     public void reject(String rejectReason) {
         this.status = ReservationStatus.REJECTED;
         this.rejectReason = rejectReason;
+        this.pickupStatus = PickupStatus.WAITING;
     }
 
     public void confirmDeposit() {
