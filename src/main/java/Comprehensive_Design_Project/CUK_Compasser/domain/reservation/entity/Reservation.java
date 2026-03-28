@@ -7,6 +7,8 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name = "reservations",
@@ -39,7 +41,6 @@ public class Reservation extends BaseEntity {
     private Member member;
 
     // 예약이 속한 스토어
-    // 일단 기존 구조 호환 때문에 유지
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
             name = "store_id",
@@ -57,6 +58,7 @@ public class Reservation extends BaseEntity {
     )
     private RandomBox randomBox;
 
+    // 예약 상태
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 30)
@@ -65,6 +67,28 @@ public class Reservation extends BaseEntity {
     // 사용자가 요청한 수량
     @Column(name = "requested_quantity", nullable = false)
     private Integer requestedQuantity;
+
+    // 총 결제 금액
+    @Column(name = "total_price", nullable = false)
+    private Integer totalPrice;
+
+    @Column(name = "deposit_confirmed_at")
+    private LocalDateTime depositConfirmedAt;
+
+    @Column(name = "picked_up_at")
+    private LocalDateTime pickedUpAt;
+
+    // 결제 상태
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false, length = 30)
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+    // 픽업 상태
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "pickup_status", nullable = false, length = 30)
+    private PickupStatus pickupStatus = PickupStatus.WAITING;
 
     // 거절 사유
     @Column(name = "reject_reason", length = 500)
@@ -75,5 +99,43 @@ public class Reservation extends BaseEntity {
         if (this.status == null) {
             this.status = ReservationStatus.REQUESTED;
         }
+        if (this.paymentStatus == null) {
+            this.paymentStatus = PaymentStatus.PENDING;
+        }
+        if (this.pickupStatus == null) {
+            this.pickupStatus = PickupStatus.WAITING;
+        }
+    }
+
+    public void approve() {
+        this.status = ReservationStatus.APPROVED;
+        this.rejectReason = null;
+    }
+
+    public void reject(String rejectReason) {
+        this.status = ReservationStatus.REJECTED;
+        this.rejectReason = rejectReason;
+        this.pickupStatus = PickupStatus.WAITING;
+    }
+
+    public void confirmDeposit() {
+        this.paymentStatus = PaymentStatus.PAID;
+    }
+
+    public void markPreparing() {
+        this.pickupStatus = PickupStatus.PREPARING;
+    }
+
+    public void markReady() {
+        this.pickupStatus = PickupStatus.READY;
+    }
+
+    public void markPickedUp() {
+        this.pickupStatus = PickupStatus.PICKED_UP;
+    }
+
+    public void cancel(String reason) {
+        this.status = ReservationStatus.CANCELED;
+        this.rejectReason = reason;
     }
 }

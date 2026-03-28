@@ -64,6 +64,9 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_RANDOM_BOX_BUY_LIMIT(HttpStatus.BAD_REQUEST, "RB004", "구매 제한 개수가 올바르지 않습니다."),
     INVALID_RANDOM_BOX_SALE_STATUS(HttpStatus.BAD_REQUEST, "RB005", "랜덤박스 판매 상태가 올바르지 않습니다."),
     RANDOM_BOX_NOT_FOUND(HttpStatus.NOT_FOUND, "RB006", "랜덤박스를 찾을 수 없습니다."),
+    RANDOM_BOX_NOT_ON_SALE(HttpStatus.BAD_REQUEST, "RB007", "판매 중인 랜덤박스가 아닙니다."),
+    RANDOM_BOX_STOCK_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "RB008", "랜덤박스 재고가 부족합니다."),
+    RANDOM_BOX_BUY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RB009", "구매 가능 수량을 초과했습니다."),
 
     // =========================
     // [QRCode]
@@ -94,7 +97,18 @@ public enum ErrorStatus implements BaseErrorCode {
     RESERVATION_ALREADY_PROCESSED(HttpStatus.BAD_REQUEST, "R002", "이미 처리된 예약입니다."),
     REJECT_REASON_REQUIRED(HttpStatus.BAD_REQUEST, "R003", "거절 사유는 필수입니다."),
     RESERVATION_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "R004", "예약 상태값은 필수입니다."),
-    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다.");
+    INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다."),
+    RESERVATION_ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "R006", "이미 승인된 예약입니다."),
+    RESERVATION_ALREADY_REJECTED(HttpStatus.BAD_REQUEST, "R007", "이미 거절된 예약입니다."),
+    RESERVATION_ALREADY_PICKED_UP(HttpStatus.BAD_REQUEST, "R008", "이미 픽업된 예약입니다."),
+
+
+    // =========================
+    // [Order]
+    // =========================
+    INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "O001", "주문 수량이 올바르지 않습니다."),
+    ORDER_ALREADY_PAID(HttpStatus.BAD_REQUEST, "O002", "이미 송금 완료 처리된 주문입니다."),
+    ORDER_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "O003", "현재 상태의 주문은 취소할 수 없습니다.");
 
 
     private final HttpStatus httpStatus;
