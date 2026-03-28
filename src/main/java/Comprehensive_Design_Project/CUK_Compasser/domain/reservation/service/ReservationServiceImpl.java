@@ -15,10 +15,11 @@ import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.config.KakaoPayProperties;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -34,9 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationConverter reservationConverter;
     private final KakaoPayClient kakaoPayClient;
     private final KakaoPayProperties kakaoPayProperties;
-
-    @Lazy
-    private final ReservationServiceImpl self;
+    private final PlatformTransactionManager transactionManager;
 
     @Override
     @Transactional(readOnly = true)
@@ -238,20 +237,24 @@ public class ReservationServiceImpl implements ReservationService {
                     .build();
 
         } catch (GeneralException e) {
-            self.markPaymentFailedInNewTx(reservation.getId());
+            markPaymentFailedInNewTx(reservation.getId());
             throw e;
         } catch (Exception e) {
-            self.markPaymentFailedInNewTx(reservation.getId());
+            markPaymentFailedInNewTx(reservation.getId());
             throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void markPaymentFailedInNewTx(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+    private void markPaymentFailedInNewTx(Long reservationId) {
+        TransactionTemplate txTemplate = new TransactionTemplate(transactionManager);
+        txTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-        reservation.markPaymentFailed();
+        txTemplate.executeWithoutResult(status -> {
+            Reservation failedReservation = reservationRepository.findById(reservationId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+            failedReservation.markPaymentFailed();
+        });
     }
 
     private void validateApproveResponse(Reservation reservation, KakaoPayRespDTO.ApproveResponseDTO response) {
