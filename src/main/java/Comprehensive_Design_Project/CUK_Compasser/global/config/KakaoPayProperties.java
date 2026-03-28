@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "kakaopay")
 public class KakaoPayProperties {
+
     private String cid;
     private String secretKey;
     private String baseUrl;

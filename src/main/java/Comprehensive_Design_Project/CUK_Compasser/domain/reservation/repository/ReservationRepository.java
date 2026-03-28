@@ -37,6 +37,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     boolean existsByRandomBox_IdAndMember_IdAndStatusIn(Long randomBoxId, Long memberId, List<ReservationStatus> statuses);
 
+    Optional<Reservation> findByIdAndMember_Id(Long reservationId, Long memberId);
+
     /// ////////
     @EntityGraph(attributePaths = {
             "member",
@@ -45,4 +47,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "randomBox"
     })
     Optional<Reservation> findByIdAndMember(Long reservationId, Member member);
+
 }

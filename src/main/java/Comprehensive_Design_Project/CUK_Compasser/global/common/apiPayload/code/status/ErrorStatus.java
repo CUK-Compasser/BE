@@ -101,6 +101,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RESERVATION_ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "R006", "이미 승인된 예약입니다."),
     RESERVATION_ALREADY_REJECTED(HttpStatus.BAD_REQUEST, "R007", "이미 거절된 예약입니다."),
     RESERVATION_ALREADY_PICKED_UP(HttpStatus.BAD_REQUEST, "R008", "이미 픽업된 예약입니다."),
+    RESERVATION_ALREADY_PAID(HttpStatus.CONFLICT, "R010", "이미 결제가 완료된 예약입니다."),
 
 
     // =========================
@@ -108,8 +109,18 @@ public enum ErrorStatus implements BaseErrorCode {
     // =========================
     INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "O001", "주문 수량이 올바르지 않습니다."),
     ORDER_ALREADY_PAID(HttpStatus.BAD_REQUEST, "O002", "이미 송금 완료 처리된 주문입니다."),
-    ORDER_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "O003", "현재 상태의 주문은 취소할 수 없습니다.");
+    ORDER_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "O003", "현재 상태의 주문은 취소할 수 없습니다."),
 
+    // =========================
+    // [Payment]
+    // =========================
+    KAKAOPAY_READY_FAILED(HttpStatus.BAD_GATEWAY, "P001", "카카오페이 결제 준비에 실패했습니다."),
+    KAKAOPAY_APPROVE_FAILED(HttpStatus.BAD_GATEWAY, "P002", "카카오페이 결제 승인에 실패했습니다."),
+    PAYMENT_TID_NOT_FOUND(HttpStatus.NOT_FOUND, "P003", "결제 TID를 찾을 수 없습니다."),
+    INVALID_PG_TOKEN(HttpStatus.BAD_REQUEST, "P004", "유효하지 않은 pg_token 입니다."),
+    INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "P005", "현재 결제 상태에서는 요청할 수 없습니다."),
+    INVALID_PAYMENT_AMOUNT(HttpStatus.BAD_REQUEST, "P006", "결제 금액이 주문 금액과 일치하지 않습니다."),
+    INVALID_PAYMENT_INFO(HttpStatus.BAD_REQUEST, "P007", "결제 승인 정보가 올바르지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class KakaoPayWebClientConfig {
 
     @Bean
-    public WebClient kakaoPayWebClient() {
-        return WebClient.builder().build();
+    public WebClient kakaoPayWebClient(WebClient.Builder builder) {
+        return builder.build();
     }
 }

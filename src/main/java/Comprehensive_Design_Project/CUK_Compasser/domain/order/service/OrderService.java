@@ -7,9 +7,7 @@ public interface OrderService {
 
     OrderRespDTO.CreateOrderResultDTO createOrder(Long memberId, OrderReqDTO.CreateOrderDTO request);
 
-    OrderRespDTO.CompleteOrderResultDTO completeOrder(Long memberId, Long orderId);
+    OrderRespDTO.CancelOrderResultDTO cancelOrder(Long memberId, Long orderId);
 
     OrderRespDTO.OrderStatusDTO getOrderStatus(Long memberId, Long orderId);
-
-    OrderRespDTO.CancelOrderResultDTO cancelOrder(Long memberId, Long orderId);
 }
