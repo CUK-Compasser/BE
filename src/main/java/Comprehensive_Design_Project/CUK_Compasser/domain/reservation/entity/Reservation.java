@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
+import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
@@ -93,6 +94,25 @@ public class Reservation extends BaseEntity {
     // 거절 사유
     @Column(name = "reject_reason", length = 500)
     private String rejectReason;
+
+    @Column(name = "payment_tid", length = 100)
+    private String paymentTid;
+
+    @Column(name = "payment_method", length = 30)
+    private String paymentMethod;
+
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
+
+    public void updatePaymentTid(String paymentTid) {
+        this.paymentTid = paymentTid;
+    }
+
+    public void markPaid(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+        this.paidAt = LocalDateTime.now();
+        this.status = OrderStatus.PAID;
+    }
 
     @PrePersist
     protected void prePersist() {
