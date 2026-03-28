@@ -32,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
      * 사용자 주문 생성
      * - 사용자 주문 화면에서 사용할 Reservation 데이터를 생성한다.
      * - 주문 생성 시 예약/결제/픽업 상태의 기본값을 함께 세팅한다.
+     * - 결제는 이후 카카오페이 ready/approve API에서 진행한다.
      */
     @Override
     @Transactional
@@ -52,9 +53,9 @@ public class OrderServiceImpl implements OrderService {
                 .randomBox(randomBox)
                 .requestedQuantity(request.getQuantity())
                 .totalPrice(totalPrice)
-                .status(ReservationStatus.REQUESTED)      // 주문 요청 상태
-                .paymentStatus(PaymentStatus.PENDING)     // 아직 송금 전
-                .pickupStatus(PickupStatus.WAITING)       // 아직 준비 시작 전
+                .status(ReservationStatus.REQUESTED)
+                .paymentStatus(PaymentStatus.PENDING)
+                .pickupStatus(PickupStatus.WAITING)
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -63,34 +64,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 사용자 송금 완료 처리
-     * - 사용자가 '송금 완료' 버튼을 눌렀을 때 결제 상태를 PAID로 변경한다.
-     * - 이미 취소/거절된 주문은 처리할 수 없다.
-     * - 이미 결제 완료된 주문은 중복 처리할 수 없다.
-     */
-    @Override
-    @Transactional
-    public OrderRespDTO.CompleteOrderResultDTO completeOrder(Long memberId, Long orderId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-
-        Reservation reservation = reservationRepository.findByIdAndMember(orderId, member)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
-
-        validateCompleteOrder(reservation);
-
-        reservation.setPaymentStatus(PaymentStatus.PAID);
-
-        return OrderConverter.toCompleteOrderResultDTO(
-                reservation,
-                "송금 완료 처리되었습니다. 사장님의 확인 후 주문이 진행됩니다."
-        );
-    }
-
-    /**
      * 사용자 주문 취소
-     * - 사용자는 아직 점주가 처리하지 않은 REQUESTED 상태의 주문만 취소할 수 있다.
-     * - 취소 시 Reservation 상태를 CANCELED로 변경한다.
+     * - 아직 점주가 처리하지 않은 REQUESTED 상태의 주문만 취소할 수 있다.
+     * - 이미 결제 완료된 주문은 취소할 수 없다.
      */
     @Override
     @Transactional
@@ -104,6 +80,7 @@ public class OrderServiceImpl implements OrderService {
         validateCancelOrder(reservation);
 
         reservation.setStatus(ReservationStatus.CANCELED);
+        reservation.setPaymentStatus(PaymentStatus.CANCELED);
 
         return OrderConverter.toCancelOrderResultDTO(
                 reservation,
@@ -128,10 +105,6 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 주문 생성 가능 여부 검증
-     * - 수량이 1 이상인지 확인
-     * - 랜덤박스가 판매 가능한 상태인지 확인
-     * - 재고가 충분한지 확인
-     * - 구매 제한 수량을 초과하지 않는지 확인
      */
     private void validateCreateOrder(RandomBox randomBox, Integer quantity) {
         if (quantity == null || quantity < 1) {
@@ -152,24 +125,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 송금 완료 처리 가능 여부 검증
-     * - 거절되거나 취소된 주문은 결제 완료 처리할 수 없다.
-     * - 이미 결제 완료된 주문은 중복 처리할 수 없다.
-     */
-    private void validateCompleteOrder(Reservation reservation) {
-        if (reservation.getStatus() == ReservationStatus.REJECTED ||
-                reservation.getStatus() == ReservationStatus.CANCELED) {
-            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PROCESSED);
-        }
-
-        if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
-            throw new GeneralException(ErrorStatus.ORDER_ALREADY_PAID);
-        }
-    }
-
-    /**
      * 주문 취소 가능 여부 검증
      * - 아직 점주가 처리하지 않은 REQUESTED 상태만 취소 가능하다.
+     * - 결제 완료된 예약은 취소 불가
      */
     private void validateCancelOrder(Reservation reservation) {
         if (reservation.getStatus() != ReservationStatus.REQUESTED) {
