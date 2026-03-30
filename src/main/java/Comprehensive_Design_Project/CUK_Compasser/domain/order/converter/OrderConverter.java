@@ -24,7 +24,6 @@ public class OrderConverter {
                 .orderStatus(orderStatus.name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .pickupStatus(reservation.getPickupStatus() != null ? reservation.getPickupStatus().name() : null)
                 .memberBankType(reservation.getMember().getBankType())
                 .depositBankType(reservation.getStore().getStoreManager().getDepositBankType())
                 .depositAccountNumber(reservation.getStore().getStoreManager().getDepositAccountNumber())
@@ -40,7 +39,6 @@ public class OrderConverter {
                 .orderStatus(OrderStatusMapper.resolve(reservation).name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .pickupStatus(reservation.getPickupStatus() != null ? reservation.getPickupStatus().name() : null)
                 .message(message)
                 .build();
     }
@@ -59,7 +57,6 @@ public class OrderConverter {
                 .orderStatus(orderStatus.name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .pickupStatus(reservation.getPickupStatus() != null ? reservation.getPickupStatus().name() : null)
                 .memberBankType(reservation.getMember().getBankType())
                 .depositBankType(reservation.getStore().getStoreManager().getDepositBankType())
                 .depositAccountNumber(reservation.getStore().getStoreManager().getDepositAccountNumber())
@@ -76,7 +73,6 @@ public class OrderConverter {
                 .orderStatus(OrderStatusMapper.resolve(reservation).name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .pickupStatus(reservation.getPickupStatus() != null ? reservation.getPickupStatus().name() : null)
                 .message(message)
                 .build();
     }
