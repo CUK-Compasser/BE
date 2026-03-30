@@ -24,6 +24,7 @@ services:
       - KAKAO_LOGIN_REDIRECT_URI=${KAKAO_LOGIN_REDIRECT_URI}
       - KAKAO_LOCAL_BASE_URL=https://dapi.kakao.com
       - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
+      - JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -41,6 +42,11 @@ services:
 
     networks:
       - cuk-compasser-net
+
+    deploy:
+      resources:
+        limits:
+          memory: 400M
 
   redis:
     image: redis:latest
@@ -68,11 +74,18 @@ services:
     networks:
       - cuk-compasser-net
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER -p$$MYSQL_PASSWORD"]
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -u $$MYSQL_USER -p$$MYSQL_PASSWORD" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
+    command:
+      - --innodb_buffer_pool_size=128M # 데이터를 램에 올려두는 캐시 공간을 128MB로 제한
+      - --max_connections=50           # 동시 접속자(커넥션) 수 50개로 제한
+    deploy:
+      resources:
+        limits:
+          memory: 300M                 # 컨테이너 전체 메모리 상한선
 
   prometheus:
     image: prom/prometheus:latest
