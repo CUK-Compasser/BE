@@ -120,7 +120,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PG_TOKEN(HttpStatus.BAD_REQUEST, "P004", "유효하지 않은 pg_token 입니다."),
     INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "P005", "현재 결제 상태에서는 요청할 수 없습니다."),
     INVALID_PAYMENT_AMOUNT(HttpStatus.BAD_REQUEST, "P006", "결제 금액이 주문 금액과 일치하지 않습니다."),
-    INVALID_PAYMENT_INFO(HttpStatus.BAD_REQUEST, "P007", "결제 승인 정보가 올바르지 않습니다.");
+    INVALID_PAYMENT_INFO(HttpStatus.BAD_REQUEST, "P007", "결제 승인 정보가 올바르지 않습니다."),
+    KAKAOPAY_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "P008", "카카오페이 결제 취소에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

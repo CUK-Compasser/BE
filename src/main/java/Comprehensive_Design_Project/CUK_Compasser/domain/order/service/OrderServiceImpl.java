@@ -8,16 +8,20 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.order.dto.OrderRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.SaleStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.repository.RandomBoxRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.KakaoPayReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.KakaoPayRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PickupStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.service.KakaoPayClient;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
+import Comprehensive_Design_Project.CUK_Compasser.global.config.KakaoPayProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final RandomBoxRepository randomBoxRepository;
     private final ReservationRepository reservationRepository;
+    private final KakaoPayClient kakaoPayClient;
+    private final KakaoPayProperties kakaoPayProperties;
 
     /**
      * 사용자 주문 생성
@@ -55,7 +61,6 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(totalPrice)
                 .status(ReservationStatus.REQUESTED)
                 .paymentStatus(PaymentStatus.PENDING)
-                .pickupStatus(PickupStatus.WAITING)
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -66,7 +71,8 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 사용자 주문 취소
      * - 아직 점주가 처리하지 않은 REQUESTED 상태의 주문만 취소할 수 있다.
-     * - 이미 결제 완료된 주문은 취소할 수 없다.
+     * - 결제 전 주문은 paymentStatus 를 CANCELED 로 변경한다.
+     * - 이미 결제 완료된 주문은 카카오 결제 취소(환불) 후 paymentStatus 를 REFUNDED 로 변경한다.
      */
     @Override
     @Transactional
@@ -79,8 +85,14 @@ public class OrderServiceImpl implements OrderService {
 
         validateCancelOrder(reservation);
 
+        if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
+            cancelKakaoPayPayment(reservation);
+            reservation.markRefunded();
+        } else {
+            reservation.setPaymentStatus(PaymentStatus.CANCELED);
+        }
+
         reservation.setStatus(ReservationStatus.CANCELED);
-        reservation.setPaymentStatus(PaymentStatus.CANCELED);
 
         return OrderConverter.toCancelOrderResultDTO(
                 reservation,
@@ -127,15 +139,40 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 주문 취소 가능 여부 검증
      * - 아직 점주가 처리하지 않은 REQUESTED 상태만 취소 가능하다.
-     * - 결제 완료된 예약은 취소 불가
+     * - 이미 취소되었거나 환불 완료된 주문은 다시 취소할 수 없다.
      */
     private void validateCancelOrder(Reservation reservation) {
         if (reservation.getStatus() != ReservationStatus.REQUESTED) {
-            throw new GeneralException(ErrorStatus.INVALID_RESERVATION_STATUS);
+            throw new GeneralException(ErrorStatus.ORDER_CANCEL_NOT_ALLOWED);
         }
 
-        if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
-            throw new GeneralException(ErrorStatus.ORDER_ALREADY_PAID);
+        if (reservation.getPaymentStatus() == PaymentStatus.REFUNDED ||
+                reservation.getPaymentStatus() == PaymentStatus.CANCELED) {
+            throw new GeneralException(ErrorStatus.ORDER_CANCEL_NOT_ALLOWED);
+        }
+    }
+
+    /**
+     * 카카오페이 결제 취소(환불)
+     * - 이미 결제 완료된 reservation 에 대해서만 호출한다.
+     * - 카카오 취소 응답의 tid 가 기존 결제 tid 와 일치하는지 검증한다.
+     */
+    private void cancelKakaoPayPayment(Reservation reservation) {
+        if (!StringUtils.hasText(reservation.getPaymentTid())) {
+            throw new GeneralException(ErrorStatus.PAYMENT_TID_NOT_FOUND);
+        }
+
+        KakaoPayReqDTO.CancelReqDTO request = KakaoPayReqDTO.CancelReqDTO.builder()
+                .cid(kakaoPayProperties.getCid())
+                .tid(reservation.getPaymentTid())
+                .cancel_amount(reservation.getTotalPrice())
+                .cancel_tax_free_amount(0)
+                .build();
+
+        KakaoPayRespDTO.CancelRespDTO response = kakaoPayClient.cancel(request);
+
+        if (response == null || !reservation.getPaymentTid().equals(response.getTid())) {
+            throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
         }
     }
 }

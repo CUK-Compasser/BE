@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reservation.controller;
 
+import Comprehensive_Design_Project.CUK_Compasser.global.common.properties.AppProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,16 @@ import java.net.URI;
 @RequestMapping("/payments/kakaopay")
 public class KakaoPayCallbackController {
 
+    private final AppProperties appProperties;
+
     @GetMapping("/success")
     public ResponseEntity<Void> success(
             @RequestParam Long reservationId,
             @RequestParam("pg_token") String pgToken
     ) {
         URI redirectUri = URI.create(
-                "http://localhost:3000/payment/success?reservationId=" + reservationId + "&pg_token=" + pgToken
+                appProperties.getFrontendBaseUrl() +
+                        "/payment/success?reservationId=" + reservationId + "&pg_token=" + pgToken
         );
 
         return ResponseEntity.status(302)
@@ -29,7 +33,8 @@ public class KakaoPayCallbackController {
     @GetMapping("/cancel")
     public ResponseEntity<Void> cancel(@RequestParam Long reservationId) {
         URI redirectUri = URI.create(
-                "http://localhost:3000/payment/cancel?reservationId=" + reservationId
+                appProperties.getFrontendBaseUrl() +
+                        "/payment/cancel?reservationId=" + reservationId
         );
 
         return ResponseEntity.status(302)
@@ -40,7 +45,8 @@ public class KakaoPayCallbackController {
     @GetMapping("/fail")
     public ResponseEntity<Void> fail(@RequestParam Long reservationId) {
         URI redirectUri = URI.create(
-                "http://localhost:3000/payment/fail?reservationId=" + reservationId
+                appProperties.getFrontendBaseUrl() +
+                        "/payment/fail?reservationId=" + reservationId
         );
 
         return ResponseEntity.status(302)
