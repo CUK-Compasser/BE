@@ -74,8 +74,17 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreList(userLat, userLon, page));
     }
 
+    @GetMapping("/address")
+    @Operation(summary = "특정 주소 기준 가게 조회 API", description = "사용자가 입력한 특정 주소를 기준으로 하는 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
+    public ApiResponse<Object> getStoreListByAddress(
+            /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
+            @RequestParam String address,
+            @RequestParam(defaultValue = "0") Integer page){
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByAddress(address, page));
+    }
+
     @GetMapping("/tag/{tag}")
-    @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다.")
+    @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다. ")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
             @RequestParam BigDecimal userLat,
@@ -85,8 +94,10 @@ public class StoreController {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(userLat, userLon, tag, page));
     }
 
-    @GetMapping("/university/{university}")
-    @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
+
+    /* 대학교도 특정 주소이므로, 해당 API는 안 쓸 듯? */
+//    @GetMapping("/university/{university}")
+//    @Operation(summary = "대학교 반경 가게 조회 API", description = "사용자가 고른 대학교를 기준으로 반경의 가게를 조회하는 API 입니다.")
     public ApiResponse<List<StoreRespDTO>> getStoreListByUniversity (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
             @RequestBody StoreReqDTO.StoreReqWithCoordinateAndTagDTO dto,
@@ -103,19 +114,19 @@ public class StoreController {
     }
 
     @GetMapping("/{storeId}/simple")
-    @Operation(summary = "가게 단순 조회 API", description = "사용자 원하는 가게 대한 단순 정보를 요청/반환하는 API 입니다.")
+    @Operation(summary = "가게 단순 조회 API", description = "사용자 원하는 가게 대한 단순 정보를 요청/반환하는 API 입니다. 화면 기준 핀 클릭해서 나오게 되는 바텀 시트 바용 API 입니다!")
     public ApiResponse<SimpleStoreInfoDTO> getStoreSimple (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getSimpleStoreInfo(storeId));
     }
 
     @GetMapping("/{storeId}")
-    @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+    @Operation(summary = "가게 상세 조회 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다. 바텀 시트 바에서 상점 보러가기를 통해 상세 정보를 받는 API 입니다!")
     public ApiResponse<StoreRespDTO> getStore (@PathVariable Long storeId){
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreInfo(storeId));
     }
 
-    @GetMapping("/keyword")
-    @Operation(summary = "가게 검색 API", description = "사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다.")
+//    @GetMapping("/keyword")
+//    @Operation(summary = "가게 검색 API", description = "사용자가 입력한 키워드를 사용자 원하는 가게 대한 상세 정보를 요청/반환하는 API 입니다. 이건 제가 착각해서 가게 이름을 사용자가 '직접' 입력해서 검색하는 API로 만들어놔서 안쓸 것 같아요...")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByKeyword (
             @RequestParam BigDecimal userLat,
             @RequestParam BigDecimal userLon,

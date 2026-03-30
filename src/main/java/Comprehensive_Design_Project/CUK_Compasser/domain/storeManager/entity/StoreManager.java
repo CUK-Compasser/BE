@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.BankType;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
@@ -36,6 +37,16 @@ public class StoreManager extends BaseEntity {
 
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "deposit_bank_type", length = 30)
+    private BankType depositBankType;
+
+    @Column(name = "deposit_account_number", length = 50)
+    private String depositAccountNumber;
+
+    @Column(name = "deposit_account_holder", length = 50)
+    private String depositAccountHolder;
 
     @OneToOne(mappedBy = "storeManager", fetch = FetchType.LAZY)
     private Store store;

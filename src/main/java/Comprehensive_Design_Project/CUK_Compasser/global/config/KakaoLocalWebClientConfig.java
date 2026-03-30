@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class KakaoWebClientConfig {
+public class KakaoLocalWebClientConfig {
 
     @Value("${kakao.local.base-url}")
     private String baseUrl;

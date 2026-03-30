@@ -16,6 +16,7 @@ public class StoreRespPagingDTO {
         private Long storeId;
         private Long storeManagerId;
         private String storeName;
+        private String storeImage;
         private Tag tag;
         private String storeDetails;
         private BigDecimal latitude;

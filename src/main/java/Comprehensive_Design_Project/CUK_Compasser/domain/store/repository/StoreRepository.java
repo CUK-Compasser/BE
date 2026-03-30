@@ -56,7 +56,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findStoresByTagWithinRadius(
             @Param("userLon") BigDecimal userLon,
             @Param("userLat") BigDecimal userLat,
-            @Param("distance") double distanceInMeters,
+            @Param("distance") double distance,
             @Param("tag") String tag,
             Pageable pageable); // 태그 별 조회 + 반경 + 페이징
 
@@ -71,7 +71,7 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     Page<Store> findStoresByKeywordWithinRadius(
             @Param("userLon") BigDecimal userLon,
             @Param("userLat") BigDecimal userLat,
-            @Param("distance") double distanceInMeters,
+            @Param("distance") double distance,
             @Param("keyword") String keyword,
             Pageable pageable); // 가게 이름 조회 + 반경 + 페이징
 

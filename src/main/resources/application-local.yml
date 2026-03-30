@@ -106,6 +106,13 @@ kakao:
     base-url: https://dapi.kakao.com
     rest-api-key: ${KAKAO_REST_API_KEY}
 
+kakaopay:
+  cid: TC0ONETIME
+  secret-key: ${KAKAOPAY_SECRET_KEY_DEV}
+  base-url: https://open-api.kakaopay.com
+  approval-url: https://compasser.co.kr/payments/kakaopay/success
+  cancel-url: https://compasser.co.kr/payments/kakaopay/cancel
+  fail-url: https://compasser.co.kr/payments/kakaopay/fail
 
 springdoc:
   packages-to-scan: Comprehensive_Design_Project.CUK_Compasser
