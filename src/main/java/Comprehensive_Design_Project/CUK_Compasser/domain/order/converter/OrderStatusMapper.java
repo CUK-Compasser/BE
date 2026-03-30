@@ -2,7 +2,6 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.order.converter;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PickupStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 
@@ -37,25 +36,11 @@ public class OrderStatusMapper {
 
         ReservationStatus reservationStatus = reservation.getStatus();
         PaymentStatus paymentStatus = reservation.getPaymentStatus();
-        PickupStatus pickupStatus = reservation.getPickupStatus();
 
         // 사용자가 취소했거나 점주가 거절한 경우
         if (reservationStatus == ReservationStatus.CANCELED ||
                 reservationStatus == ReservationStatus.REJECTED) {
             return OrderStatus.CANCELED;
-        }
-
-        // 픽업 상태 우선 반영
-        if (pickupStatus == PickupStatus.PICKED_UP) {
-            return OrderStatus.PICKED_UP;
-        }
-
-        if (pickupStatus == PickupStatus.READY) {
-            return OrderStatus.READY;
-        }
-
-        if (pickupStatus == PickupStatus.PREPARING) {
-            return OrderStatus.PREPARING;
         }
 
         // 결제 완료

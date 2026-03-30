@@ -11,7 +11,6 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.repository.Ra
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.KakaoPayReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.KakaoPayRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PickupStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
@@ -62,7 +61,6 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(totalPrice)
                 .status(ReservationStatus.REQUESTED)
                 .paymentStatus(PaymentStatus.PENDING)
-                .pickupStatus(PickupStatus.WAITING)
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);

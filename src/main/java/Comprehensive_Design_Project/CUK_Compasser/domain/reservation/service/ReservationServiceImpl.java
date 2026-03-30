@@ -8,7 +8,6 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.KakaoPa
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.ReservationReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.dto.ReservationRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PickupStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
@@ -110,7 +109,6 @@ public class ReservationServiceImpl implements ReservationService {
         lockedRandomBox.decreaseStock(reservation.getRequestedQuantity());
 
         reservation.approve();
-        reservation.markPreparing();
 
         return reservationConverter.toReservationDTO(reservation);
     }
@@ -132,10 +130,6 @@ public class ReservationServiceImpl implements ReservationService {
 
         if (request.getRejectReason() == null || request.getRejectReason().trim().isEmpty()) {
             throw new GeneralException(ErrorStatus.REJECT_REASON_REQUIRED);
-        }
-
-        if (reservation.getPickupStatus() == PickupStatus.PICKED_UP) {
-            throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PICKED_UP);
         }
 
         if (reservation.getStatus() == ReservationStatus.CANCELED ||

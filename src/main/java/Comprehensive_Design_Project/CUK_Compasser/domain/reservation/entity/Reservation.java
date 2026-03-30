@@ -75,11 +75,6 @@ public class Reservation extends BaseEntity {
     @Column(name = "payment_status", nullable = false, length = 30)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
-    // 픽업 상태
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pickup_status", nullable = false, length = 30)
-    private PickupStatus pickupStatus = PickupStatus.WAITING;
 
     // 거절/취소 사유
     @Column(name = "reject_reason", length = 500)
@@ -104,9 +99,6 @@ public class Reservation extends BaseEntity {
         }
         if (this.paymentStatus == null) {
             this.paymentStatus = PaymentStatus.PENDING;
-        }
-        if (this.pickupStatus == null) {
-            this.pickupStatus = PickupStatus.WAITING;
         }
     }
 
@@ -154,11 +146,6 @@ public class Reservation extends BaseEntity {
     public void reject(String rejectReason) {
         this.status = ReservationStatus.REJECTED;
         this.rejectReason = rejectReason;
-        this.pickupStatus = PickupStatus.WAITING;
-    }
-
-    public void markPreparing() {
-        this.pickupStatus = PickupStatus.PREPARING;
     }
 
     public void markRefunded() {
