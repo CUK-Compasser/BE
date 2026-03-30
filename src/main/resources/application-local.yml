@@ -114,5 +114,8 @@ kakaopay:
   cancel-url: https://compasser.co.kr/payments/kakaopay/cancel
   fail-url: https://compasser.co.kr/payments/kakaopay/fail
 
+app:
+  frontend-base-url: https://www.compasser.co.kr
+
 springdoc:
   packages-to-scan: Comprehensive_Design_Project.CUK_Compasser

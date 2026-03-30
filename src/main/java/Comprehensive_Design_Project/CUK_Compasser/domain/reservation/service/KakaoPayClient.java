@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 @Slf4j
 @Component
@@ -54,16 +55,77 @@ public class KakaoPayClient {
 
     public KakaoPayRespDTO.ApproveResponseDTO approve(KakaoPayReqDTO.ApproveRequestDTO request) {
         try {
-            return kakaoPayWebClient.post()
+            log.info("[KakaoPayClient] approve 호출 시작 - url={}, cid={}, tid={}, partnerOrderId={}, partnerUserId={}, pgToken={}",
+                    kakaoPayProperties.getBaseUrl() + "/online/v1/payment/approve",
+                    request.getCid(),
+                    request.getTid(),
+                    request.getPartner_order_id(),
+                    request.getPartner_user_id(),
+                    request.getPg_token());
+
+            KakaoPayRespDTO.ApproveResponseDTO response = kakaoPayWebClient.post()
                     .uri(kakaoPayProperties.getBaseUrl() + "/online/v1/payment/approve")
                     .header(HttpHeaders.AUTHORIZATION, "SECRET_KEY " + kakaoPayProperties.getSecretKey())
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(KakaoPayRespDTO.ApproveResponseDTO.class)
-                    .block();
-        } catch (Exception e) {
+                    .block(java.time.Duration.ofSeconds(10));
+
+            if (response == null) {
+                log.error("[KakaoPayClient] approve 응답이 null");
+                throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
+            }
+
+            log.info("[KakaoPayClient] approve 호출 성공 - tid={}, partnerOrderId={}, approvedAt={}",
+                    response.getTid(), response.getPartner_order_id(), response.getApproved_at());
+
+            return response;
+
+        } catch (WebClientResponseException e) {
+            log.error("[KakaoPayClient] approve 실패 - status={}, body={}",
+                    e.getStatusCode(), e.getResponseBodyAsString(), e);
             throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
+
+        } catch (Exception e) {
+            log.error("[KakaoPayClient] approve 호출 중 예외", e);
+            throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
+        }
+    }
+
+    public KakaoPayRespDTO.CancelRespDTO cancel(KakaoPayReqDTO.CancelReqDTO request) {
+        try {
+            log.info("[KakaoPayClient] cancel 호출 시작 - url={}, cid={}, tid={}, cancelAmount={}",
+                    kakaoPayProperties.getBaseUrl() + "/online/v1/payment/cancel",
+                    request.getCid(),
+                    request.getTid(),
+                    request.getCancel_amount());
+
+            KakaoPayRespDTO.CancelRespDTO response = kakaoPayWebClient.post()
+                    .uri(kakaoPayProperties.getBaseUrl() + "/online/v1/payment/cancel")
+                    .header(HttpHeaders.AUTHORIZATION, "SECRET_KEY " + kakaoPayProperties.getSecretKey())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(request)
+                    .retrieve()
+                    .bodyToMono(KakaoPayRespDTO.CancelRespDTO.class)
+                    .block(java.time.Duration.ofSeconds(10));
+
+            if (response == null) {
+                log.error("[KakaoPayClient] cancel 응답이 null");
+                throw new GeneralException(ErrorStatus.KAKAOPAY_CANCEL_FAILED);
+            }
+
+            log.info("[KakaoPayClient] cancel 호출 성공 - tid={}", response.getTid());
+            return response;
+
+        } catch (WebClientResponseException e) {
+            log.error("[KakaoPayClient] cancel 실패 - status={}, body={}",
+                    e.getStatusCode(), e.getResponseBodyAsString(), e);
+            throw new GeneralException(ErrorStatus.KAKAOPAY_CANCEL_FAILED);
+
+        } catch (Exception e) {
+            log.error("[KakaoPayClient] cancel 호출 중 예외", e);
+            throw new GeneralException(ErrorStatus.KAKAOPAY_CANCEL_FAILED);
         }
     }
 }

@@ -4,6 +4,8 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -159,8 +161,10 @@ public class Reservation extends BaseEntity {
         this.pickupStatus = PickupStatus.PREPARING;
     }
 
-    public void markPickedUp() {
-        this.pickupStatus = PickupStatus.PICKED_UP;
-        this.pickedUpAt = LocalDateTime.now();
+    public void markRefunded() {
+        if (this.paymentStatus != PaymentStatus.PAID) {
+            throw new GeneralException(ErrorStatus.INVALID_PAYMENT_STATUS);
+        }
+        this.paymentStatus = PaymentStatus.REFUNDED;
     }
 }

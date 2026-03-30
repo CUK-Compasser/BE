@@ -64,4 +64,16 @@ public class KakaoPayRespDTO {
         private String paymentStatus;
         private String approvedAt;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CancelRespDTO {
+        private String aid;
+        private String tid;
+        private String cid;
+        private String status;
+        private String canceled_at;
+    }
 }

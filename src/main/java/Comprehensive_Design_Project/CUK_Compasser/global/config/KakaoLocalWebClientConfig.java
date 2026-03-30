@@ -18,9 +18,6 @@ public class KakaoLocalWebClientConfig {
 
     @Bean
     public WebClient kakaoLocalWebClient(WebClient.Builder builder) {
-        System.out.println("[Kakao] restApiKey prefix = " +
-                (restApiKey == null ? "null" : restApiKey.substring(0, Math.min(6, restApiKey.length()))));
-
         return builder
                 .baseUrl(baseUrl)
                 .defaultHeader("Authorization", "KakaoAK " + restApiKey.trim())
