@@ -1,12 +1,11 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.OwnerBusinessVerifyReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.OwnerUpgradeRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.StoreImage;
-import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreImageRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity.StoreManager;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
@@ -23,16 +22,17 @@ import java.time.LocalDateTime;
 public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
 
     private static final String DEFAULT_STORE_NAME = "미등록 매장";
-    private static final String DEFAULT_STORE_IMAGE_URL = "https://example.com/default-store.png";
 
     private final MemberRepository memberRepository;
     private final StoreManagerRepository storeManagerRepository;
     private final StoreRepository storeRepository;
-    private final StoreImageRepository storeImageRepository;
+
+    // 추후 국세청 진위확인 클라이언트 주입
+    // private final NtsBusinessVerifyClient ntsBusinessVerifyClient;
 
     /**
-     * ✅ (옵션) "승격만" 수행하는 기존 API용
-     * - 이제는 사업자 검증이 되어있는지(verifiedAt) 체크하고 승격/생성 처리
+     * 기존 승격 API
+     * - 이미 사업자 검증이 완료된 사용자만 점장 승격 가능
      */
     @Override
     @Transactional
@@ -52,23 +52,34 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
     }
 
     /**
-     * ✅ 화면용 원스텝: 사업자번호 검증 + 점장승격 + store/storeImage 자동 생성(멱등)
+     * 사업자 진위확인 + 점장 승격
+     * - 사업자등록번호, 대표자명, 개업일자를 이용해 외부 API 검증 후 승격 처리
      */
     @Override
     @Transactional
-    public OwnerUpgradeRespDTO verifyBusinessLicenseAndUpgrade(Long memberId, String businessLicenseNumber) {
+    public OwnerUpgradeRespDTO verifyBusinessLicenseAndUpgrade(Long memberId, OwnerBusinessVerifyReqDTO request) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        String bizNo = normalizeBizNo(businessLicenseNumber);
+        String bizNo = normalizeBizNo(request.getBusinessLicenseNumber());
         validateBizNoFormat(bizNo);
+        validateStartDateFormat(request.getStartDate());
+        validateOwnerName(request.getOwnerName());
 
-        // (선택) 외부 검증 붙일 자리
-        // boolean valid = externalBizVerifier.verify(bizNo);
-        // if (!valid) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_VERIFY_FAILED);
+        // 실제 국세청 진위확인 API 연동 시 사용
+        // boolean valid = ntsBusinessVerifyClient.verify(
+        //         bizNo,
+        //         request.getStartDate(),
+        //         request.getOwnerName(),
+        //         request.getBusinessName()
+        // );
+        //
+        // if (!valid) {
+        //     throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_VERIFY_FAILED);
+        // }
 
-        // ✅ store_manager upsert (없으면 생성, 있으면 업데이트)
+        // store_manager upsert
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
                 .orElseGet(() -> storeManagerRepository.save(
                         StoreManager.builder()
@@ -78,7 +89,6 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                                 .build()
                 ));
 
-        // 정책: 이미 존재하면 번호/검증시간 갱신 허용 (원하면 "이미 등록됨"으로 막을 수도 있음)
         storeManager.setBusinessLicenseNumber(bizNo);
         storeManager.setVerifiedAt(LocalDateTime.now());
 
@@ -86,19 +96,17 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
     }
 
     /**
-     * ✅ 공통: role=STORE_MANAGER 승격 + store/storeImage 멱등 생성
-     * - 이미 STORE_MANAGER면 alreadyUpgraded=true 반환
+     * 공통 처리
+     * - 점장 권한 승격
+     * - 매장 없으면 기본 매장 생성
      */
     private OwnerUpgradeRespDTO upgradeAndProvision(Member member, StoreManager storeManager) {
 
         Long memberId = member.getId();
-
         boolean alreadyUpgraded = (member.getRole() == MemberRole.STORE_MANAGER);
 
-        // ✅ role 승격(멱등)
         member.setRole(MemberRole.STORE_MANAGER);
 
-        // ✅ store 멱등 생성
         Store store = storeRepository.findByStoreManager_MemberId(memberId)
                 .orElseGet(() -> storeRepository.save(
                         Store.builder()
@@ -119,14 +127,46 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                 .build();
     }
 
+    /**
+     * 사업자등록번호 숫자만 남기기
+     */
     private String normalizeBizNo(String bizNo) {
         if (bizNo == null) return null;
-        return bizNo.replaceAll("\\D", ""); // 숫자만 남김
+        return bizNo.replaceAll("\\D", "");
     }
 
+    /**
+     * 사업자등록번호 형식 검증
+     */
     private void validateBizNoFormat(String bizNo) {
-        if (bizNo == null) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_REQUIRED);
-        if (bizNo.length() != 10) throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_INVALID_FORMAT);
+        if (bizNo == null) {
+            throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_REQUIRED);
+        }
+        if (bizNo.length() != 10) {
+            throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_INVALID_FORMAT);
+        }
+    }
+
+    /**
+     * 개업일자 형식 검증
+     * - yyyyMMdd 8자리 숫자
+     */
+    private void validateStartDateFormat(String startDate) {
+        if (isBlank(startDate)) {
+            throw new GeneralException(ErrorStatus.BUSINESS_OPEN_DATE_REQUIRED);
+        }
+        if (!startDate.matches("^\\d{8}$")) {
+            throw new GeneralException(ErrorStatus.BUSINESS_OPEN_DATE_INVALID_FORMAT);
+        }
+    }
+
+    /**
+     * 대표자명 검증
+     */
+    private void validateOwnerName(String ownerName) {
+        if (isBlank(ownerName)) {
+            throw new GeneralException(ErrorStatus.OWNER_NAME_REQUIRED);
+        }
     }
 
     private boolean isBlank(String s) {
