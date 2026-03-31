@@ -87,8 +87,11 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_LICENSE_REQUIRED(HttpStatus.BAD_REQUEST, "O001", "사업자등록번호를 입력해주세요."),
     BUSINESS_LICENSE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "O002", "사업자등록번호 형식이 올바르지 않습니다."),
     BUSINESS_LICENSE_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "O003", "사업자등록번호가 등록되지 않았습니다."),
-    BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 검증이 완료되지 않았습니다."),
-    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다."),
+    BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 진위확인이 완료되지 않았습니다."),
+    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 진위확인에 실패했습니다."),
+    BUSINESS_OPEN_DATE_REQUIRED(HttpStatus.BAD_REQUEST, "B005", "개업일자는 필수입니다."),
+    BUSINESS_OPEN_DATE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "B006", "개업일자 형식이 올바르지 않습니다. yyyyMMdd 형식이어야 합니다."),
+    OWNER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "B007", "대표자명은 필수입니다."),
 
     // =========================
     // [Reservation]
