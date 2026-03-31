@@ -33,7 +33,6 @@ public class OrderReqDTO {
         // 실제 DB 상태값
         private String reservationStatus;
         private String paymentStatus;
-        private String pickupStatus;
 
         private String message;
     }

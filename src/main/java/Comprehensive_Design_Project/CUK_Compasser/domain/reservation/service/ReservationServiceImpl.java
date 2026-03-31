@@ -84,7 +84,6 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * 점장 예약 수락
      * - 선결제 후 수락 정책이므로 PAID 상태인 예약만 수락 가능하다.
-     * - 수락 시 재고 차감 + pickupStatus 를 PREPARING 으로 변경한다.
      */
     @Override
     @Transactional
@@ -151,6 +150,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         // 이미 결제 완료된 예약을 점장이 거절하면 환불 처리
         if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
+            validateRefundable(reservation);
             cancelKakaoPayPayment(reservation);
             reservation.markRefunded();
         }
@@ -374,4 +374,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
         }
     }
+
+    private void validateRefundable(Reservation reservation) {
+        if (Boolean.TRUE.equals(reservation.getSettled())) {
+            throw new GeneralException(ErrorStatus.REFUND_NOT_ALLOWED_AFTER_SETTLEMENT);
+        }
+    }
+
+
 }

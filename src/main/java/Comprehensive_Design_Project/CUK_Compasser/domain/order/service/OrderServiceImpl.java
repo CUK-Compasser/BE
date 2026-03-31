@@ -86,12 +86,12 @@ public class OrderServiceImpl implements OrderService {
         validateCancelOrder(reservation);
 
         if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
+            validateRefundable(reservation);
             cancelKakaoPayPayment(reservation);
             reservation.markRefunded();
         } else {
             reservation.setPaymentStatus(PaymentStatus.CANCELED);
         }
-
         reservation.setStatus(ReservationStatus.CANCELED);
 
         return OrderConverter.toCancelOrderResultDTO(
@@ -173,6 +173,12 @@ public class OrderServiceImpl implements OrderService {
 
         if (response == null || !reservation.getPaymentTid().equals(response.getTid())) {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
+        }
+    }
+
+    private void validateRefundable(Reservation reservation) {
+        if (Boolean.TRUE.equals(reservation.getSettled())) {
+            throw new GeneralException(ErrorStatus.REFUND_NOT_ALLOWED_AFTER_SETTLEMENT);
         }
     }
 }
