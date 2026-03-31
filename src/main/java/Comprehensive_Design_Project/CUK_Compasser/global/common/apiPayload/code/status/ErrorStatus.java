@@ -100,7 +100,6 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_RESERVATION_STATUS(HttpStatus.BAD_REQUEST, "R005", "변경할 수 없는 예약 상태입니다."),
     RESERVATION_ALREADY_APPROVED(HttpStatus.BAD_REQUEST, "R006", "이미 승인된 예약입니다."),
     RESERVATION_ALREADY_REJECTED(HttpStatus.BAD_REQUEST, "R007", "이미 거절된 예약입니다."),
-    RESERVATION_ALREADY_PICKED_UP(HttpStatus.BAD_REQUEST, "R008", "이미 픽업된 예약입니다."),
     RESERVATION_ALREADY_PAID(HttpStatus.CONFLICT, "R010", "이미 결제가 완료된 예약입니다."),
 
 
@@ -121,7 +120,15 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_PAYMENT_STATUS(HttpStatus.BAD_REQUEST, "P005", "현재 결제 상태에서는 요청할 수 없습니다."),
     INVALID_PAYMENT_AMOUNT(HttpStatus.BAD_REQUEST, "P006", "결제 금액이 주문 금액과 일치하지 않습니다."),
     INVALID_PAYMENT_INFO(HttpStatus.BAD_REQUEST, "P007", "결제 승인 정보가 올바르지 않습니다."),
-    KAKAOPAY_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "P008", "카카오페이 결제 취소에 실패했습니다.");
+    KAKAOPAY_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "P008", "카카오페이 결제 취소에 실패했습니다."),
+
+    // =========================
+    // [Settlement]
+    // =========================
+    ALREADY_SETTLED(HttpStatus.BAD_REQUEST, "S001", "이미 정산 완료된 주문입니다."),
+    REFUND_NOT_ALLOWED_AFTER_SETTLEMENT(HttpStatus.BAD_REQUEST, "S002", "정산 완료된 주문은 환불할 수 없습니다."),
+    SETTLEMENT_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "S003", "정산 대상 주문이 없습니다."),
+    INVALID_SETTLEMENT_REQUEST(HttpStatus.BAD_REQUEST, "S004", "정산 요청이 올바르지 않습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -55,7 +55,6 @@ public class RewardService {
         // reward -> select sum (r.stamp), sum (r.useCouponCnt) from Reward r where r.member.id = :memberId
         SummaryMemberReward rewardSummaryByMemberId = rewardRepository.findTotalRewardSummaryByMemberId(memberId);
 
-        // memberId -> select count(o) from Order o where o.member.id = :memberId And o.orderStatus = 'PICKED_UP'
         Long unboxingCnt = 1L;
 
         return rewardSummaryByMemberId.withUnboxedCount(unboxingCnt);

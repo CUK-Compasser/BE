@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -40,4 +41,37 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     })
     Optional<Reservation> findByIdAndMember(Long reservationId, Member member);
 
+    // =========================
+    // Settlement
+    // =========================
+
+    /**
+     * 정산 대상 조회
+     * - 점장 본인 가게의 주문 중
+     *   APPROVED + PAID + settled = false 인 주문만 조회한다.
+     */
+    @EntityGraph(attributePaths = {
+            "member",
+            "store",
+            "store.storeManager",
+            "randomBox"
+    })
+    List<Reservation> findAllByStore_IdAndStatusAndPaymentStatusAndSettledFalseOrderByCreatedAtAsc(
+            Long storeId,
+            ReservationStatus status,
+            PaymentStatus paymentStatus
+    );
+
+    /**
+     * 정산 완료 처리 대상 조회
+     * - 요청으로 들어온 reservationIds 중
+     *   해당 점장 가게에 속한 주문만 조회한다.
+     */
+    @EntityGraph(attributePaths = {
+            "member",
+            "store",
+            "store.storeManager",
+            "randomBox"
+    })
+    List<Reservation> findAllByIdInAndStore_Id(List<Long> reservationIds, Long storeId);
 }

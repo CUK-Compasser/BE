@@ -29,7 +29,6 @@ public class OrderRespDTO {
         private String orderStatus;
         private String reservationStatus;
         private String paymentStatus;
-        private String pickupStatus;
 
         private BankType memberBankType;
 
@@ -50,7 +49,6 @@ public class OrderRespDTO {
         private String orderStatus;
         private String reservationStatus;
         private String paymentStatus;
-        private String pickupStatus;
         private String message;
     }
 
@@ -63,7 +61,6 @@ public class OrderRespDTO {
         private String orderStatus;
         private String reservationStatus;
         private String paymentStatus;
-        private String pickupStatus;
         private String message;
     }
 
@@ -85,7 +82,6 @@ public class OrderRespDTO {
         private String orderStatus;
         private String reservationStatus;
         private String paymentStatus;
-        private String pickupStatus;
 
         private BankType memberBankType;
 

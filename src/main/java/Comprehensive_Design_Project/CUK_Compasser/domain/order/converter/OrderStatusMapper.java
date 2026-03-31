@@ -26,7 +26,7 @@ public class OrderStatusMapper {
     /**
      * 사용자 주문 화면에 표시할 대표 상태를 계산하는 클래스
      *
-     * 실제 상태 원천은 ReservationStatus, PaymentStatus, PickupStatus이며,
+     * 실제 상태 원천은 ReservationStatus, PaymentStatus이며,
      * OrderStatus는 다른 코드와의 호환을 위해 대표 상태로만 사용한다.
      */
     public static OrderStatus resolve(Reservation reservation) {

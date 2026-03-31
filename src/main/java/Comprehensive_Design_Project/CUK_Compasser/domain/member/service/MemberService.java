@@ -70,7 +70,6 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다."));
 
         RewardSummary rewardSummary = rewardRepository.getRewardSummaryByMemberId(memberId);
-        Long totalUnboxing = orderRepository.countByMember_IdAndStatus(memberId, OrderStatus.PICKED_UP);
 
         return MemberRespDTO.MyPageRespDTO.builder()
                 .memberName(member.getMemberName())
@@ -79,7 +78,6 @@ public class MemberService {
                 .profileImageUrl(null) // 현재는 null 값
                 .totalStampCount((int) rewardSummary.earnCount())   // long -> int
                 .totalCouponCount((int) rewardSummary.couponCount()) // long -> int
-                .totalUnboxingCount(totalUnboxing != null ? totalUnboxing.intValue() : 0)
                 .build();
     }
 }

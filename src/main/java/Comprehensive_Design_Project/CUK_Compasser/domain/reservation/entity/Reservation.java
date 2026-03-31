@@ -65,10 +65,6 @@ public class Reservation extends BaseEntity {
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    // 픽업 완료 시각
-    @Column(name = "picked_up_at")
-    private LocalDateTime pickedUpAt;
-
     // 결제 상태
     @Builder.Default
     @Enumerated(EnumType.STRING)
@@ -91,6 +87,21 @@ public class Reservation extends BaseEntity {
     // 실제 결제 완료 시각
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean settled = false;
+
+    private LocalDateTime settledAt;
+
+    public void markSettled() {
+        if (Boolean.TRUE.equals(this.settled)) {
+            throw new GeneralException(ErrorStatus.ALREADY_SETTLED);
+        }
+        this.settled = true;
+        this.settledAt = LocalDateTime.now();
+    }
+
 
     @PrePersist
     protected void prePersist() {
@@ -151,6 +162,9 @@ public class Reservation extends BaseEntity {
     public void markRefunded() {
         if (this.paymentStatus != PaymentStatus.PAID) {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_STATUS);
+        }
+        if (Boolean.TRUE.equals(this.settled)) {
+            throw new GeneralException(ErrorStatus.REFUND_NOT_ALLOWED_AFTER_SETTLEMENT);
         }
         this.paymentStatus = PaymentStatus.REFUNDED;
     }
