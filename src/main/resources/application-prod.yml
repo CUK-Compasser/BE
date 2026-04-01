@@ -35,9 +35,14 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       pool-name: HikariPool-1
+  # 다음 배포 때는 never로 바꿔서 중복 삽입 에러 방지
+  sql:
+    init:
+      mode: always
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: false
