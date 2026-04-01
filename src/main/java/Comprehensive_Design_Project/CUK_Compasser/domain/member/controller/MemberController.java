@@ -36,8 +36,8 @@ public class MemberController {
     * 브라우저가 인식하려면, Content-Type 필요해서....
     */
     @GetMapping(value = "/qr/test", produces = MediaType.IMAGE_PNG_VALUE)
-    @Operation(summary = "QR 코드 이미지 직접 확인용 (테스트용)", description = "브라우저에서 바로 이미지를 볼 수 있도록 하는 테스트용 API")
-    public ResponseEntity<Resource> getRewardQRTest(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    @Operation(summary = "QR 코드 생성 API", description = "사용자 id 값을 기준으로 QR 코드를 생성하는 API 입니다. 공통 응답으로 통일하려고 했으나, Http Header의 contentType을 설정해야 되서 기본 ResponseEntity를 활용했습니다... 관련 사항은 김석현한테 문의주세요!")
+    public ResponseEntity<Resource> getRewardQR(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Resource resource = new ByteArrayResource(memberService.generateQRCode(userDetails.getMember().getId()));
 //        log.info("bytes = {}", bytes);
         return ResponseEntity.ok()

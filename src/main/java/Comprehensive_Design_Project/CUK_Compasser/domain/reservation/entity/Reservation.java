@@ -4,6 +4,8 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.BaseEntity;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -63,21 +65,12 @@ public class Reservation extends BaseEntity {
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
-    // 픽업 완료 시각
-    @Column(name = "picked_up_at")
-    private LocalDateTime pickedUpAt;
-
     // 결제 상태
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false, length = 30)
     private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
-    // 픽업 상태
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    @Column(name = "pickup_status", nullable = false, length = 30)
-    private PickupStatus pickupStatus = PickupStatus.WAITING;
 
     // 거절/취소 사유
     @Column(name = "reject_reason", length = 500)
@@ -95,6 +88,21 @@ public class Reservation extends BaseEntity {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean settled = false;
+
+    private LocalDateTime settledAt;
+
+    public void markSettled() {
+        if (Boolean.TRUE.equals(this.settled)) {
+            throw new GeneralException(ErrorStatus.ALREADY_SETTLED);
+        }
+        this.settled = true;
+        this.settledAt = LocalDateTime.now();
+    }
+
+
     @PrePersist
     protected void prePersist() {
         if (this.status == null) {
@@ -102,9 +110,6 @@ public class Reservation extends BaseEntity {
         }
         if (this.paymentStatus == null) {
             this.paymentStatus = PaymentStatus.PENDING;
-        }
-        if (this.pickupStatus == null) {
-            this.pickupStatus = PickupStatus.WAITING;
         }
     }
 
@@ -152,15 +157,15 @@ public class Reservation extends BaseEntity {
     public void reject(String rejectReason) {
         this.status = ReservationStatus.REJECTED;
         this.rejectReason = rejectReason;
-        this.pickupStatus = PickupStatus.WAITING;
     }
 
-    public void markPreparing() {
-        this.pickupStatus = PickupStatus.PREPARING;
-    }
-
-    public void markPickedUp() {
-        this.pickupStatus = PickupStatus.PICKED_UP;
-        this.pickedUpAt = LocalDateTime.now();
+    public void markRefunded() {
+        if (this.paymentStatus != PaymentStatus.PAID) {
+            throw new GeneralException(ErrorStatus.INVALID_PAYMENT_STATUS);
+        }
+        if (Boolean.TRUE.equals(this.settled)) {
+            throw new GeneralException(ErrorStatus.REFUND_NOT_ALLOWED_AFTER_SETTLEMENT);
+        }
+        this.paymentStatus = PaymentStatus.REFUNDED;
     }
 }

@@ -19,7 +19,7 @@ public class StoreManagerController {
 
     private final StoreManagerService storeManagerService;
 
-    @GetMapping("/qr-check")
+    @PostMapping("/qr-check")
     @Operation(summary = "사장님 - QR 촬영", description = "사장님이 QR 찍었을 때 해당 사용자 정보 불러오는 API입니다.")
     public ApiResponse<StoreManagerRespDTO.GetMemberRewardDTO> checkingQR (
             @AuthenticationPrincipal CustomUserDetails userDetails,

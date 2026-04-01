@@ -32,4 +32,15 @@ public class KakaoPayReqDTO {
         private String partner_user_id;
         private String pg_token;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CancelReqDTO {
+        private String cid;
+        private String tid;
+        private Integer cancel_amount;
+        private Integer cancel_tax_free_amount;
+    }
 }

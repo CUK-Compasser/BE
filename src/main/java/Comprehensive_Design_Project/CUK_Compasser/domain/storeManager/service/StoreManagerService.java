@@ -4,12 +4,16 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.repository.ReservationRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.entity.RewardHistory;
 import Comprehensive_Design_Project.CUK_Compasser.domain.rewardHistory.repository.RewardHistoryRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.converter.StoreManagerConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
@@ -27,6 +31,7 @@ public class StoreManagerService {
     private final StoreRepository storeRepository;
     private final RewardRepository rewardRepository;
     private final RewardHistoryRepository  rewardHistoryRepository;
+    private final ReservationRepository reservationRepository;
     private final RedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
@@ -37,22 +42,19 @@ public class StoreManagerService {
             throw new GeneralException(ErrorStatus.QR_EXPIRED);
         }
 
-        return null;
+        ///  쿼리를 4번이나 쓰고 있음, DTO Projection 필요
+
+        Store store = storeRepository.findByStoreManager_Id(storeManagerId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
+        Member member = memberRepository.findById(qrDTO.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
+        Reward reward = rewardRepository.findByMember_IdAndStore_Id(member.getId(), store.getId()).orElseThrow(() -> new GeneralException(ErrorStatus.REWARD_NOT_FOUND));
+
+        Reservation reservation = reservationRepository.findByMember_IdAndStore_IdAndStatus(member.getId(), store.getId(), ReservationStatus.APPROVED);
+
+        return StoreManagerConverter.toGetMemberRewardDTO(member, store, reservation, reward);
 
         ///  TODO 수정 필요
-
-/*        RewardRespRecord summary = rewardRepository.findRewardRecord(qrDTO.getMemberId(), storeManagerId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)); // 매장이나 유저가 없을 때
-
-        return StoreManagerRespDTO.GetMemberRewardDTO.builder()
-                .rewardId(summary.rewardId()) // 첫 적립이면 null
-                .storeId(summary.storeId())
-                .memberId(summary.memberId())
-                .nickname(summary.nickname())
-                .stamp(summary.rewardId() == null ? 0 : summary.stamp())
-                .coupon(summary.rewardId() == null ? 0 : summary.coupon())
-                .createdAt(summary.createdAt())
-                .build();*/
 
     }
 
