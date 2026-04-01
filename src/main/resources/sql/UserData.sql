@@ -1,7 +1,7 @@
 -- ---------------------------------------------------------
 -- 1. members 데이터 삽입 (ID 1~40)
 -- ---------------------------------------------------------
-INSERT INTO members (created_at, updated_at, email, member_name, password, phone, provider, provider_id, role, status)
+INSERT IGNORE INTO members (created_at, updated_at, email, member_name, password, phone, provider, provider_id, role, status)
 VALUES (NOW(), NOW(), 'manager1@test.com', '성수매니저', 'password', '010-1111-1111', 'NORMAL', NULL, 'STORE_MANAGER', 'ACTIVE'),
        (NOW(), NOW(), 'manager2@test.com', '강남매니저', 'password', '010-2222-2222', 'NORMAL', NULL, 'STORE_MANAGER','ACTIVE'),
        (NOW(), NOW(), 'manager3@test.com', '연남매니저', 'password', '010-3333-3333', 'NORMAL', NULL, 'STORE_MANAGER','ACTIVE'),
