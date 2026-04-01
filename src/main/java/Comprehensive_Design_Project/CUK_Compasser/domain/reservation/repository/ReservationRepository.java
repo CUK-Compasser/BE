@@ -4,8 +4,10 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.PaymentStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,4 +76,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "randomBox"
     })
     List<Reservation> findAllByIdInAndStore_Id(List<Long> reservationIds, Long storeId);
+
+    @Query("select r from Reservation r join fetch r.randomBox where r.member.id = :memberId and r.store.id = :storeId " +
+            "and r.status = :status order by r.createdAt desc limit 1")
+    Reservation findByMember_IdAndStore_IdAndStatus(@Param("memberId") Long memberId,
+                                                    @Param("storeId") Long storeId,
+                                                    @Param("status") ReservationStatus status);
 }

@@ -18,9 +18,10 @@ public class StoreManagerRespDTO {
         private Long storeId;
         private Long memberId;
         private String nickname;
+        private String email;
+        private String randomBoxName;
+        private Integer totalPrice;
         private Integer stamp;
         private Integer coupon;
-        private LocalDateTime createdAt;
-
     }
 }
