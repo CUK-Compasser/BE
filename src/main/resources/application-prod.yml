@@ -39,6 +39,10 @@ spring:
   sql:
     init:
       mode: always
+      data-locations:
+        - classpath:sql/UserData.sql
+        - classpath:sql/StoreDataInsertSQL.sql
+        - classpath:sql/RandomBoxDataInsertSQL.sql
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
