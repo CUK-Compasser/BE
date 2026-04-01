@@ -76,7 +76,7 @@ public class StoreController {
 
     @GetMapping("/address")
     @Operation(summary = "특정 주소 기준 가게 조회 API", description = "사용자가 입력한 특정 주소를 기준으로 하는 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
-    public ApiResponse<Object> getStoreListByAddress(
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByAddress(
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
             @RequestParam String address,
             @RequestParam(defaultValue = "0") Integer page){
