@@ -46,7 +46,7 @@ VALUES (NOW(), NOW(), 'manager1@test.com', '성수매니저', 'password', '010-1
 -- ---------------------------------------------------------
 -- 2. store_managers 데이터 삽입 (member_id와 1:1 매칭)
 -- ---------------------------------------------------------
-INSERT INTO store_managers (created_at, member_id, updated_at, verified_at, business_license_number)
+INSERT IGNORE INTO store_managers (created_at, member_id, updated_at, verified_at, business_license_number)
 VALUES (NOW(), 1, NOW(), NOW(), '111-81-12345'),
        (NOW(), 2, NOW(), NOW(), '222-82-23456'),
        (NOW(), 3, NOW(), NOW(), '333-83-34567'),
