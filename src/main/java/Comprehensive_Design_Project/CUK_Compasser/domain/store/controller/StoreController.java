@@ -76,7 +76,7 @@ public class StoreController {
 
     @GetMapping("/address")
     @Operation(summary = "특정 주소 기준 가게 조회 API", description = "사용자가 입력한 특정 주소를 기준으로 하는 가게 조회 API로, createdAt 기준 페이지네이션으로 10개 씩 반환하는 API 입니다.")
-    public ApiResponse<Object> getStoreListByAddress(
+    public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByAddress(
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
             @RequestParam String address,
             @RequestParam(defaultValue = "0") Integer page){
@@ -84,12 +84,12 @@ public class StoreController {
     }
 
     @GetMapping("/tag/{tag}")
-    @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다. ")
+    @Operation(summary = "태그 별 가게 조회 API", description = "사용자가 고른 태그를 기준으로 가게를 페이지네이션 조회를 하는 API 입니다. PathVariable로 /tag/CAFE 형식입니다")
     public ApiResponse<List<StoreRespPagingDTO.GetStoreReqDTO>> getStoreListByTag (
             /*@AuthenticationPrincipal CustomUserDetails userDetails,*/
-            @RequestParam BigDecimal userLat,
-            @RequestParam BigDecimal userLon,
-            @RequestParam Tag tag,
+            @RequestParam ("userLat") BigDecimal userLat,
+            @RequestParam ("userLon")BigDecimal userLon,
+            @PathVariable Tag tag,
             @RequestParam(defaultValue = "0") Integer page) {
         return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreListByTag(userLat, userLon, tag, page));
     }
