@@ -12,12 +12,13 @@ RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar -x test
 
 # 2. 실행 스테이지
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
-
+RUN apk add --no-cache tzdata
 ENV TZ=Asia/Seoul
+
+COPY --from=build /app/build/libs/*SNAPSHOT.jar app.jar
 
 # 실행 시 'prod' 프로파일 활성화
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]

@@ -17,7 +17,6 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,7 +70,6 @@ public class MemberService {
                 .orElseThrow(() -> new RuntimeException("해당 회원을 찾을 수 없습니다."));
 
         RewardSummary rewardSummary = rewardRepository.getRewardSummaryByMemberId(memberId);
-        Long totalUnboxing = orderRepository.countByMember_IdAndStatus(memberId, OrderStatus.PICKED_UP);
 
         return MemberRespDTO.MyPageRespDTO.builder()
                 .memberName(member.getMemberName())
@@ -80,7 +78,6 @@ public class MemberService {
                 .profileImageUrl(null) // 현재는 null 값
                 .totalStampCount((int) rewardSummary.earnCount())   // long -> int
                 .totalCouponCount((int) rewardSummary.couponCount()) // long -> int
-                .totalUnboxingCount(totalUnboxing != null ? totalUnboxing.intValue() : 0)
                 .build();
     }
 }

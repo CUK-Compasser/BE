@@ -56,6 +56,10 @@ public class Member extends BaseEntity {
     @Column(length = 20)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "bank_type", length = 30)
+    private BankType bankType;
+
     /** 점장 승격 시 생성되는 1:1 */
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreManager storeManager;

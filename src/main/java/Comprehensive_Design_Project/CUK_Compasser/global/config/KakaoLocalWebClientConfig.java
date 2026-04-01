@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class KakaoWebClientConfig {
+public class KakaoLocalWebClientConfig {
 
     @Value("${kakao.local.base-url}")
     private String baseUrl;
@@ -18,9 +18,6 @@ public class KakaoWebClientConfig {
 
     @Bean
     public WebClient kakaoLocalWebClient(WebClient.Builder builder) {
-        System.out.println("[Kakao] restApiKey prefix = " +
-                (restApiKey == null ? "null" : restApiKey.substring(0, Math.min(6, restApiKey.length()))));
-
         return builder
                 .baseUrl(baseUrl)
                 .defaultHeader("Authorization", "KakaoAK " + restApiKey.trim())
