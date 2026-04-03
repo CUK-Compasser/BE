@@ -16,7 +16,7 @@ public class ReservationRespDTO {
         private Long reservationId;
 
         private Long memberId;
-        private String nickName;
+        private String nickname;
 
         private Long storeId;
         private String storeName;

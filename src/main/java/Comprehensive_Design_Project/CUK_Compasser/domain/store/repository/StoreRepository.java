@@ -44,6 +44,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     Page<Store> findAllByTagOrderByCreatedAtDesc(Tag tag, Pageable pageable); // 태그 별 조회 + 페이징
 
+    @Query("select s from Store s join fetch s.randomBoxes where s.id = :storeId")
+    Optional<Store> findByIdJoinFetchRandomBox(@Param ("storeId")Long storeId);
+
     @Query(value = "Select * From stores" +
             " s " +
             "Where ST_Distance_Sphere(Point(:userLon, :userLat), Point(s.longitude, s.latitude)) <= :distance " +

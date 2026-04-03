@@ -1,5 +1,9 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.converter;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.converter.RandomBoxConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.dto.RandomBoxRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.randomBox.entity.RandomBox;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreDetailsDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreRespPagingDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
@@ -76,5 +80,31 @@ public class StoreConverter {
                     .build());
         }
         return dtoList;
+    }
+
+    public StoreDetailsDTO toStoreDetailsDTO(Store store) {
+
+        RandomBoxConverter randomBoxConverter = new RandomBoxConverter();
+
+        List<RandomBoxRespDTO> randomBoxes = store.getRandomBoxes().stream()
+                .map(randomBoxConverter::toResp)
+                .toList();
+
+        return StoreDetailsDTO.builder()
+                .storeId(store.getId())
+                .storeManagerId(store.getStoreManager().getId()) // 현재 fetch join으로 이미 랜덤박스를 들고 와서 얘는 쿼리가 발생
+                .storeName(store.getStoreName())
+                .storeEmail(store.getStoreEmail())
+                .storeDetails(store.getStoreDetails())
+                .images(store.getImages())
+                .inputAddress(store.getInputAddress())
+                .roadAddress(store.getRoadAddress())
+                .jibunAddres(store.getJibunAddress())
+                .latitude(store.getLatitude())
+                .longitude(store.getLongitude())
+                .businessHours(toJsonNode(store.getBusinessHours()))
+                .tag(store.getTag())
+                .randomBoxes(randomBoxes)
+                .build();
     }
 }
