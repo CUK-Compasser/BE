@@ -42,7 +42,7 @@ public class MemberRespDTO {
     public static class RewardListDTO {
         private Long rewardId;
         private Integer points;
-        private String storename;
+        private String storeName;
     }
 
     // erd 보고 수정

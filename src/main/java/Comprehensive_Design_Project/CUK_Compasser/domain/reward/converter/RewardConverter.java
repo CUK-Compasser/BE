@@ -14,7 +14,7 @@ public class RewardConverter {
                         MemberRespDTO.RewardListDTO.builder()
                                 .rewardId(reward.getId())
                                 .points(reward.getStamp())
-                                .storename(reward.getStore().getStoreName())
+                                .storeName(reward.getStore().getStoreName())
                                 .build()
                 )
                 .toList();
