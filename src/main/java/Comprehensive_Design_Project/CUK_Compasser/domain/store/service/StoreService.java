@@ -162,8 +162,11 @@ public class StoreService {
     }
 
     @Transactional (readOnly = true)
-    public StoreRespDTO getStoreInfo (Long storeId){
-        return storeConverter.toResp(storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND)));
+    public StoreDetailsDTO getStoreInfo (Long storeId){
+        Store store = storeRepository.findByIdJoinFetchRandomBox(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+
+//        Store store = storeRepository.findById(storeId).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+        return storeConverter.toStoreDetailsDTO(store);
     }
 
     @Transactional (readOnly = true)
