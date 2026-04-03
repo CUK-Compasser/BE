@@ -13,7 +13,7 @@ public class ReservationConverter {
         return ReservationRespDTO.ReservationDTO.builder()
                 .reservationId(reservation.getId())
                 .memberId(reservation.getMember().getId())
-                .nickName(reservation.getMember().getNickname())
+                .nickname(reservation.getMember().getNickname())
                 .storeId(reservation.getStore().getId())
                 .storeName(reservation.getStore().getStoreName())
                 .randomBoxId(reservation.getRandomBox().getId())
