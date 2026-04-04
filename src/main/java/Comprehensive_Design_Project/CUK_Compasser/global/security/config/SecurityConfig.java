@@ -69,10 +69,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 프론트엔드 로컬 개발 서버 주소 허용 (3000, 3001)
-        configuration.setAllowedOrigins(List.of(
+        // 로컬 프론트, 로컬 스웨거, 본 서버 도메인 모두 추가
+        configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
-                "http://localhost:3001"
+                "http://localhost:3001",
+                "http://localhost:8080",       // 로컬 테스트용 스웨거 (포트 8080일 경우)
+                "http://localhost:8081",       // 로컬 테스트용 스웨거 (포트 8081일 경우)
+                "https://compasser.site",      // 본 서버 스웨거 및 배포된 프론트엔드 도메인
+                "https://www.compasser.site"   // www가 붙은 도메인
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -80,6 +84,7 @@ public class SecurityConfig {
         // 모든 헤더 허용
         configuration.setAllowedHeaders(List.of("*"));
 
+        // 쿠키(인증 정보) 전송 허용
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
