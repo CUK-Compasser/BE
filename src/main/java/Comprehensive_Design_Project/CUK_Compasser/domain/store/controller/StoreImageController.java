@@ -2,6 +2,8 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.StoreImageRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.service.StoreImageService;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,16 +24,16 @@ public class StoreImageController {
 
     @GetMapping
     @Operation(summary = "스토어 대표 사진 조회")
-    public StoreImageRespDTO get(
+    public ApiResponse<StoreImageRespDTO> get(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeImageService.getRepresentativeImage(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeImageService.getRepresentativeImage(memberId));
     }
 
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "스토어 대표 사진 교체")
-    public StoreImageRespDTO upload(
+    public ApiResponse<StoreImageRespDTO> upload(
             @Parameter(
                     description = "업로드할 이미지 파일",
                     content = @Content(
@@ -43,15 +45,16 @@ public class StoreImageController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeImageService.uploadRepresentativeImage(memberId, storeImage);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeImageService.uploadRepresentativeImage(memberId, storeImage));
     }
 
     @DeleteMapping
     @Operation(summary = "스토어 대표 사진 삭제")
-    public void delete(
+    public ApiResponse<Void> delete(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
         storeImageService.deleteRepresentativeImage(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.OK, null);
     }
 }
