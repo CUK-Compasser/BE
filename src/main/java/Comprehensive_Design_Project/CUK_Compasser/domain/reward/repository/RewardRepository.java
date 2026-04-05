@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
@@ -15,8 +16,8 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
 
     Optional<Reward> findByMember_IdAndStore_Id(Long memberId, Long storeId);
 
-    @Query("select r from Reward r join fetch r.store s where r.member.id = :memberId")
-    List<Reward> findAllByMember_Id(@Param("memberId") Long memberId);
+    /*@Query("select r from Reward r join fetch r.store s where r.member.id = :memberId")
+    List<Reward> findAllByMember_Id(@Param("memberId") Long memberId);*/
 
     @Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary(" +
             "COALESCE(SUM(r.stamp), 0L), " +
@@ -34,6 +35,15 @@ public interface RewardRepository extends JpaRepository<Reward, Long> {
             @Param("memberId") Long memberId,
             @Param("storeManagerId") Long storeManagerId
     );*/
+
+    @Query("select new Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord( " +
+            "r.store.storeName," +
+            "r.stamp," +
+            "r.coupon, " +
+            "r.useCouponCnt)" +
+            "from Reward r " +
+            "where r.member.id = :memberId")
+    List<RewardEachStoreRecord> findAllByMember_Id(@Param("memberId") Long memberId);
 
     @Query("SELECT new Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward(" +
             "COALESCE(SUM(r.stamp), 0), " +

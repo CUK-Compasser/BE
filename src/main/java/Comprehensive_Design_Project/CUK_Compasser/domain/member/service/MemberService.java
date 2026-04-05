@@ -6,7 +6,10 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.Membe
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.repository.OrderRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -57,10 +60,11 @@ public class MemberService {
         }
     }
 
-    public List<MemberRespDTO.RewardListDTO> getRewardList (Long memberId){
-        memberRepository.findById(memberId)
+    @Transactional(readOnly = true)
+    public List<RewardEachStoreRecord> getRewardList (Long memberId){
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        return RewardConverter.toRewardListDTO(rewardRepository.findAllByMember_Id(memberId));
+        return rewardRepository.findAllByMember_Id(memberId);
     }
 
     @Transactional(readOnly = true)
