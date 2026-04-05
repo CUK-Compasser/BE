@@ -29,12 +29,12 @@ public class StoreController {
      */
     @PatchMapping("/owners/me/store")
     @Operation(summary = "내 가게 정보 수정 API", description = "로그인한 점장의 가게 정보를 수정하는 API 입니다.")
-    public StoreRespDTO patchMyStore(
+    public ApiResponse<StoreRespDTO> patchMyStore(
             @RequestBody StoreUpdateReqDTO req,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeService.updateStore(memberId, req);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.updateStore(memberId, req));
     }
 
     /**
@@ -43,11 +43,11 @@ public class StoreController {
      */
     @GetMapping("/owners/me/store")
     @Operation(summary = "내 가게 조회 API", description = "로그인한 점장의 가게 정보를 조회하는 API 입니다.")
-    public StoreRespDTO getMyStore(
+    public ApiResponse<StoreRespDTO> getMyStore(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeService.getMyStore(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getMyStore(memberId));
     }
 
     /**
@@ -56,12 +56,12 @@ public class StoreController {
      */
     @PatchMapping("/owners/me/store/location")
     @Operation(summary = "내 가게 위치 수정 API", description = "로그인한 점장의 가게 위치 정보를 수정하는 API 입니다.")
-    public StoreRespDTO patchMyStoreLocation(
+    public ApiResponse<StoreRespDTO> patchMyStoreLocation(
             @RequestBody StoreLocationUpdateReqDTO req,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return storeService.updateLocation(memberId, req);
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.updateLocation(memberId, req));
     }
 
     @GetMapping
