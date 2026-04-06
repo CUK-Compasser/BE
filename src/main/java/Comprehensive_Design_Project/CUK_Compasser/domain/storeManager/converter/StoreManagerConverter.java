@@ -8,6 +8,10 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.S
 
 public class StoreManagerConverter {
 
+
+    /**
+     * @deprecated
+    * */
     public static StoreManagerRespDTO.GetMemberRewardDTO toGetMemberRewardDTO(Member member, Store store, Reservation reservation, Reward reward) {
 
         return StoreManagerRespDTO.GetMemberRewardDTO.builder()

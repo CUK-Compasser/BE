@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * @deprecated
+ * */
 public class StoreManagerRespDTO {
 
     @Getter
