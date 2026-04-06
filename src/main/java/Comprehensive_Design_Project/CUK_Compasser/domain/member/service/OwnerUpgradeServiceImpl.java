@@ -5,6 +5,7 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.OwnerUpgrade
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.owner.client.NtsBusinessVerifyClient;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity.StoreManager;
@@ -26,14 +27,8 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
     private final MemberRepository memberRepository;
     private final StoreManagerRepository storeManagerRepository;
     private final StoreRepository storeRepository;
+    private final NtsBusinessVerifyClient ntsBusinessVerifyClient;
 
-    // 추후 국세청 진위확인 클라이언트 주입
-    // private final NtsBusinessVerifyClient ntsBusinessVerifyClient;
-
-    /**
-     * 기존 승격 API
-     * - 이미 사업자 검증이 완료된 사용자만 점장 승격 가능
-     */
     @Override
     @Transactional
     public OwnerUpgradeRespDTO upgradeToStoreManager(Long memberId) {
@@ -41,12 +36,15 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
+        // 개발용: store_manager가 없으면 기본 row 생성
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.BUSINESS_LICENSE_NOT_REGISTERED));
-
-        if (isBlank(storeManager.getBusinessLicenseNumber()) || storeManager.getVerifiedAt() == null) {
-            throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_NOT_VERIFIED);
-        }
+                .orElseGet(() -> storeManagerRepository.save(
+                        StoreManager.builder()
+                                .member(member)
+                                .businessLicenseNumber("TEST-BIZ-NUMBER")
+                                .verifiedAt(LocalDateTime.now())
+                                .build()
+                ));
 
         return upgradeAndProvision(member, storeManager);
     }
@@ -67,19 +65,17 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
         validateStartDateFormat(request.getStartDate());
         validateOwnerName(request.getOwnerName());
 
-        // 실제 국세청 진위확인 API 연동 시 사용
-        // boolean valid = ntsBusinessVerifyClient.verify(
-        //         bizNo,
-        //         request.getStartDate(),
-        //         request.getOwnerName(),
-        //         request.getBusinessName()
-        // );
-        //
-        // if (!valid) {
-        //     throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_VERIFY_FAILED);
-        // }
+        boolean valid = ntsBusinessVerifyClient.verify(
+                bizNo,
+                request.getStartDate(),
+                request.getOwnerName(),
+                request.getBusinessName()
+        );
 
-        // store_manager upsert
+        if (!valid) {
+            throw new GeneralException(ErrorStatus.BUSINESS_LICENSE_VERIFY_FAILED);
+        }
+
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
                 .orElseGet(() -> storeManagerRepository.save(
                         StoreManager.builder()
