@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity.StoreManager;

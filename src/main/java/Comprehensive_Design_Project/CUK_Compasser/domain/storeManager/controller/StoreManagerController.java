@@ -23,10 +23,12 @@ public class StoreManagerController {
     @Operation(summary = "사장님 - QR 촬영", description = "사장님이 QR 찍었을 때 해당 사용자 정보 불러오는 API입니다.")
     public ApiResponse<StoreManagerRespDTO.GetMemberRewardDTO> checkingQR (
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody MemberRespDTO.QRDTO qrDTO){
+            @RequestParam String token,
+            @RequestParam Long memberId
+            /*@RequestBody MemberRespDTO.QRDTO qrDTO*/){
         // 사장님이 QR 찍었을 때 사용자 정보 불러오는 API
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeManagerService.checkingQR(userDetails.getMember().getId(), qrDTO));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeManagerService.checkingQR(userDetails.getMember().getId(), token, memberId));
     }
 
     @PostMapping("/reward")

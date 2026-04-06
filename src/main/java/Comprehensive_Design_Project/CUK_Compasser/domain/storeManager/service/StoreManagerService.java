@@ -39,22 +39,22 @@ public class StoreManagerService {
     private final RedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
-    public StoreManagerRespDTO.GetMemberRewardDTO checkingQR(Long storeManagerId, MemberRespDTO.QRDTO qrDTO) {
+    public StoreManagerRespDTO.GetMemberRewardDTO checkingQR(Long storeManagerId, String token, Long memberId) {
 
-        /*String token = (String) redisTemplate.opsForValue().get("qr:" + qrDTO.getToken());
-        if (token == null) {
+        String memberToken = (String) redisTemplate.opsForValue().get("qr:" + memberId);
+        if (memberToken == null) {
             throw new GeneralException(ErrorStatus.QR_EXPIRED);
-        }*/
-
-        Optional<StoreManagerRespDTO.GetMemberRewardDTO> memberReward = storeManagerRepository.getMemberRewardByMemberIdAndStoreId(
-                qrDTO.getMemberId(),
-                storeManagerId
-                , ReservationStatus.APPROVED);
-        if (memberReward.isPresent()) {
-            return memberReward.get();
-        } else {
-            throw new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND);
         }
+
+        if (!memberRepository.existsById(memberId)){
+            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
+        }
+
+        return storeManagerRepository.getMemberRewardByMemberIdAndStoreId(
+                memberId,
+                storeManagerId,
+                ReservationStatus.APPROVED)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
     }
 
     @Transactional

@@ -30,9 +30,9 @@ public class MemberRespDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class QRDTO {
+    public static class QRDTO { // -> RequestParam으로 대체.
         private Long memberId;
-//        private String token; // redis 인증용 토큰
+        private String token; // redis 인증용 토큰
     }
 
     @Getter
