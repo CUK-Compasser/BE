@@ -17,6 +17,7 @@ public class RandomBoxConverter {
                 .price(box.getPrice())
                 .buyLimit(box.getBuyLimit())
                 .saleStatus(box.getSaleStatus().name())
+                .pickupTimeInfo(box.getPickupTimeInfo())
                 .build();
     }
 }
