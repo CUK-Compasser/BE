@@ -6,7 +6,10 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.Membe
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.repository.OrderRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -23,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 
 @Service
 @RequiredArgsConstructor
@@ -35,14 +41,29 @@ public class MemberService {
     private final RedisTemplate<String, String> redisTemplate;
 
     private static final String ADDRESS_KEY_PREFIX = "address:member:";
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    public static String generateVerificationCode() {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder(4);
+
+        for (int i = 0; i < 4; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            code.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return code.toString();
+    }
 
     public byte[] generateQRCode (Long memberId) {
         int width = 200, height = 200;
         BitMatrix encode = null;
-        String memberIdJson = "{\"memberId\" : "+memberId.toString()+"}"; // JSON 형식 수정
+        String qrToken = generateVerificationCode();
+        String memberDataJson = "{\"memberId\" : "+memberId.toString()+", token: "  + "\""+ qrToken +"\""+"}"; // JSON 형식 수정
+        redisTemplate.opsForValue().set("qr:" + memberId, qrToken, 30, TimeUnit.SECONDS);
 
         try {
-            encode = new MultiFormatWriter().encode(memberIdJson, BarcodeFormat.QR_CODE, width, height);
+            encode = new MultiFormatWriter().encode(memberDataJson, BarcodeFormat.QR_CODE, width, height);
         } catch (WriterException e) {
             throw new GeneralException(ErrorStatus.QR_IMAGE_WRITE_FAILED);
         }
@@ -57,10 +78,11 @@ public class MemberService {
         }
     }
 
-    public List<MemberRespDTO.RewardListDTO> getRewardList (Long memberId){
-        memberRepository.findById(memberId)
+    @Transactional(readOnly = true)
+    public List<RewardEachStoreRecord> getRewardList (Long memberId){
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        return RewardConverter.toRewardListDTO(rewardRepository.findAllByMember_Id(memberId));
+        return rewardRepository.findAllByMember_Id(memberId);
     }
 
     @Transactional(readOnly = true)
