@@ -57,20 +57,29 @@ public class StoreManagerService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
     }
 
+    /**
+     * 앞 API 에서 이미 올바른 값을 주었음을 가정하여 getReference를 사용
+     * 신뢰!
+     * @return void
+     * */
     @Transactional
     public void writingReward(StoreManagerReqDTO.WritingRewardDTO dto) {
-        Reward reward = rewardRepository.findById(dto.getRewardId()).orElseThrow(() -> new GeneralException(ErrorStatus.REWARD_NOT_FOUND));
+        Reward reward = rewardRepository.findById(dto.getRewardId())
+                .orElse(null);
 
-        Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+        Member memberReference = memberRepository.getReferenceById(dto.getMemberId());
+        Store storeReference = storeRepository.getReferenceById(dto.getStoreId());
+
+        /*Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Store store = storeRepository.findById(dto.getStoreId()).orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));*/
         // 있으면 Increase
         if (reward != null) {
             reward.increasePoint();
 
         } else {
-            rewardRepository.save(Reward.createNewReward(member, store));
+            rewardRepository.save(Reward.createNewReward(memberReference, storeReference));
         }
-
-        rewardHistoryRepository.save(RewardHistory.earnReward(member, store));
+        rewardHistoryRepository.save(RewardHistory.earnReward(memberReference, storeReference));
     }
+
 }
