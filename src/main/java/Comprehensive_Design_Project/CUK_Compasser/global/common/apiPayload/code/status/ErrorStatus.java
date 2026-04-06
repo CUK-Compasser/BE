@@ -67,6 +67,7 @@ public enum ErrorStatus implements BaseErrorCode {
     RANDOM_BOX_NOT_ON_SALE(HttpStatus.BAD_REQUEST, "RB007", "판매 중인 랜덤박스가 아닙니다."),
     RANDOM_BOX_STOCK_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "RB008", "랜덤박스 재고가 부족합니다."),
     RANDOM_BOX_BUY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RB009", "구매 가능 수량을 초과했습니다."),
+    INVALID_PICKUP_TIME(HttpStatus.BAD_REQUEST, "RB010", "유효하지 않은 픽업 시간입니다."),
 
     // =========================
     // [QRCode]

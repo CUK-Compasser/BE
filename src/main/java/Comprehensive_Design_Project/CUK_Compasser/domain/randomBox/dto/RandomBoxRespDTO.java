@@ -15,4 +15,7 @@ public class RandomBoxRespDTO {
     private Integer buyLimit;
     private String content;
     private String saleStatus;
+
+    // pickupTime JSON 문자열
+    private String pickupTimeInfo;
 }

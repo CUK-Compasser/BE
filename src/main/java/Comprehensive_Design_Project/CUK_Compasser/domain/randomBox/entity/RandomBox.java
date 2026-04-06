@@ -49,6 +49,9 @@ public class RandomBox extends BaseEntity {
     @Column(name = "buy_limit", nullable = false)
     private Integer buyLimit;
 
+    @Column(name = "pickup_time_info", columnDefinition = "TEXT", nullable = false)
+    private String pickupTimeInfo;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "sale_status", nullable = false, length = 30)
     private SaleStatus saleStatus;
