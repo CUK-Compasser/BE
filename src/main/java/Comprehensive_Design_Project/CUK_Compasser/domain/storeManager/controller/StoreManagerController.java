@@ -2,6 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.controlle
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.req.StoreManagerReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.GetMemberRewardRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.service.StoreManagerService;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
@@ -21,7 +22,7 @@ public class StoreManagerController {
 
     @PostMapping("/qr-check")
     @Operation(summary = "사장님 - QR 촬영", description = "사장님이 QR 찍었을 때 해당 사용자 정보 불러오는 API입니다.")
-    public ApiResponse<StoreManagerRespDTO.GetMemberRewardDTO> checkingQR (
+    public ApiResponse<GetMemberRewardRecord> checkingQR (
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String token,
             @RequestParam Long memberId

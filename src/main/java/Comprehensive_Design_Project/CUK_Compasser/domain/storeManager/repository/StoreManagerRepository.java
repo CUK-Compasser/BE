@@ -2,6 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repositor
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.ReservationStatus;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.GetMemberRewardRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity.StoreManager;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,7 +23,7 @@ public interface StoreManagerRepository extends JpaRepository<StoreManager, Long
     * member, store, reservation = unique, not null,
     * reward = could be null
     * */
-    @Query("select new Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.StoreManagerRespDTO.GetMemberRewardDTO(" +
+    @Query("select new Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.dto.resp.GetMemberRewardRecord(" +
             "r.id, " +
             "s.id, " +
             "m.id, m.nickname, m.email, " +
@@ -30,11 +31,11 @@ public interface StoreManagerRepository extends JpaRepository<StoreManager, Long
             "r.stamp, r.coupon) " +
             "from Member m " +
             "cross join Store s " +
-            "join Reservation rs on rs.member = m and rs.store = s and rs.status = :status" + // 예약, 주문은 필수
+            "join Reservation rs on rs.member = m and rs.store = s and rs.status = :status " + // 예약, 주문은 필수
             "left join Reward r on r.member = m and r.store = s " +    // 적립은 선택 (null 가능)
             "where m.id = :memberId and s.storeManager.id = :storeManagerId " +
             "and rs.status = :status")
-    Optional<StoreManagerRespDTO.GetMemberRewardDTO> getMemberRewardByMemberIdAndStoreId(
+    Optional<GetMemberRewardRecord> getMemberRewardByMemberIdAndStoreId(
             @Param("memberId") Long memberId,
             @Param("storeManagerId") Long storeManagerId,
             @Param("status") ReservationStatus status);

@@ -259,7 +259,7 @@ INSERT INTO stores (latitude, longitude, created_at, updated_at,
        "MON": { "open": "06:30", "close": "18:00", "break-time": null, "closed": false },
        "TUE": { "open": "06:30", "close": "18:00", "break-time": null, "closed": false },
        "WED": { "open": "06:30", "close": "18:00", "break-time": null, "closed": false },
-       "THU": { "open": "06:30", "close": "18:00", "break-time": null, "closed": false },
+       "THU": { "open": "06:30", "close": "18:00", "bre ak-time": null, "closed": false },
        "FRI": { "open": "06:30", "close": "18:00", "break-time": null, "closed": false },
        "SAT": { "open": "07:00", "close": "17:00", "break-time": null, "closed": false },
        "SUN": { "open": "07:00", "close": "17:00", "break-time": null, "closed": false }
