@@ -69,36 +69,6 @@ public class OrderRespDTO {
         private List<MemberOrderSummaryDTO> orders;
     }
 
-    /**
-     * 사용자 주문 상세/상태 조회 응답
-     * - 목록보다 조금 더 자세한 정보가 필요할 때 사용
-     */
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberOrderDetailDTO {
-        private Long reservationId;
-        private Long storeId;
-        private String storeName;
-
-        private Long randomBoxId;
-        private String randomBoxName;
-
-        private Integer quantity;
-        private Integer totalPrice;
-
-        private String orderStatus;
-        private String reservationStatus;
-        private String paymentStatus;
-
-        private String pickupTimeText;
-        private String businessHours;
-
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-    }
-
     @Getter
     @Builder
     @NoArgsConstructor
