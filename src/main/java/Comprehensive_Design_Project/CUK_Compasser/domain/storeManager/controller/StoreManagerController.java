@@ -30,6 +30,7 @@ public class StoreManagerController {
     }
 
     @PostMapping("/reward")
+    @Operation(summary = "사장님 - QR 촬영", description = "사장님이 QR로 조회한 사용자에 대해 적립을 허용하는 API 입니다.")
     public ApiResponse<Object> writingReward(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody StoreManagerReqDTO.WritingRewardDTO dto){

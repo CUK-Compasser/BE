@@ -32,7 +32,7 @@ public class MemberRespDTO {
     @AllArgsConstructor
     public static class QRDTO {
         private Long memberId;
-        private String token; // redis 인증용 토큰
+//        private String token; // redis 인증용 토큰
     }
 
     @Getter

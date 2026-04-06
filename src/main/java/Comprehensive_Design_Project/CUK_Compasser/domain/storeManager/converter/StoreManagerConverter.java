@@ -11,13 +11,13 @@ public class StoreManagerConverter {
     public static StoreManagerRespDTO.GetMemberRewardDTO toGetMemberRewardDTO(Member member, Store store, Reservation reservation, Reward reward) {
 
         return StoreManagerRespDTO.GetMemberRewardDTO.builder()
-                .rewardId(reward.getId())
+                .rewardId(reward == null ? 0L : reward.getId())
                 .storeId(store.getId())
                 .memberId(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .stamp(reward.getStamp())
-                .coupon(reward.getCoupon())
+                .stamp(reward == null ? 0 : reward.getStamp())
+                .coupon(reward == null ? 0 : reward.getCoupon())
                 .randomBoxName(reservation.getRandomBox().getBoxName())
                 .totalPrice(reservation.getTotalPrice())
                 .build();
