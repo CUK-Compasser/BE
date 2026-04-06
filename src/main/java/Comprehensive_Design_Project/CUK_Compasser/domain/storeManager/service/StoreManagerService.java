@@ -33,42 +33,28 @@ public class StoreManagerService {
     private final MemberRepository memberRepository;
     private final StoreRepository storeRepository;
     private final RewardRepository rewardRepository;
-    private final RewardHistoryRepository  rewardHistoryRepository;
+    private final RewardHistoryRepository rewardHistoryRepository;
     private final StoreManagerRepository storeManagerRepository;
     private final ReservationRepository reservationRepository;
     private final RedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
-    public StoreManagerRespDTO.GetMemberRewardDTO checkingQR (Long storeManagerId, MemberRespDTO.QRDTO qrDTO) {
+    public StoreManagerRespDTO.GetMemberRewardDTO checkingQR(Long storeManagerId, MemberRespDTO.QRDTO qrDTO) {
 
         /*String token = (String) redisTemplate.opsForValue().get("qr:" + qrDTO.getToken());
         if (token == null) {
             throw new GeneralException(ErrorStatus.QR_EXPIRED);
         }*/
 
-        ///  쿼리를 4번이나 쓰고 있음, DTO Projection 필요
-        // StoreManagerRespDTO.GetMemberRewardDTO
-
-        /*Store store = storeRepository.findByStoreManager_Id(storeManagerId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
-
-        Member member = memberRepository.findById(qrDTO.getMemberId())
-                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-
-        Reward reward = rewardRepository.findByMember_IdAndStore_Id(member.getId(), store.getId()).orElse(null);
-
-        Reservation reservation = reservationRepository.findByMember_IdAndStore_IdAndStatus(member.getId(), store.getId(), ReservationStatus.APPROVED)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));*/
-
-        Optional<StoreManagerRespDTO.GetMemberRewardDTO> memberReward = storeManagerRepository.getMemberRewardByMemberIdAndStoreId(qrDTO.getMemberId(), storeManagerId);
+        Optional<StoreManagerRespDTO.GetMemberRewardDTO> memberReward = storeManagerRepository.getMemberRewardByMemberIdAndStoreId(
+                qrDTO.getMemberId(),
+                storeManagerId
+                , ReservationStatus.APPROVED);
         if (memberReward.isPresent()) {
             return memberReward.get();
-        }
-        else {
+        } else {
             throw new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND);
         }
-
-//        return StoreManagerConverter.toGetMemberRewardDTO(member, store, reservation, reward);
     }
 
     @Transactional
@@ -81,8 +67,7 @@ public class StoreManagerService {
         if (reward != null) {
             reward.increasePoint();
 
-        }
-        else{
+        } else {
             rewardRepository.save(Reward.createNewReward(member, store));
         }
 
