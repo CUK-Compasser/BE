@@ -60,7 +60,7 @@ public class MemberService {
         BitMatrix encode = null;
         String qrToken = generateVerificationCode();
         String memberDataJson = "{\"memberId\" : "+memberId.toString()+", token: "  + "\""+ qrToken +"\""+"}"; // JSON 형식 수정
-        redisTemplate.opsForValue().set("qr:" + memberId, qrToken, 30, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set("qr:" + memberId, qrToken, 65, TimeUnit.SECONDS);
 
         try {
             encode = new MultiFormatWriter().encode(memberDataJson, BarcodeFormat.QR_CODE, width, height);
