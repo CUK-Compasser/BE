@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -101,18 +103,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * 사용자 주문 상태 조회
-     * - 사용자 화면에서 보여줄 주문 상태 상세 정보를 반환한다.
+     * 사용자 주문 리스트 조회
+     * - 로그인한 사용자의 주문(Reservation) 목록을 최신순으로 조회한다.
      */
     @Override
-    public OrderRespDTO.OrderStatusDTO getOrderStatus(Long memberId, Long orderId) {
+    public OrderRespDTO.MemberOrderListDTO getOrderList(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        Reservation reservation = reservationRepository.findByIdAndMember(orderId, member)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+        List<Reservation> reservations = reservationRepository.findAllByMemberOrderByCreatedAtDesc(member);
 
-        return OrderConverter.toOrderStatusDTO(reservation);
+        return OrderConverter.toMemberOrderListDTO(reservations);
     }
 
     /**

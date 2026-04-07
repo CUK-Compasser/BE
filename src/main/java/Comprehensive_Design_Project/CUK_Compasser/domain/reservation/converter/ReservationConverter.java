@@ -13,28 +13,25 @@ public class ReservationConverter {
         return ReservationRespDTO.ReservationDTO.builder()
                 .reservationId(reservation.getId())
                 .memberId(reservation.getMember().getId())
-                .nickname(reservation.getMember().getNickname())
+                .customerName(reservation.getMember().getMemberName())
                 .storeId(reservation.getStore().getId())
                 .storeName(reservation.getStore().getStoreName())
                 .randomBoxId(reservation.getRandomBox().getId())
                 .randomBoxName(reservation.getRandomBox().getBoxName())
-                .price(reservation.getRandomBox().getPrice())
+                .totalPrice(reservation.getTotalPrice())
                 .status(reservation.getStatus())
                 .requestedQuantity(reservation.getRequestedQuantity())
                 .rejectReason(reservation.getRejectReason())
-                .createdAt(reservation.getCreatedAt())
-                .updatedAt(reservation.getUpdatedAt())
                 .build();
     }
 
     public ReservationRespDTO.ReservationListDTO toReservationListDTO(List<Reservation> reservations) {
-        List<ReservationRespDTO.ReservationDTO> dtoList = reservations.stream()
+        List<ReservationRespDTO.ReservationDTO> reservationDTOList = reservations.stream()
                 .map(this::toReservationDTO)
                 .toList();
 
         return ReservationRespDTO.ReservationListDTO.builder()
-                .reservations(dtoList)
-                .count(dtoList.size())
+                .reservations(reservationDTOList)
                 .build();
     }
 }

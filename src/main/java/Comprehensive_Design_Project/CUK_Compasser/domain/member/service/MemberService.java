@@ -3,13 +3,8 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.member.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.repository.MemberRepository;
-import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
-import Comprehensive_Design_Project.CUK_Compasser.domain.order.repository.OrderRepository;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reward.converter.RewardConverter;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardSummary;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.SummaryMemberReward;
-import Comprehensive_Design_Project.CUK_Compasser.domain.reward.entity.Reward;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reward.repository.RewardRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -37,7 +32,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RewardRepository rewardRepository;
-    private final OrderRepository orderRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     private static final String ADDRESS_KEY_PREFIX = "address:member:";
