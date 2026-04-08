@@ -17,10 +17,12 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StoreManagerService {
@@ -30,7 +32,6 @@ public class StoreManagerService {
     private final RewardRepository rewardRepository;
     private final RewardHistoryRepository rewardHistoryRepository;
     private final StoreManagerRepository storeManagerRepository;
-    private final ReservationRepository reservationRepository;
     private final RedisTemplate redisTemplate;
 
     @Transactional(readOnly = true)
@@ -39,6 +40,10 @@ public class StoreManagerService {
         String memberToken = (String) redisTemplate.opsForValue().get("qr:" + memberId);
         if (memberToken == null) {
             throw new GeneralException(ErrorStatus.QR_EXPIRED);
+        }
+        else if (!memberToken.equals(token)) {
+            log.info("memberToken: {}, qrToken: {}", memberToken, token);
+            throw new GeneralException(ErrorStatus.WRONG_QR);
         }
 
         if (!memberRepository.existsById(memberId)){

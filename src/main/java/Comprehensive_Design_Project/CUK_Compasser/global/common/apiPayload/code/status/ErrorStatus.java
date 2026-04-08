@@ -72,10 +72,11 @@ public enum ErrorStatus implements BaseErrorCode {
     // =========================
     // [QRCode]
     // =========================
-    QR_IMAGE_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW001","이미지 파일로 변환하는 중 오류가 발생했습니다."),
-    QR_INVALID_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "RW003","QR 코드의 크기(가로/세로) 설정이 잘못되었습니다."),
-    QR_GENERATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW004","QR 코드 생성 중 알 수 없는 오류가 발생했습니다."),
-    QR_EXPIRED(HttpStatus.BAD_REQUEST,"RW005","만료된 QR 코드 입니다."),
+    QR_IMAGE_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"QR001","이미지 파일로 변환하는 중 오류가 발생했습니다."),
+    QR_INVALID_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "QR002","QR 코드의 크기(가로/세로) 설정이 잘못되었습니다."),
+    QR_GENERATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"QR003","QR 코드 생성 중 알 수 없는 오류가 발생했습니다."),
+    QR_EXPIRED(HttpStatus.BAD_REQUEST,"QR004","만료된 QR 코드 입니다."),
+    WRONG_QR(HttpStatus.BAD_REQUEST,"QR005","잘 못된 QR 코드 입니다."),
 
     // =========================
     // [Reward]

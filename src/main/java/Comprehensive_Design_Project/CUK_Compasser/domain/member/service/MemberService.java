@@ -53,8 +53,8 @@ public class MemberService {
         int width = 200, height = 200;
         BitMatrix encode = null;
         String qrToken = generateVerificationCode();
-        String memberDataJson = "{\"memberId\" : "+memberId.toString()+", token: "  + "\""+ qrToken +"\""+"}"; // JSON 형식 수정
-        redisTemplate.opsForValue().set("qr:" + memberId, qrToken, 30, TimeUnit.SECONDS);
+        String memberDataJson = "{\"memberId\" : "+memberId.toString()+", \"token\": "  + "\""+ qrToken +"\""+"}"; // JSON 형식 수정
+        redisTemplate.opsForValue().set("qr:" + memberId, qrToken, 65, TimeUnit.SECONDS);
 
         try {
             encode = new MultiFormatWriter().encode(memberDataJson, BarcodeFormat.QR_CODE, width, height);
