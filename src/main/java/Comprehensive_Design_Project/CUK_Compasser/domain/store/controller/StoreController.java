@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
