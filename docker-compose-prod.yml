@@ -23,6 +23,9 @@ services:
       - KAKAO_LOCAL_BASE_URL=https://dapi.kakao.com
       - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
       - JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m
+      - KAKAO_JS_KEY=${KAKAO_JS_KEY}
+      - KAKAOPAY_SECRET_KEY_DEV=${KAKAOPAY_SECRET_KEY_DEV}
+      - NTS_SERVICE_KEY=${NTS_SERVICE_KEY}
     depends_on:
       mysql-db:
         condition: service_healthy
