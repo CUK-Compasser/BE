@@ -39,7 +39,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: c
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
