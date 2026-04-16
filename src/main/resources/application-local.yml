@@ -119,3 +119,8 @@ app:
 
 springdoc:
   packages-to-scan: Comprehensive_Design_Project.CUK_Compasser
+
+nts:
+  business:
+    base-url: https://api.odcloud.kr/api/nts-businessman/v1
+    service-key: ${NTS_SERVICE_KEY}

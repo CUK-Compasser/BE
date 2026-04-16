@@ -1,8 +1,9 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.order.converter;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.order.dto.OrderRespDTO;
-import Comprehensive_Design_Project.CUK_Compasser.domain.order.entity.OrderStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.reservation.entity.Reservation;
+
+import java.util.List;
 
 public class OrderConverter {
 
@@ -10,7 +11,6 @@ public class OrderConverter {
     }
 
     public static OrderRespDTO.CreateOrderResultDTO toCreateOrderResultDTO(Reservation reservation) {
-        OrderStatus orderStatus = OrderStatusMapper.resolve(reservation);
 
         return OrderRespDTO.CreateOrderResultDTO.builder()
                 .reservationId(reservation.getId())
@@ -21,49 +21,9 @@ public class OrderConverter {
                 .quantity(reservation.getRequestedQuantity())
                 .unitPrice(reservation.getRandomBox().getPrice())
                 .totalPrice(reservation.getTotalPrice())
-                .orderStatus(orderStatus.name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .memberBankType(reservation.getMember().getBankType())
-                .depositBankType(reservation.getStore().getStoreManager().getDepositBankType())
-                .depositAccountNumber(reservation.getStore().getStoreManager().getDepositAccountNumber())
-                .depositAccountHolder(reservation.getStore().getStoreManager().getDepositAccountHolder())
-                .businessHours(reservation.getStore().getBusinessHours())
                 .createdAt(reservation.getCreatedAt())
-                .build();
-    }
-
-    public static OrderRespDTO.CompleteOrderResultDTO toCompleteOrderResultDTO(Reservation reservation, String message) {
-        return OrderRespDTO.CompleteOrderResultDTO.builder()
-                .reservationId(reservation.getId())
-                .orderStatus(OrderStatusMapper.resolve(reservation).name())
-                .reservationStatus(reservation.getStatus().name())
-                .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .message(message)
-                .build();
-    }
-
-    public static OrderRespDTO.OrderStatusDTO toOrderStatusDTO(Reservation reservation) {
-        OrderStatus orderStatus = OrderStatusMapper.resolve(reservation);
-
-        return OrderRespDTO.OrderStatusDTO.builder()
-                .reservationId(reservation.getId())
-                .storeId(reservation.getStore().getId())
-                .storeName(reservation.getStore().getStoreName())
-                .randomBoxId(reservation.getRandomBox().getId())
-                .randomBoxName(reservation.getRandomBox().getBoxName())
-                .quantity(reservation.getRequestedQuantity())
-                .totalPrice(reservation.getTotalPrice())
-                .orderStatus(orderStatus.name())
-                .reservationStatus(reservation.getStatus().name())
-                .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
-                .memberBankType(reservation.getMember().getBankType())
-                .depositBankType(reservation.getStore().getStoreManager().getDepositBankType())
-                .depositAccountNumber(reservation.getStore().getStoreManager().getDepositAccountNumber())
-                .depositAccountHolder(reservation.getStore().getStoreManager().getDepositAccountHolder())
-                .businessHours(reservation.getStore().getBusinessHours())
-                .createdAt(reservation.getCreatedAt())
-                .updatedAt(reservation.getUpdatedAt())
                 .build();
     }
 
@@ -74,6 +34,29 @@ public class OrderConverter {
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
                 .message(message)
+                .build();
+    }
+
+    public static OrderRespDTO.MemberOrderSummaryDTO toMemberOrderSummaryDTO(Reservation reservation) {
+        return OrderRespDTO.MemberOrderSummaryDTO.builder()
+                .reservationId(reservation.getId())
+                .storeId(reservation.getStore().getId())
+                .storeName(reservation.getStore().getStoreName())
+                .randomBoxId(reservation.getRandomBox().getId())
+                .randomBoxName(reservation.getRandomBox().getBoxName())
+                .quantity(reservation.getRequestedQuantity())
+                .totalPrice(reservation.getTotalPrice())
+                .pickupTimeText(null) // 추후 픽업시간 필드 연결
+                .build();
+    }
+
+    public static OrderRespDTO.MemberOrderListDTO toMemberOrderListDTO(List<Reservation> reservations) {
+        List<OrderRespDTO.MemberOrderSummaryDTO> orders = reservations.stream()
+                .map(OrderConverter::toMemberOrderSummaryDTO)
+                .toList();
+
+        return OrderRespDTO.MemberOrderListDTO.builder()
+                .orders(orders)
                 .build();
     }
 }

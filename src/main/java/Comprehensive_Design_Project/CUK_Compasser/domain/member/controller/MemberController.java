@@ -2,6 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.member.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
@@ -47,7 +48,7 @@ public class MemberController {
 
     @GetMapping("/reward")
     @Operation(summary = "적립 현황 확인 API", description = "사용자가 여러 가게에서 적립한 현황을 확인하는 API 입니다.")
-    public ApiResponse<List<MemberRespDTO.RewardListDTO>> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ApiResponse<List<RewardEachStoreRecord>> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getRewardList(userDetails.getMember().getId()));
     }
 

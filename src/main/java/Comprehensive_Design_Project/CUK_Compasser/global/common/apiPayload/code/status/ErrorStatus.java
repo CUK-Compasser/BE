@@ -67,14 +67,16 @@ public enum ErrorStatus implements BaseErrorCode {
     RANDOM_BOX_NOT_ON_SALE(HttpStatus.BAD_REQUEST, "RB007", "판매 중인 랜덤박스가 아닙니다."),
     RANDOM_BOX_STOCK_NOT_ENOUGH(HttpStatus.BAD_REQUEST, "RB008", "랜덤박스 재고가 부족합니다."),
     RANDOM_BOX_BUY_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "RB009", "구매 가능 수량을 초과했습니다."),
+    INVALID_PICKUP_TIME(HttpStatus.BAD_REQUEST, "RB010", "유효하지 않은 픽업 시간입니다."),
 
     // =========================
     // [QRCode]
     // =========================
-    QR_IMAGE_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW001","이미지 파일로 변환하는 중 오류가 발생했습니다."),
-    QR_INVALID_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "RW003","QR 코드의 크기(가로/세로) 설정이 잘못되었습니다."),
-    QR_GENERATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"RW004","QR 코드 생성 중 알 수 없는 오류가 발생했습니다."),
-    QR_EXPIRED(HttpStatus.BAD_REQUEST,"RW005","만료된 QR 코드 입니다."),
+    QR_IMAGE_WRITE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"QR001","이미지 파일로 변환하는 중 오류가 발생했습니다."),
+    QR_INVALID_SIZE(HttpStatus.INTERNAL_SERVER_ERROR, "QR002","QR 코드의 크기(가로/세로) 설정이 잘못되었습니다."),
+    QR_GENERATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"QR003","QR 코드 생성 중 알 수 없는 오류가 발생했습니다."),
+    QR_EXPIRED(HttpStatus.BAD_REQUEST,"QR004","만료된 QR 코드 입니다."),
+    WRONG_QR(HttpStatus.BAD_REQUEST,"QR005","잘 못된 QR 코드 입니다."),
 
     // =========================
     // [Reward]
@@ -87,8 +89,11 @@ public enum ErrorStatus implements BaseErrorCode {
     BUSINESS_LICENSE_REQUIRED(HttpStatus.BAD_REQUEST, "O001", "사업자등록번호를 입력해주세요."),
     BUSINESS_LICENSE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "O002", "사업자등록번호 형식이 올바르지 않습니다."),
     BUSINESS_LICENSE_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "O003", "사업자등록번호가 등록되지 않았습니다."),
-    BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 검증이 완료되지 않았습니다."),
-    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 검증에 실패했습니다."),
+    BUSINESS_LICENSE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "O004", "사업자등록번호 진위확인이 완료되지 않았습니다."),
+    BUSINESS_LICENSE_VERIFY_FAILED(HttpStatus.BAD_REQUEST, "O005", "사업자등록번호 진위확인에 실패했습니다."),
+    BUSINESS_OPEN_DATE_REQUIRED(HttpStatus.BAD_REQUEST, "B005", "개업일자는 필수입니다."),
+    BUSINESS_OPEN_DATE_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "B006", "개업일자 형식이 올바르지 않습니다. yyyyMMdd 형식이어야 합니다."),
+    OWNER_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "B007", "대표자명은 필수입니다."),
 
     // =========================
     // [Reservation]
