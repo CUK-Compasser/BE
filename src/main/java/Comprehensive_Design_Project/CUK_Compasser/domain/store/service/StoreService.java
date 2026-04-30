@@ -164,6 +164,7 @@ public class StoreService {
                     .storeId(store.getId())
                     .tag(store.getTag())
                     .storeName(store.getStoreName())
+                    .storeEmail(store.getStoreEmail())
                     .roadAddress(store.getRoadAddress())
                     .jibunAddress(store.getJibunAddress())
                     .businessHours(objectMapper.readTree(store.getBusinessHours())).build();
