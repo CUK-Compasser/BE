@@ -9,5 +9,5 @@ public interface OrderService {
 
     OrderRespDTO.CancelOrderResultDTO cancelOrder(Long memberId, Long orderId);
 
-    OrderRespDTO.MemberOrderListDTO getOrderList(Long memberId);
+    OrderRespDTO.MemberOrderListDTO getOrderList(Long memberId, String type);
 }

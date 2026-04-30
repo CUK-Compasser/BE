@@ -114,6 +114,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST, "O001", "주문 수량이 올바르지 않습니다."),
     ORDER_ALREADY_PAID(HttpStatus.BAD_REQUEST, "O002", "이미 송금 완료 처리된 주문입니다."),
     ORDER_CANCEL_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "O003", "현재 상태의 주문은 취소할 수 없습니다."),
+    INVALID_ORDER_TYPE(HttpStatus.BAD_REQUEST, "O004", "올바르지 않은 주문 조회 타입입니다. (ongoing | completed)"),
 
     // =========================
     // [Payment]
