@@ -75,6 +75,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "store.storeManager",
             "randomBox"
     })
+
+    // ReservationRepository.java
+    List<Reservation> findAllByMemberAndStatusOrderByCreatedAtDesc(Member member, ReservationStatus status);
+
+    List<Reservation> findAllByMemberAndStatusInOrderByCreatedAtDesc(Member member, List<ReservationStatus> statuses);
+
     List<Reservation> findAllByIdInAndStore_Id(List<Long> reservationIds, Long storeId);
 
     @Query("select r from Reservation r join fetch r.randomBox where r.member.id = :memberId and r.store.id = :storeId " +

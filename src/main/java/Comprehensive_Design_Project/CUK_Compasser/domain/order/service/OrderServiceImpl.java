@@ -106,12 +106,21 @@ public class OrderServiceImpl implements OrderService {
      * 사용자 주문 리스트 조회
      * - 로그인한 사용자의 주문(Reservation) 목록을 최신순으로 조회한다.
      */
+    private static final List<ReservationStatus> COMPLETED_STATUSES =
+            List.of(ReservationStatus.APPROVED, ReservationStatus.REJECTED, ReservationStatus.CANCELED);
+
     @Override
-    public OrderRespDTO.MemberOrderListDTO getOrderList(Long memberId) {
+    public OrderRespDTO.MemberOrderListDTO getOrderList(Long memberId, String type) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
-        List<Reservation> reservations = reservationRepository.findAllByMemberOrderByCreatedAtDesc(member);
+        List<Reservation> reservations = switch (type) {
+            case "ongoing"   -> reservationRepository
+                    .findAllByMemberAndStatusOrderByCreatedAtDesc(member, ReservationStatus.REQUESTED);
+            case "completed" -> reservationRepository
+                    .findAllByMemberAndStatusInOrderByCreatedAtDesc(member, COMPLETED_STATUSES);
+            default -> throw new GeneralException(ErrorStatus.INVALID_ORDER_TYPE); // 400
+        };
 
         return OrderConverter.toMemberOrderListDTO(reservations);
     }
