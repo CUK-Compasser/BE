@@ -7,8 +7,11 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpReqDTO
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.TokenRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.generalStatus.GeneralErrorCode;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.service.OAuth2Service;
+import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +24,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -74,7 +79,8 @@ public class OAuth2Controller {
     }
 
     @GetMapping("/code/kakao") // 카카오 회원가입 or 로그인 서비스 == GET 요청
-    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 카카오 서버에서 바로 BE 서버로 리다이렉트 해줘서 딱히 접근할 일이 없어요.")
+    @Operation(summary = "카카오 로그인 API", description = "사용자가 카카오 로그인 동의 후 받는 API 입니다. 카카오 서버 인증 후 받은 memberName과 함께 " +
+            "https://compasser.co.kr/auth/callback?accessToken={accessToken} 로 리다이렉트 하는 API 입니다.")
     public ApiResponse<Object> callback (@RequestParam("code") String code, HttpServletResponse response) {
 
         MemberRespDTO.MemberInfoDTO memberInfo = oAuth2Service.loginWithKakao(code);
@@ -87,6 +93,12 @@ public class OAuth2Controller {
                 .sameSite("Strict")
                 .build();
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        try {
+            response.sendRedirect("https://compasser.co.kr/auth/callback?accessToken=".concat(memberInfo.getJwt().getAccessToken()) );
+        } catch (IOException e) {
+            throw new GeneralException(GeneralErrorCode.WRONG_REDIRECT_URL);
+        }
 
         MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().isSuccess(true).memberName(memberInfo.getMemberName()).accessToken(memberInfo.getJwt().getAccessToken()).build();
         return ApiResponse.onSuccess(SuccessStatus.OK, respDTO);
