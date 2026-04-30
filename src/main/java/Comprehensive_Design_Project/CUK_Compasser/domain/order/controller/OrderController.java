@@ -62,15 +62,16 @@ public class OrderController {
      */
     @Operation(
             summary = "사용자 주문 리스트 조회",
-            description = "로그인한 사용자의 주문 목록을 최신순으로 조회합니다."
+            description = "type=ongoing: 진행중(REQUESTED), type=completed: 완료(APPROVED/REJECTED/CANCELED)"
     )
     @GetMapping
     public ApiResponse<OrderRespDTO.MemberOrderListDTO> getOrderList(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam(name = "type", defaultValue = "ongoing") String type
     ) {
         return ApiResponse.onSuccess(
                 SuccessStatus.ORDER_STATUS_FOUND,
-                orderService.getOrderList(userDetails.getMember().getId())
+                orderService.getOrderList(userDetails.getMember().getId(), type)
         );
     }
 }
