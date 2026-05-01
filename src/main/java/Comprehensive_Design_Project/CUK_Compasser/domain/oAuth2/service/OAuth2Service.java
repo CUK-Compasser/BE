@@ -59,7 +59,7 @@ public class OAuth2Service {
     private final AuthenticationManager authenticationManager;
 
     @Transactional
-    public SignUpRespDTO.JoinRespDTO joinMember(SignUpReqDTO.JoinReqDTO joinRequestDTO) {
+    public SignUpRespDTO.JoinRespDAO joinMember(SignUpReqDTO.JoinReqDTO joinRequestDTO) {
 
         // 이메일 중복 확인
         if (memberRepository.findByEmail(joinRequestDTO.getEmail()).isPresent()) {
@@ -86,11 +86,23 @@ public class OAuth2Service {
 
         Member savedMember = memberRepository.save(newMember);
 
+        // 2. API 플로우 한계로 인한, 회원가입 시에도 JWT 발급 (점장 승격 API와 플로우 충돌)
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(newMember.getRole().toString()));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(newMember.getEmail(), newMember.getPassword(), authorities);
+
+        SignUpRespDTO.JoinRespDAO dao = SignUpRespDTO.JoinRespDAO.builder()
+                .jwt(jwtProvider.generateToken(authentication))
+                .memberName(newMember.getMemberName())
+                .email(newMember.getEmail())
+                .build();
+
+        return dao;
+/*
         // 3. 빌더를 통해 생성된 객체 반환
         return SignUpRespDTO.JoinRespDTO.builder()
                 .memberName(savedMember.getMemberName())
                 .email(savedMember.getEmail())
-                .build();
+                .build();*/
     }
 
     // 일반 로그인 서비스
