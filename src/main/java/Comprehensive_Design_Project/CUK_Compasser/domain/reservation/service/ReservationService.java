@@ -16,6 +16,10 @@ public interface ReservationService {
 
     KakaoPayRespDTO.ReadyResultDTO readyKakaoPay(Long reservationId, Long memberId);
 
+    void approveKakaoPayByCallback(Long reservationId, String pgToken);
+    void cancelKakaoPayByCallback(Long reservationId);
+    void markPaymentFailedByCallback(Long reservationId);
+
     KakaoPayRespDTO.ApproveResultDTO approveKakaoPay(Long reservationId, Long memberId, String pgToken);
 
     void cancelKakaoPay(Long reservationId, Long memberId);

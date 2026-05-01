@@ -41,7 +41,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 점장 확인 대기 목록 조회
-     * - 로그인한 점장의 가게 기준으로 REQUESTED 상태 예약만 조회한다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -59,7 +58,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 점장 처리 완료 목록 조회
-     * - APPROVED, REJECTED, CANCELED 상태 예약을 조회한다.
      */
     @Override
     @Transactional(readOnly = true)
@@ -83,7 +81,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 점장 예약 수락
-     * - 선결제 후 수락 정책이므로 PAID 상태인 예약만 수락 가능하다.
      */
     @Override
     @Transactional
@@ -106,7 +103,6 @@ public class ReservationServiceImpl implements ReservationService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
 
         lockedRandomBox.decreaseStock(reservation.getRequestedQuantity());
-
         reservation.approve();
 
         return reservationConverter.toReservationDTO(reservation);
@@ -114,9 +110,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 점장 예약 거절
-     * - 거절 사유는 필수이다.
-     * - 이미 결제 완료된 예약은 카카오 결제 취소 후 REFUNDED 로 변경한다.
-     * - 승인된 주문을 거절로 되돌리는 경우 재고를 복구한다.
      */
     @Override
     @Transactional
@@ -140,15 +133,12 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_STATUS);
         }
 
-        // 이미 승인된 주문을 거절로 되돌리는 경우 재고 복구
         if (reservation.getStatus() == ReservationStatus.APPROVED) {
             RandomBox lockedRandomBox = randomBoxRepository.findWithLockById(reservation.getRandomBox().getId())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.RANDOM_BOX_NOT_FOUND));
-
             lockedRandomBox.increaseStock(reservation.getRequestedQuantity());
         }
 
-        // 이미 결제 완료된 예약을 점장이 거절하면 환불 처리
         if (reservation.getPaymentStatus() == PaymentStatus.PAID) {
             validateRefundable(reservation);
             cancelKakaoPayPayment(reservation);
@@ -162,9 +152,6 @@ public class ReservationServiceImpl implements ReservationService {
 
     /**
      * 카카오페이 결제 준비
-     * - READY 이전 단계(PENDING, FAILED, CANCELED 등)에서 다시 시도할 수 있다.
-     * - 이미 PAID 인 경우 재결제 불가
-     * - 취소/거절된 예약은 결제 불가
      */
     @Override
     @Transactional
@@ -181,13 +168,10 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.RESERVATION_ALREADY_PAID);
         }
 
-        String partnerOrderId = "reservation_" + reservation.getId();
-        String partnerUserId = "member_" + memberId;
-
         KakaoPayReqDTO.ReadyRequestDTO request = KakaoPayReqDTO.ReadyRequestDTO.builder()
                 .cid(kakaoPayProperties.getCid())
-                .partner_order_id(partnerOrderId)
-                .partner_user_id(partnerUserId)
+                .partner_order_id("reservation_" + reservation.getId())
+                .partner_user_id("member_" + memberId)
                 .item_name(reservation.getStore().getStoreName() + " 랜덤박스")
                 .quantity(reservation.getRequestedQuantity())
                 .total_amount(reservation.getTotalPrice())
@@ -198,7 +182,6 @@ public class ReservationServiceImpl implements ReservationService {
                 .build();
 
         KakaoPayRespDTO.ReadyResponseDTO response = kakaoPayClient.ready(request);
-
         reservation.markPaymentReady(response.getTid(), "KAKAOPAY");
 
         return KakaoPayRespDTO.ReadyResultDTO.builder()
@@ -210,9 +193,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     /**
-     * 카카오페이 결제 승인
-     * - READY 상태에서만 승인 가능하다.
-     * - 승인 응답 검증 실패나 카카오 호출 실패 시 paymentStatus 를 FAILED 로 변경한다.
+     * 카카오페이 결제 승인 (프론트 직접 호출용 - 현재는 미사용, 콜백 방식으로 대체됨)
      */
     @Override
     @Transactional
@@ -251,9 +232,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         try {
             KakaoPayRespDTO.ApproveResponseDTO response = kakaoPayClient.approve(request);
-
             validateApproveResponse(reservation, memberId, response);
-
             reservation.markPaid("KAKAOPAY");
 
             return KakaoPayRespDTO.ApproveResultDTO.builder()
@@ -263,14 +242,13 @@ public class ReservationServiceImpl implements ReservationService {
                     .approvedAt(response.getApproved_at())
                     .build();
 
-        }  catch (GeneralException e) {
+        } catch (GeneralException e) {
             if (e.getCode() == ErrorStatus.KAKAOPAY_APPROVE_FAILED ||
                     e.getCode() == ErrorStatus.INVALID_PAYMENT_AMOUNT ||
                     e.getCode() == ErrorStatus.INVALID_PAYMENT_INFO) {
                 markPaymentFailedInNewTx(reservation.getId());
             }
             throw e;
-
         } catch (Exception e) {
             markPaymentFailedInNewTx(reservation.getId());
             throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
@@ -278,9 +256,53 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     /**
-     * 카카오 결제창 취소 처리
-     * - 실제 카카오 승인 완료(PAID) 전, READY 상태에서만 취소 가능하다.
-     * - 취소 시 paymentStatus 를 CANCELED 로 변경한다.
+     * 카카오페이 콜백 - 결제 승인 (서버 내부 처리용)
+     * - 카카오페이 success 콜백에서 자동 호출, 인증 없음
+     */
+    @Override
+    @Transactional
+    public void approveKakaoPayByCallback(Long reservationId, String pgToken) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        if (reservation.getPaymentStatus() != PaymentStatus.READY) {
+            throw new GeneralException(ErrorStatus.INVALID_PAYMENT_STATUS);
+        }
+
+        if (!StringUtils.hasText(reservation.getPaymentTid())) {
+            throw new GeneralException(ErrorStatus.PAYMENT_TID_NOT_FOUND);
+        }
+
+        Long memberId = reservation.getMember().getId();
+
+        KakaoPayReqDTO.ApproveRequestDTO request = KakaoPayReqDTO.ApproveRequestDTO.builder()
+                .cid(kakaoPayProperties.getCid())
+                .tid(reservation.getPaymentTid())
+                .partner_order_id("reservation_" + reservationId)
+                .partner_user_id("member_" + memberId)
+                .pg_token(pgToken)
+                .build();
+
+        try {
+            KakaoPayRespDTO.ApproveResponseDTO response = kakaoPayClient.approve(request);
+            validateApproveResponse(reservation, memberId, response);
+            reservation.markPaid("KAKAOPAY");
+
+        } catch (GeneralException e) {
+            if (e.getCode() == ErrorStatus.KAKAOPAY_APPROVE_FAILED ||
+                    e.getCode() == ErrorStatus.INVALID_PAYMENT_AMOUNT ||
+                    e.getCode() == ErrorStatus.INVALID_PAYMENT_INFO) {
+                markPaymentFailedInNewTx(reservationId);
+            }
+            throw e;
+        } catch (Exception e) {
+            markPaymentFailedInNewTx(reservationId);
+            throw new GeneralException(ErrorStatus.KAKAOPAY_APPROVE_FAILED);
+        }
+    }
+
+    /**
+     * 카카오 결제창 취소 처리 (프론트 직접 호출용)
      */
     @Override
     @Transactional
@@ -300,9 +322,35 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     /**
-     * 카카오페이 결제 취소(환불)
-     * - 이미 결제 완료된 reservation 에 대해서만 호출한다.
-     * - 카카오 취소 응답의 tid 가 기존 결제 tid 와 일치하는지 검증한다.
+     * 카카오페이 콜백 - 결제 취소 상태 반영
+     */
+    @Override
+    @Transactional
+    public void cancelKakaoPayByCallback(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        if (reservation.getPaymentStatus() == PaymentStatus.READY) {
+            reservation.cancelPayment();
+        }
+    }
+
+    /**
+     * 카카오페이 콜백 - 결제 실패 상태 반영
+     */
+    @Override
+    @Transactional
+    public void markPaymentFailedByCallback(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
+
+        if (reservation.getPaymentStatus() == PaymentStatus.READY) {
+            reservation.markPaymentFailed();
+        }
+    }
+
+    /**
+     * 카카오페이 결제 취소(환불) - 점장 거절 시 내부 호출
      */
     private void cancelKakaoPayPayment(Reservation reservation) {
         if (!StringUtils.hasText(reservation.getPaymentTid())) {
@@ -333,14 +381,12 @@ public class ReservationServiceImpl implements ReservationService {
         txTemplate.executeWithoutResult(status -> {
             Reservation failedReservation = reservationRepository.findById(reservationId)
                     .orElseThrow(() -> new GeneralException(ErrorStatus.RESERVATION_NOT_FOUND));
-
             failedReservation.markPaymentFailed();
         });
     }
 
     /**
      * 카카오 승인 응답 검증
-     * - amount, tid, partner_order_id, partner_user_id, cid 를 검증한다.
      */
     private void validateApproveResponse(Reservation reservation,
                                          Long memberId,
@@ -349,10 +395,7 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_AMOUNT);
         }
 
-        Integer approvedAmount = response.getAmount().getTotal();
-        Integer expectedAmount = reservation.getTotalPrice();
-
-        if (!expectedAmount.equals(approvedAmount)) {
+        if (!reservation.getTotalPrice().equals(response.getAmount().getTotal())) {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_AMOUNT);
         }
 
@@ -360,13 +403,11 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
         }
 
-        String expectedPartnerOrderId = "reservation_" + reservation.getId();
-        if (!expectedPartnerOrderId.equals(response.getPartner_order_id())) {
+        if (!("reservation_" + reservation.getId()).equals(response.getPartner_order_id())) {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
         }
 
-        String expectedPartnerUserId = "member_" + memberId;
-        if (!expectedPartnerUserId.equals(response.getPartner_user_id())) {
+        if (!("member_" + memberId).equals(response.getPartner_user_id())) {
             throw new GeneralException(ErrorStatus.INVALID_PAYMENT_INFO);
         }
 
@@ -380,6 +421,4 @@ public class ReservationServiceImpl implements ReservationService {
             throw new GeneralException(ErrorStatus.REFUND_NOT_ALLOWED_AFTER_SETTLEMENT);
         }
     }
-
-
 }

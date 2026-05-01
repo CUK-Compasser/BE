@@ -35,33 +35,7 @@ public class ReservationPaymentController {
     }
 
     @Operation(
-            summary = "카카오페이 결제 승인",
-            description = "카카오페이 결제 완료 후 전달받은 pg_token으로 최종 결제를 승인합니다."
-    )
-    @PostMapping("/{reservationId}/payment/approve")
-    public ApiResponse<KakaoPayRespDTO.ApproveResultDTO> approveKakaoPay(
-            @PathVariable Long reservationId,
-            @RequestParam("pg_token") String pgToken,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        return ApiResponse.onSuccess(
-                SuccessStatus.RESERVATION_PAYMENT_APPROVED,
-                reservationService.approveKakaoPay(reservationId, userDetails.getMember().getId(), pgToken)
-        );
-    }
-
-    /*
-    결제 취소 API
-        이건 주문은 살려두고 결제만 취소하는 것이야.
-        reservationStatus = REQUESTED 그대로
-        paymentStatus = CANCELED
-
-        예약은 아직 유효
-        다만 이번 결제 시도만 취소됨
-        사용자는 같은 reservationId로 다시 결제 가능
-    */
-    @Operation(
-            summary = "카카오페이 결제전 결제창에 취소 처리",
+            summary = "카카오페이 결제창 진입 전 취소",
             description = "결제창에서 사용자가 취소한 경우 결제 상태만 CANCELED로 변경합니다."
     )
     @PostMapping("/{reservationId}/payment/cancel")
@@ -72,5 +46,4 @@ public class ReservationPaymentController {
         reservationService.cancelKakaoPay(reservationId, userDetails.getMember().getId());
         return ApiResponse.onSuccess(SuccessStatus.OK, null);
     }
-
 }
