@@ -46,8 +46,23 @@ public class OAuth2Controller {
 
     @PostMapping("/sign-up")
     @Operation(summary = "일반 회원가입 API", description = "이름, 닉네임, 이메일 등을 입력받아 회원가입을 진행합니다.")
-    public ApiResponse<SignUpRespDTO.JoinRespDTO> signUp(@RequestBody @Valid SignUpReqDTO.JoinReqDTO signUpReqDTO) {
-        return ApiResponse.onSuccess(SuccessStatus.CREATED, oAuth2Service.joinMember(signUpReqDTO));
+    public ApiResponse<SignUpRespDTO.JoinRespDTO> signUp(HttpServletResponse response,@RequestBody @Valid SignUpReqDTO.JoinReqDTO signUpReqDTO) {
+
+        SignUpRespDTO.JoinRespDAO joinRespDAO = oAuth2Service.joinMember(signUpReqDTO);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", joinRespDAO.getJwt().getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ApiResponse.onSuccess(SuccessStatus.CREATED, SignUpRespDTO.JoinRespDTO.builder()
+                .email(joinRespDAO.getEmail())
+                .accessToken(joinRespDAO.getJwt().getAccessToken())
+                .memberName(joinRespDAO.getEmail()).build());
     }
 
 
