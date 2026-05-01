@@ -52,7 +52,7 @@ public class Reward extends BaseEntity {
         return Reward.builder()
                 .member(member)
                 .store(store)
-                .stamp(0)
+                .stamp(1) // 기본 적립 후 스탬프 생성이므로
                 .coupon(0)
                 .reason("")
                 .build();

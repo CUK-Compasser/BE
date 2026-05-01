@@ -2,6 +2,7 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.member.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
+import Comprehensive_Design_Project.CUK_Compasser.domain.reward.dto.RewardEachStoreRecord;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.ApiResponse;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.SuccessStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.userDetails.CustomUserDetails;
@@ -35,7 +36,7 @@ public class MemberController {
     /*
     * 브라우저가 인식하려면, Content-Type 필요해서....
     */
-    @GetMapping(value = "/qr/test", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/qr", produces = MediaType.IMAGE_PNG_VALUE)
     @Operation(summary = "QR 코드 생성 API", description = "사용자 id 값을 기준으로 QR 코드를 생성하는 API 입니다. 공통 응답으로 통일하려고 했으나, Http Header의 contentType을 설정해야 되서 기본 ResponseEntity를 활용했습니다... 관련 사항은 김석현한테 문의주세요!")
     public ResponseEntity<Resource> getRewardQR(@AuthenticationPrincipal CustomUserDetails userDetails) {
         Resource resource = new ByteArrayResource(memberService.generateQRCode(userDetails.getMember().getId()));
@@ -47,7 +48,7 @@ public class MemberController {
 
     @GetMapping("/reward")
     @Operation(summary = "적립 현황 확인 API", description = "사용자가 여러 가게에서 적립한 현황을 확인하는 API 입니다.")
-    public ApiResponse<List<MemberRespDTO.RewardListDTO>> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ApiResponse<List<RewardEachStoreRecord>> getRewardList (@AuthenticationPrincipal CustomUserDetails userDetails) {
         return ApiResponse.onSuccess(SuccessStatus.OK, memberService.getRewardList(userDetails.getMember().getId()));
     }
 

@@ -1,7 +1,9 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
@@ -38,6 +40,7 @@ public class StoreService {
     @Transactional
     public StoreRespDTO updateStore(Long memberId, StoreUpdateReqDTO req) {
         Store store = getMyStoreEntity(memberId);
+        Member member = store.getStoreManager().getMember();
 
         if (req.getStoreName() != null) {
             store.setStoreName(req.getStoreName());
@@ -50,6 +53,14 @@ public class StoreService {
         if (req.getBusinessHours() != null) {
             validateBusinessHours(req.getBusinessHours());
             store.setBusinessHours(storeConverter.toRawJson(req.getBusinessHours()));
+        }
+
+        if (req.getTag() != null) {
+            store.setTag(req.getTag());
+        }
+
+        if (req.getBankType() != null) {
+            member.setBankType(req.getBankType());
         }
 
         return storeConverter.toResp(store);
@@ -153,6 +164,7 @@ public class StoreService {
                     .storeId(store.getId())
                     .tag(store.getTag())
                     .storeName(store.getStoreName())
+                    .storeEmail(store.getStoreEmail())
                     .roadAddress(store.getRoadAddress())
                     .jibunAddress(store.getJibunAddress())
                     .businessHours(objectMapper.readTree(store.getBusinessHours())).build();

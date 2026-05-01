@@ -20,6 +20,9 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    /**
+     * 사장님 확인 대기 예약 리스트 조회 API
+     */
     @Operation(
             summary = "예약 페이지 목록 조회",
             description = "로그인한 점장의 가게 기준으로 확인 대기중(REQUESTED) 예약 목록만 조회합니다."
@@ -34,6 +37,9 @@ public class ReservationController {
         );
     }
 
+    /**
+     * 사장님 처리 완료 예약 리스트 조회 API
+     */
     @Operation(
             summary = "주문 페이지 목록 조회",
             description = "로그인한 점장의 가게 기준으로 처리 완료 목록(APPROVED, REJECTED, CANCELED)을 조회합니다."
@@ -48,6 +54,9 @@ public class ReservationController {
         );
     }
 
+    /**
+     * 사장님 예약 수락 API
+     */
     @Operation(
             summary = "예약 수락",
             description = "로그인한 점장의 가게 기준으로 확인 대기중 예약을 수락합니다."
@@ -63,6 +72,9 @@ public class ReservationController {
         );
     }
 
+    /**
+     * 사장님 예약 거절 API
+     */
     @Operation(
             summary = "예약 거절",
             description = "로그인한 점장의 가게 기준으로 확인 대기중 예약을 거절합니다."
