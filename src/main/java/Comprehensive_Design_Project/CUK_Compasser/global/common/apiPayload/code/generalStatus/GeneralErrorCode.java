@@ -21,7 +21,8 @@ public enum GeneralErrorCode implements BaseErrorCode {
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "G007", "토큰을 통해 사용자를 찾을 수 없습니다.."),
     BLACKLIST_TOKEN(HttpStatus.UNAUTHORIZED, "G008", "블랙리스트에 등록된 토큰입니다."),
     RT_NOT_FOUND(HttpStatus.UNAUTHORIZED, "G008", "리프레쉬 토큰을 찾을 수 없습니다."),
-    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "G007", "입력값 검증에 실패했습니다.");
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "G007", "입력값 검증에 실패했습니다."),
+    WRONG_REDIRECT_URL(HttpStatus.BAD_REQUEST, "G009", "리다이렉트에 실패했습니다.");
 
     private final HttpStatus httpStatus;  // ex: 200 OK
     private final String code;
