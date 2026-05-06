@@ -19,6 +19,7 @@ public class StoreRespDTO {
     private Long storeManagerId;
     private String storeName;
     private String storeDetails;
+    private String storeEmail;
 
     private String inputAddress;
     private String roadAddress;

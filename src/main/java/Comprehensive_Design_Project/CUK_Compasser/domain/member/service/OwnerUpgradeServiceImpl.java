@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class OwnerUpgradeServiceImpl implements OwnerUpgradeService {
                 .orElseGet(() -> storeManagerRepository.save(
                         StoreManager.builder()
                                 .member(member)
-                                .businessLicenseNumber("TEST-BIZ-NUMBER")
+                                .businessLicenseNumber("TEST-" + memberId + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase())
                                 .verifiedAt(LocalDateTime.now())
                                 .build()
                 ));
