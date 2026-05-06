@@ -18,7 +18,7 @@ public class StoreRespPagingDTO {
         private String storeName;
         private String storeImage;
         private Tag tag;
-        private String storeDetails;
+        private String storeEmail;
         private BigDecimal latitude;
         private BigDecimal longitude;
         private JsonNode businessHours;

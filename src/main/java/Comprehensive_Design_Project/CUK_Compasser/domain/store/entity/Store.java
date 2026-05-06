@@ -50,9 +50,6 @@ public class Store extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Tag tag;
 
-    @Column(name = "store_details", length = 500)
-    private String storeDetails;
-
     @Column(name = "input_address", length = 255)
     private String inputAddress;
 

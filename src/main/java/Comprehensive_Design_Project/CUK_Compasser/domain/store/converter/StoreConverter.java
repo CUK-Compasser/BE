@@ -29,10 +29,10 @@ public class StoreConverter {
                 .storeId(store.getId())
                 .storeManagerId(store.getStoreManager().getId())
                 .storeName(store.getStoreName())
-                .storeDetails(store.getStoreDetails())
                 .inputAddress(store.getInputAddress())
                 .roadAddress(store.getRoadAddress())
                 .jibunAddress(store.getJibunAddress())
+                .storeEmail(store.getStoreEmail())
                 .latitude(store.getLatitude())
                 .longitude(store.getLongitude())
                 .businessHours(toJsonNode(store.getBusinessHours()))
@@ -73,7 +73,7 @@ public class StoreConverter {
                     .storeName(store.getStoreName())
                     .storeImage(imageUrl)
                     .tag(store.getTag())
-                    .storeDetails(store.getStoreDetails())
+                    .storeEmail(store.getStoreEmail())
                     .latitude(store.getLatitude())  // 맵 화면에서 사용할 위도 -> 심플 조회 (바텀시트바) API 에 활용
                     .longitude(store.getLongitude())  // 맵 화면에서 사용할 경도 -> 심플 조회 (바텀시트바) API 에 활용
                     .businessHours(toJsonNode(store.getBusinessHours()))
@@ -95,7 +95,6 @@ public class StoreConverter {
                 .storeManagerId(store.getStoreManager().getId()) // 현재 fetch join으로 이미 랜덤박스를 들고 와서 얘는 쿼리가 발생
                 .storeName(store.getStoreName())
                 .storeEmail(store.getStoreEmail())
-                .storeDetails(store.getStoreDetails())
                 .images(store.getImages())
                 .inputAddress(store.getInputAddress())
                 .roadAddress(store.getRoadAddress())
