@@ -15,7 +15,6 @@ public record StoreDetailsDTO(
         Long storeManagerId,
         String storeName,
         String storeEmail,
-        String storeDetails,
         List<StoreImage> images,
 
         String inputAddress,

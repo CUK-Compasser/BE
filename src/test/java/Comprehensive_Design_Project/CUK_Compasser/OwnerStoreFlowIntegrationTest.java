@@ -93,7 +93,7 @@ class OwnerStoreFlowIntegrationTest {
         String patchBody = """
                 {
                   "storeName": "컴패서 카페",
-                  "storeDetails": "랜덤박스 판매합니다",
+                  "storeEmail": "starvillage_origin@gmail.com",
                   "beforePrice": 12000,
                   "afterPrice": 5900,
                   "businessHours": {
