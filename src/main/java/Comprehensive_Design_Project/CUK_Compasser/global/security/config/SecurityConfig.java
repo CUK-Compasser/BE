@@ -76,7 +76,8 @@ public class SecurityConfig {
                 "http://localhost:8080",       // 로컬 테스트용 스웨거 (포트 8080일 경우)
                 "http://localhost:8081",       // 로컬 테스트용 스웨거 (포트 8081일 경우)
                 "https://compasser.site",      // 본 서버 스웨거 및 배포된 프론트엔드 도메인
-                "https://www.compasser.site"   // www가 붙은 도메인
+                "https://www.compasser.site",   // www가 붙은 도메인
+                "https://owner.compasser.co.kr/"
         ));
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
