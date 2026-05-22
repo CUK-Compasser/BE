@@ -110,7 +110,9 @@ public class OAuth2Controller {
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         try {
-            response.sendRedirect("https://compasser.co.kr/auth/callback?accessToken=".concat(memberInfo.getJwt().getAccessToken()) );
+            response.sendRedirect("https://compasser.co.kr/auth/callback?accessToken="
+                    .concat(memberInfo.getJwt().getAccessToken())
+                    .concat("&role=").concat(memberInfo.getRole().name()));
         } catch (IOException e) {
             throw new GeneralException(GeneralErrorCode.WRONG_REDIRECT_URL);
         }
