@@ -64,9 +64,8 @@ public class Member extends BaseEntity {
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private StoreManager storeManager;
 
-    public static Member createNewMemberByKakao(String email, String nickname) {
-        // phone은 어떻게 할까?
-        return Member.builder().email(email).status(Role.ACTIVE).role(MemberRole.NULL).provider(Login.KAKAO).providerId("id").memberName(nickname).build();
+    public static Member createNewMemberByKakao(String email, String nickname, String kakaoId) {
+        return Member.builder().email(email).status(Role.ACTIVE).role(MemberRole.NULL).provider(Login.KAKAO).providerId(kakaoId).memberName(nickname).build();
     }
 
     // 편의 메서드(선택)

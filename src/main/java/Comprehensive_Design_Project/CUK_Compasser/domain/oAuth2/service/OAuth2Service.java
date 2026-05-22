@@ -196,17 +196,15 @@ public class OAuth2Service {
 
 
         // 사용자 정보 처리
+        String kakaoId = jsonNode2.get("id").asText();
         String memberName = jsonNode2.get("properties").get("nickname").asText();
         String email = jsonNode2.get("kakao_account").get("email").asText();
 
-
-//        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-
-        Optional<Member> memberOptional = memberRepository.findByEmail(email);
+        Optional<Member> memberOptional = memberRepository.findByProviderAndProviderId(Login.KAKAO, kakaoId);
         if(memberOptional.isEmpty()) {
             // 없는 경우 저장
-            memberRepository.save(Member.createNewMemberByKakao(email, memberName));
-            memberOptional = memberRepository.findByEmail(email);
+            memberRepository.save(Member.createNewMemberByKakao(email, memberName, kakaoId));
+            memberOptional = memberRepository.findByProviderAndProviderId(Login.KAKAO, kakaoId);
         }
         Member member = memberOptional.get();
 
@@ -221,8 +219,7 @@ public class OAuth2Service {
 //        log.info("username: {}", memberName);
 //        log.info("userId (email): {}", email);
 
-        // 여기 추가, 통합
-        return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).memberName(memberName).build();
+        return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).memberName(memberName).role(member.getRole()).build();
     }
 
     public void logout (String accessToken, Long memberId){
