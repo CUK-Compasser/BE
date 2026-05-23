@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\jijys\\\\Desktop\\\\MAIN\\\\Github\\\\CUK-Compasser\\\\src\\\\main\\\\java\\\\Comprehensive_Design_Project\\\\CUK_Compasser\\\\domain\\\\oAuth2\" -Recurse)",
+      "Bash(Select-Object -Property FullName, Name)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(xargs grep -l \"enum Login\")"
+    ]
+  }
+}

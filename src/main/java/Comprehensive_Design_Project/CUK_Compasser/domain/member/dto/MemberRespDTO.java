@@ -1,5 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.member.dto;
 
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
 import Comprehensive_Design_Project.CUK_Compasser.global.security.jwt.JWT;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ public class MemberRespDTO {
     public static class MemberInfoDTO {
         private JWT jwt;
         private String memberName;
+        private MemberRole role;
     }
 
     @Getter
