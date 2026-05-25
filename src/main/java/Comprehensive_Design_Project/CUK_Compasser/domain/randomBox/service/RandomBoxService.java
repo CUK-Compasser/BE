@@ -225,8 +225,8 @@ public class RandomBoxService {
         try {
             LocalTime startTime = LocalTime.parse(startNode.asText());
             LocalTime endTime = LocalTime.parse(endNode.asText());
-
-            if (!startTime.isBefore(endTime)) {
+            boolean isOvernightEnd = endTime.equals(LocalTime.MIDNIGHT);
+            if (!isOvernightEnd && !startTime.isBefore(endTime)) {
                 throw new GeneralException(ErrorStatus.INVALID_PICKUP_TIME);
             }
         } catch (DateTimeParseException e) {

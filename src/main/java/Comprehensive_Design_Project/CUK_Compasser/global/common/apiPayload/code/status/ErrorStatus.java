@@ -134,7 +134,12 @@ public enum ErrorStatus implements BaseErrorCode {
     ALREADY_SETTLED(HttpStatus.BAD_REQUEST, "S001", "이미 정산 완료된 주문입니다."),
     REFUND_NOT_ALLOWED_AFTER_SETTLEMENT(HttpStatus.BAD_REQUEST, "S002", "정산 완료된 주문은 환불할 수 없습니다."),
     SETTLEMENT_TARGET_NOT_FOUND(HttpStatus.NOT_FOUND, "S003", "정산 대상 주문이 없습니다."),
-    INVALID_SETTLEMENT_REQUEST(HttpStatus.BAD_REQUEST, "S004", "정산 요청이 올바르지 않습니다.");
+    INVALID_SETTLEMENT_REQUEST(HttpStatus.BAD_REQUEST, "S004", "정산 요청이 올바르지 않습니다."),
+
+    // =========================
+    // [Account]
+    // =========================
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "AC001", "계좌 정보를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

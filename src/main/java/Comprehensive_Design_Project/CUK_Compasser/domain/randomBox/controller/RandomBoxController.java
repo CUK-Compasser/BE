@@ -54,7 +54,10 @@ public class RandomBoxController {
 
     @Operation(
             summary = "랜덤박스 수정",
-            description = "로그인한 점장이 자신의 매장 랜덤박스 정보를 수정합니다."
+            description = "로그인한 점장이 자신의 매장 랜덤박스 정보를 수정합니다.<br>" +
+                    "픽업시간 형식은 00:00 ~ 23:59 입니다!<br>" +
+                    "예시: {\\\"timezone\\\":\\\"Asia/Seoul\\\",\\\"pickupTime\\\":{\\\"start\\\":\\\"18:00\\\",\\\"end\\\":\\\"21:00\\\"}}"
+
     )
     @PatchMapping("/{boxId}")
     public ApiResponse<RandomBoxRespDTO> update(
@@ -77,6 +80,8 @@ public class RandomBoxController {
             @PathVariable Long boxId,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        Long memberId = userDetails.getMember().getId();
+        randomBoxService.delete(boxId, memberId);
         return ApiResponse.onSuccess(SuccessStatus.OK, null);
     }
 }
