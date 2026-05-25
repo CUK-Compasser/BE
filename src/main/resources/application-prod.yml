@@ -35,9 +35,18 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       pool-name: HikariPool-1
+  # 다음 배포 때는 never로 바꿔서 중복 삽입 에러 방지
+  sql:
+    init:
+      mode: always
+      data-locations:
+        - classpath:sql/UserData.sql
+        - classpath:sql/StoreDataInsertSQL.sql
+        - classpath:sql/RandomBoxDataInsertSQL.sql
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
     show-sql: false
@@ -97,3 +106,22 @@ logging:
   level:
     root: INFO
     org.hibernate.SQL: ERROR
+
+kakaopay:
+  cid: TC0ONETIME
+  secret-key: ${KAKAOPAY_SECRET_KEY_DEV}
+  base-url: https://open-api.kakaopay.com
+  approval-url: https://compasser.co.kr/payments/kakaopay/success
+  cancel-url: https://compasser.co.kr/payments/kakaopay/cancel
+  fail-url: https://compasser.co.kr/payments/kakaopay/fail
+
+app:
+  frontend-base-url: https://www.compasser.co.kr
+
+springdoc:
+  packages-to-scan: Comprehensive_Design_Project.CUK_Compasser
+
+nts:
+  business:
+    base-url: https://api.odcloud.kr/api/nts-businessman/v1
+    service-key: ${NTS_SERVICE_KEY}

@@ -1,4 +1,4 @@
-INSERT INTO random_boxes (
+INSERT IGNORE INTO random_boxes (
     created_at, updated_at, store_id, box_name, content,
     stock, price, buy_limit, sale_status
 ) VALUES

@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 @Component
 public class JWTProvider {
 
-    // 일단 1시간으로 세팅
-    private static final Long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60;
-    private static final Long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60;
+    // 일단 1시간으로 세팅 -> access token만 30분 설정, refresh token은 1주일로 설정
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 30;
+    private static final Long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60 * 24 * 7;
 
     private final Key key;
     private final CustomUserDetailsService customUserDetailsService;

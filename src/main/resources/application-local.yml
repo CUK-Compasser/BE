@@ -27,10 +27,10 @@ spring:
               - account_email
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${MYSQL_DB_NAME}
-    username: ${MYSQL_USERNAME}
+    url: jdbc:mysql://localhost:3306/${DB_NAME:cuk_compasser}?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    username: root
     password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
     hikari:
       maximum-pool-size: 5
@@ -108,7 +108,7 @@ kakao:
 
 kakaopay:
   cid: TC0ONETIME
-  secret-key: ${KAKAOPAY_SECRET_KEY_DEV}
+  secret-key: ${KAKAOPAY_SECRET_KEY_DEV:local-dummy}
   base-url: https://open-api.kakaopay.com
   approval-url: https://compasser.co.kr/payments/kakaopay/success
   cancel-url: https://compasser.co.kr/payments/kakaopay/cancel
@@ -123,4 +123,4 @@ springdoc:
 nts:
   business:
     base-url: https://api.odcloud.kr/api/nts-businessman/v1
-    service-key: ${NTS_SERVICE_KEY}
+    service-key: ${NTS_SERVICE_KEY:local-dummy}

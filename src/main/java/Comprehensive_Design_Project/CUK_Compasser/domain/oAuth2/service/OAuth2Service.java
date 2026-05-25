@@ -113,6 +113,9 @@ public class OAuth2Service {
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
+        Member member = memberRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+
         JWT jwt = jwtProvider.generateToken(authentication);
 
         redisTemplate.opsForValue().set(
@@ -125,6 +128,7 @@ public class OAuth2Service {
         return TokenRespDTO.builder()
                 .accessToken(jwt.getAccessToken())
                 .refreshToken(jwt.getRefreshToken())
+                .role(member.getRole())
                 .build();
     }
 

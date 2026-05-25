@@ -1,6 +1,7 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.controller;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberRespDTO;
+import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.service.MemberService;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.LoginReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.oAuth2.dto.SignUpReqDTO;
@@ -42,7 +43,7 @@ public class OAuth2Controller {
 
     private final OAuth2Service oAuth2Service;
 
-    public record AccessTokenDTO(String accessToken) {}
+    public record AccessTokenDTO(String accessToken, MemberRole role) {}
 
     @PostMapping("/sign-up")
     @Operation(summary = "일반 회원가입 API", description = "이름, 닉네임, 이메일 등을 입력받아 회원가입을 진행합니다.")
@@ -84,7 +85,7 @@ public class OAuth2Controller {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ApiResponse.onSuccess(SuccessStatus.OK, new AccessTokenDTO(tokenResponse.accessToken()));
+        return ApiResponse.onSuccess(SuccessStatus.OK, new AccessTokenDTO(tokenResponse.accessToken(), tokenResponse.role()));
     }
 
     @PostMapping("/login-kakao")

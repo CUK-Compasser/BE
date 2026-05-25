@@ -3,8 +3,6 @@ services:
     image: shawn9272/cuk-compasser:${IMAGE_TAG}
     container_name: cuk-compasser-service
     restart: always
-    ports:
-      - "8080:8080"
     env_file: .env
     environment:
       - DB_HOST=mysql-db
@@ -25,6 +23,9 @@ services:
       - KAKAO_LOCAL_BASE_URL=https://dapi.kakao.com
       - KAKAO_REST_API_KEY=${KAKAO_REST_API_KEY}
       - JAVA_TOOL_OPTIONS=-Xms256m -Xmx256m
+      - KAKAO_JS_KEY=${KAKAO_JS_KEY}
+      - KAKAOPAY_SECRET_KEY_DEV=${KAKAOPAY_SECRET_KEY_DEV}
+      - NTS_SERVICE_KEY=${NTS_SERVICE_KEY}
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -47,6 +48,23 @@ services:
       resources:
         limits:
           memory: 400M
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443" # HTTPS 포트 개방
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      # ✨ 핵심: EC2 호스트의 인증서 폴더를 Nginx 컨테이너 내부로 연결 (읽기 전용: ro)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    depends_on:
+      - app
+      - grafana
+    networks:
+      - cuk-compasser-net
 
   redis:
     image: redis:latest
@@ -103,8 +121,6 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     restart: always
-    ports:
-      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
       - GF_SERVER_DOMAIN=compasser.site

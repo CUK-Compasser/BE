@@ -1,7 +1,7 @@
 -- ---------------------------------------------------------
 -- 1. members 데이터 삽입 (ID 1~40)
 -- ---------------------------------------------------------
-INSERT INTO members (created_at, updated_at, email, member_name, password, phone, provider, provider_id, role, status)
+INSERT IGNORE INTO members (created_at, updated_at, email, member_name, password, phone, provider, provider_id, role, status)
 VALUES (NOW(), NOW(), 'manager1@test.com', '성수매니저', 'password', '010-1111-1111', 'NORMAL', NULL, 'STORE_MANAGER', 'ACTIVE'),
        (NOW(), NOW(), 'manager2@test.com', '강남매니저', 'password', '010-2222-2222', 'NORMAL', NULL, 'STORE_MANAGER','ACTIVE'),
        (NOW(), NOW(), 'manager3@test.com', '연남매니저', 'password', '010-3333-3333', 'NORMAL', NULL, 'STORE_MANAGER','ACTIVE'),
@@ -46,7 +46,7 @@ VALUES (NOW(), NOW(), 'manager1@test.com', '성수매니저', 'password', '010-1
 -- ---------------------------------------------------------
 -- 2. store_managers 데이터 삽입 (member_id와 1:1 매칭)
 -- ---------------------------------------------------------
-INSERT INTO store_managers (created_at, member_id, updated_at, verified_at, business_license_number)
+INSERT IGNORE INTO store_managers (created_at, member_id, updated_at, verified_at, business_license_number)
 VALUES (NOW(), 1, NOW(), NOW(), '111-81-12345'),
        (NOW(), 2, NOW(), NOW(), '222-82-23456'),
        (NOW(), 3, NOW(), NOW(), '333-83-34567'),

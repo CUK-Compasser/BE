@@ -3,7 +3,7 @@
 -- 일반 데이터 기준:   37.5445, 127.0560
 -- 가톨릭대 정문:      37.4855, 126.8025
 -- ---------------------------------------------------------
-INSERT INTO stores (latitude, longitude, created_at, updated_at,
+INSERT IGNORE INTO  stores (latitude, longitude, created_at, updated_at,
                     store_manager_id, store_name, store_details,
                     business_hours, input_address, jibun_address, road_address,
                     store_email, tag
