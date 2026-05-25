@@ -7,9 +7,6 @@ import java.util.List;
 
 public class OrderConverter {
 
-    private OrderConverter() {
-    }
-
     public static OrderRespDTO.CreateOrderResultDTO toCreateOrderResultDTO(Reservation reservation) {
 
         return OrderRespDTO.CreateOrderResultDTO.builder()
@@ -30,7 +27,6 @@ public class OrderConverter {
     public static OrderRespDTO.CancelOrderResultDTO toCancelOrderResultDTO(Reservation reservation, String message) {
         return OrderRespDTO.CancelOrderResultDTO.builder()
                 .reservationId(reservation.getId())
-                .orderStatus(OrderStatusMapper.resolve(reservation).name())
                 .reservationStatus(reservation.getStatus().name())
                 .paymentStatus(reservation.getPaymentStatus() != null ? reservation.getPaymentStatus().name() : null)
                 .message(message)
