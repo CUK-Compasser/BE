@@ -3,11 +3,13 @@ package Comprehensive_Design_Project.CUK_Compasser.domain.store.service;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.dto.MemberReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.Member;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.converter.StoreConverter;
+import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.AccountUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.req.StoreUpdateReqDTO;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp.*;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Store;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.Tag;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
+import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.entity.StoreManager;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
@@ -185,6 +187,46 @@ public class StoreService {
     public List<StoreRespPagingDTO.GetStoreReqDTO> getStoreListByKeyword (BigDecimal userLat, BigDecimal userLon, String keyword, int page){
         List<Store> content = storeRepository.findStoresByKeywordWithinRadius( userLon, userLat, 3000, "%" + keyword + "%", PageRequest.of(page, 10)).getContent();
         return storeConverter.toGetStoreDTOList(content);
+    }
+
+    @Transactional(readOnly = true)
+    public StoreManagerInfoRespDTO getStoreManagerInfo(Long memberId) {
+        StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND));
+
+        Member member = storeManager.getMember();
+
+        return StoreManagerInfoRespDTO.builder()
+                .memberName(member.getMemberName())
+                .nickName(member.getNickname())
+                .email(member.getEmail())
+                .depositBankType(storeManager.getDepositBankType())
+                .depositAccountNumber(storeManager.getDepositAccountNumber())
+                .depositAccountHolder(storeManager.getDepositAccountHolder())
+                .businessLicenseNumber(storeManager.getBusinessLicenseNumber())
+                .build();
+    }
+
+    @Transactional
+    public AccountUpdateRespDTO updateAccount(Long memberId, AccountUpdateReqDTO req) {
+        StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND));
+
+        if (req.getDepositBankType() != null) {
+            storeManager.setDepositBankType(req.getDepositBankType());
+        }
+        if (req.getDepositAccountNumber() != null) {
+            storeManager.setDepositAccountNumber(req.getDepositAccountNumber());
+        }
+        if (req.getDepositAccountHolder() != null) {
+            storeManager.setDepositAccountHolder(req.getDepositAccountHolder());
+        }
+
+        return AccountUpdateRespDTO.builder()
+                .depositBankType(storeManager.getDepositBankType())
+                .depositAccountNumber(storeManager.getDepositAccountNumber())
+                .depositAccountHolder(storeManager.getDepositAccountHolder())
+                .build();
     }
 
 }
