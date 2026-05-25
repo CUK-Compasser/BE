@@ -190,16 +190,16 @@ public class StoreService {
     }
 
     @Transactional(readOnly = true)
-    public StoreAccountRespDTO getStoreAccount(Long memberId) {
+    public StoreManagerInfoRespDTO getStoreManagerInfo(Long memberId) {
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND));
 
         Member member = storeManager.getMember();
 
-        return StoreAccountRespDTO.builder()
+        return StoreManagerInfoRespDTO.builder()
                 .memberName(member.getMemberName())
+                .nickName(member.getNickname())
                 .email(member.getEmail())
-                .role(member.getRole())
                 .depositBankType(storeManager.getDepositBankType())
                 .depositAccountNumber(storeManager.getDepositAccountNumber())
                 .depositAccountHolder(storeManager.getDepositAccountHolder())
@@ -208,7 +208,7 @@ public class StoreService {
     }
 
     @Transactional
-    public StoreAccountRespDTO updateAccount(Long memberId, AccountUpdateReqDTO req) {
+    public AccountUpdateRespDTO updateAccount(Long memberId, AccountUpdateReqDTO req) {
         StoreManager storeManager = storeManagerRepository.findByMember_Id(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_MANAGER_NOT_FOUND));
 
@@ -222,16 +222,10 @@ public class StoreService {
             storeManager.setDepositAccountHolder(req.getDepositAccountHolder());
         }
 
-        Member member = storeManager.getMember();
-
-        return StoreAccountRespDTO.builder()
-                .memberName(member.getMemberName())
-                .email(member.getEmail())
-                .role(member.getRole())
+        return AccountUpdateRespDTO.builder()
                 .depositBankType(storeManager.getDepositBankType())
                 .depositAccountNumber(storeManager.getDepositAccountNumber())
                 .depositAccountHolder(storeManager.getDepositAccountHolder())
-                .businessLicenseNumber(storeManager.getBusinessLicenseNumber())
                 .build();
     }
 

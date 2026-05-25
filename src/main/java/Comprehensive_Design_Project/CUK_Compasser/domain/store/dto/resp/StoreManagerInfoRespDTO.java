@@ -1,7 +1,6 @@
 package Comprehensive_Design_Project.CUK_Compasser.domain.store.dto.resp;
 
 import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.BankType;
-import Comprehensive_Design_Project.CUK_Compasser.domain.member.entity.MemberRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreAccountRespDTO {
+public class StoreManagerInfoRespDTO {
 
     private String memberName;
+    private String nickName;
     private String email;
-    private MemberRole role;
 
     private BankType depositBankType;
     private String depositAccountNumber;

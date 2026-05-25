@@ -141,16 +141,16 @@ public class StoreController {
 
     @GetMapping("/owners/store/info-setting")
     @Operation(summary = "사장님 계정 정보 조회 API", description = "로그인한 점장의 프로필, 계좌, 사업자번호 정보를 조회하는 API 입니다.")
-    public ApiResponse<StoreAccountRespDTO> getStoreAccount(
+    public ApiResponse<StoreManagerInfoRespDTO> getStoreAccount(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long memberId = userDetails.getMember().getId();
-        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreAccount(memberId));
+        return ApiResponse.onSuccess(SuccessStatus.OK, storeService.getStoreManagerInfo(memberId));
     }
 
     @PatchMapping("/owners/store/account-setting")
     @Operation(summary = "사장님 계좌 정보 수정 API", description = "로그인한 점장의 계좌 정보를 수정하는 API 입니다.")
-    public ApiResponse<StoreAccountRespDTO> updateAccount(
+    public ApiResponse<AccountUpdateRespDTO> updateAccount(
             @RequestBody AccountUpdateReqDTO req,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
