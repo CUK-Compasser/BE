@@ -7,12 +7,15 @@ import Comprehensive_Design_Project.CUK_Compasser.domain.store.entity.StoreImage
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreImageRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.store.repository.StoreRepository;
 import Comprehensive_Design_Project.CUK_Compasser.domain.storeManager.repository.StoreManagerRepository;
+import Comprehensive_Design_Project.CUK_Compasser.global.aws.S3Service;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.code.status.ErrorStatus;
 import Comprehensive_Design_Project.CUK_Compasser.global.common.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +27,7 @@ public class StoreImageService {
     private final StoreImageRepository storeImageRepository;
     private final StoreManagerRepository storeManagerRepository;
     private final StoreImageConverter storeImageConverter;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public StoreImageRespDTO getRepresentativeImage(Long memberId) {
@@ -42,7 +46,8 @@ public class StoreImageService {
             throw new GeneralException(ErrorStatus.STORE_IMAGE_NOT_FOUND);
         }
 
-        String url = "uploaded://" + storeImage.getOriginalFilename();
+        String imageKey = createStoreImageKey(store.getId(), storeImage);
+        String url = s3Service.uploadImage(storeImage, imageKey);
 
         storeImageRepository.deleteAllByStore_Id(store.getId());
 
@@ -69,5 +74,18 @@ public class StoreImageService {
 
         return storeRepository.findByStoreManager_MemberId(memberId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.STORE_NOT_FOUND));
+    }
+
+    private String createStoreImageKey(Long storeId, MultipartFile file) {
+        return "stores/" + storeId + "/representative/" + UUID.randomUUID() + getExtension(file);
+    }
+
+    private String getExtension(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            return "";
+        }
+
+        return originalFilename.substring(originalFilename.lastIndexOf("."));
     }
 }

@@ -108,7 +108,7 @@ kakao:
 
 kakaopay:
   cid: TC0ONETIME
-  secret-key: ${KAKAOPAY_SECRET_KEY_DEV}
+  secret-key: ${KAKAOPAY_SECRET_KEY_DEV:local-dummy}
   base-url: https://open-api.kakaopay.com
   approval-url: https://compasser.co.kr/payments/kakaopay/success
   cancel-url: https://compasser.co.kr/payments/kakaopay/cancel
@@ -123,4 +123,4 @@ springdoc:
 nts:
   business:
     base-url: https://api.odcloud.kr/api/nts-businessman/v1
-    service-key: ${NTS_SERVICE_KEY}
+    service-key: ${NTS_SERVICE_KEY:local-dummy}
